@@ -32,6 +32,7 @@ export default function Transactions() {
       setFilteredTransactions(response.data);
     } catch (error) {
       console.error('Failed to load transactions:', error);
+      toast.error('Failed to load transactions');
     } finally {
       setLoading(false);
     }
@@ -40,12 +41,15 @@ export default function Transactions() {
   const syncTransactions = async () => {
     try {
       setSyncing(true);
+      toast.loading('Syncing transactions...', { id: 'sync' });
+      
       await transactionsAPI.sync();
       await loadTransactions();
-      toast.success('Transactions synced successfully!');
+      
+      toast.success('✅ Transactions synced!', { id: 'sync' });
     } catch (error) {
       console.error('Failed to sync transactions:', error);
-      toast.error('Failed to sync transactions');
+      toast.error('Failed to sync transactions', { id: 'sync' });
     } finally {
       setSyncing(false);
     }
@@ -76,7 +80,7 @@ export default function Transactions() {
   if (loading) {
     return (
       <Layout>
-         <LoadingSpinner message="Loading transactions..." />
+        <LoadingSpinner message="Loading transactions..." />
       </Layout>
     );
   }
@@ -95,9 +99,10 @@ export default function Transactions() {
           <button 
             onClick={syncTransactions}
             disabled={syncing}
-            className="btn-primary disabled:opacity-50"
+            className="btn-primary flex items-center space-x-2 disabled:opacity-50"
           >
-            {syncing ? 'Syncing...' : 'Sync Transactions'}
+            <span className={syncing ? 'animate-spin' : ''}>🔄</span>
+            <span>{syncing ? 'Syncing...' : 'Sync Transactions'}</span>
           </button>
         </div>
 
@@ -167,8 +172,8 @@ export default function Transactions() {
                           {transaction.category && (
                             <>
                               <span className="text-gray-400">•</span>
-                              <span className="text-sm text-gray-500">
-                                {transaction.category.replace(/_/g, ' ')}
+                              <span className="text-sm text-gray-500 capitalize">
+                                {transaction.category.replace(/_/g, ' ').toLowerCase()}
                               </span>
                             </>
                           )}
@@ -188,19 +193,19 @@ export default function Transactions() {
                 </div>
               ))}
             </div>
-          ) : (
-            transactions.length === 0 ? (
-              <EmptyState
-                icon="💳"
-                title="No transactions yet"
-                message="Sync your bank accounts to see your transactions here"
-                action={syncTransactions}
-                actionLabel="Sync Transactions"
-              />
+          ) : transactions.length === 0 ? (
+            <EmptyState
+              icon="💳"
+              title="No transactions yet"
+              message="Sync your bank accounts to see your transactions here"
+              action={syncTransactions}
+              actionLabel="Sync Transactions"
+            />
           ) : (
             <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">No transactions found</p>
-              <p className="text-gray-400 text-sm mt-2">Try adjusting your filters or sync your accounts</p>
+              <span className="text-6xl mb-4 block">🔍</span>
+              <p className="text-gray-500 text-lg mb-2">No transactions found</p>
+              <p className="text-gray-400 text-sm">Try adjusting your filters</p>
             </div>
           )}
         </div>
