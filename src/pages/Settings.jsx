@@ -124,30 +124,35 @@ export default function Settings() {
                     >
                       <div className="flex items-center space-x-4">
                         <div className="h-12 w-12 bg-sky-100 rounded-full flex items-center justify-center">
-                          <span className="text-2xl">🏦</span>
+                          <span className="text-2xl">{getAccountIcon(account.accountType)}</span>
                         </div>
                         <div>
                           <p className="font-semibold text-gray-900">
-                            {account.name || 'Bank Account'}
+                            {account.accountName}
                           </p>
                           <p className="text-sm text-gray-500">
-                            {account.officialName || account.subtype || 'Account'}
+                            {account.institutionName}
                           </p>
-                          <p className="text-xs text-gray-400">
-                            ****{account.mask || '0000'}
+                          <p className="text-xs text-gray-400 capitalize">
+                            {account.accountType}
                           </p>
                         </div>
                       </div>
                       <div className="text-right">
                         <p className="font-bold text-gray-900">
-                          ${(account.balances?.current || 0).toLocaleString('en-US', {
+                          ${account.currentBalance?.toLocaleString('en-US', {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2
                           })}
                         </p>
-                        <p className="text-xs text-gray-500 capitalize">
-                          {account.type}
-                        </p>
+                        {account.availableBalance !== null && (
+                          <p className="text-xs text-gray-500">
+                            Available: ${account.availableBalance?.toLocaleString('en-US', {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2
+                            })}
+                          </p>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -181,4 +186,14 @@ export default function Settings() {
       </div>
     </Layout>
   );
+}
+
+function getAccountIcon(accountType) {
+  const icons = {
+    'depository': '🏦',
+    'credit': '💳',
+    'loan': '🏠',
+    'investment': '📈',
+  };
+  return icons[accountType] || '💰';
 }
