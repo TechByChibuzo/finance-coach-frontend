@@ -8,12 +8,13 @@ import { analyticsAPI, transactionsAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import { formatCurrency, formatDate } from '../utils/helpers';
 import { DashboardSkeleton } from '../components/common/Skeleton';
-
-
-
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import ErrorMessage from '../components/common/ErrorMessage';
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
+  const [error, setError] = useState(null);
   const [data, setData] = useState({
     monthlySummary: null,
     spendingTrend: {},
@@ -22,13 +23,15 @@ export default function Dashboard() {
     recentTransactions: [],
   });
 
-  // In useEffect - don't show toast
   useEffect(() => {
-    loadDashboardData(false); // Don't show toast on mount
+    loadDashboardData(false);
   }, []);
 
   const loadDashboardData = async (showToast = false) => {
     try {
+      setLoading(true);
+      setError(null);
+      
       const endDate = format(new Date(), 'yyyy-MM-dd');
       const startDate = format(subDays(new Date(), 30), 'yyyy-MM-dd');
 
@@ -47,15 +50,35 @@ export default function Dashboard() {
         topMerchants: merchantsRes.data,
         recentTransactions: transactionsRes.data.slice(0, 5),
       });
-      // Only show toast if explicitly requested
-      if (showToast){
+      
+      if (showToast) {
         toast.success('Dashboard refreshed!');
       }
-    } catch (error) {
-      console.error('Failed to load dashboard:', error);
+    } catch (err) {
+      console.error('Failed to load dashboard:', err);
+      setError('Failed to load dashboard data');
       toast.error('Failed to load dashboard data');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSync = async () => {
+    try {
+      setSyncing(true);
+      toast.loading('Syncing transactions...', { id: 'sync' });
+      
+      await transactionsAPI.sync();
+      
+      toast.success('✅ Transactions synced!', { id: 'sync' });
+      
+      // Reload dashboard data after sync
+      await loadDashboardData(false);
+    } catch (err) {
+      console.error('Sync failed:', err);
+      toast.error('Failed to sync transactions', { id: 'sync' });
+    } finally {
+      setSyncing(false);
     }
   };
 
@@ -67,23 +90,44 @@ export default function Dashboard() {
     );
   }
 
+  if (error) {
+    return (
+      <Layout>
+        <ErrorMessage message={error} onRetry={() => loadDashboardData(false)} />
+      </Layout>
+    );
+  }
+
   const { monthlySummary, spendingTrend, categoryBreakdown, topMerchants, recentTransactions } = data;
 
   return (
     <Layout>
       <div className="space-y-6">
-        {/* Header */}
+        {/* Header with Sync Button */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
             <p className="text-gray-500 mt-1">Welcome back! Here's your financial overview.</p>
           </div>
-          <button 
-            onClick={() => loadDashboardData(true)} // Show toast on refresh
-            className="btn-primary"
-          >
-            Refresh Data
-          </button>
+          
+          <div className="flex items-center space-x-3">
+            <button 
+              onClick={() => loadDashboardData(true)}
+              className="btn-secondary flex items-center space-x-2"
+            >
+              <span>🔄</span>
+              <span>Refresh</span>
+            </button>
+            
+            <button 
+              onClick={handleSync}
+              disabled={syncing}
+              className="btn-primary flex items-center space-x-2 disabled:opacity-50"
+            >
+              <span className={syncing ? 'animate-spin' : ''}>🔄</span>
+              <span>{syncing ? 'Syncing...' : 'Sync Transactions'}</span>
+            </button>
+          </div>
         </div>
 
         {/* Stats Grid */}
@@ -110,7 +154,7 @@ export default function Dashboard() {
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Income</p>
                 <p className="text-3xl font-bold text-gray-900 mt-2">
-                  {formatCurrency(monthlySummary?.totalSpending)}
+                  {formatCurrency(monthlySummary?.totalIncome || monthlySummary?.totalSpending)}
                 </p>
                 <p className="text-sm text-gray-500 mt-1">This month</p>
               </div>
@@ -128,7 +172,7 @@ export default function Dashboard() {
                 <p className={`text-3xl font-bold mt-2 ${
                   (monthlySummary?.netCashFlow || 0) >= 0 ? 'text-green-600' : 'text-red-600'
                 }`}>
-                  ${monthlySummary?.netCashFlow?.toLocaleString() || 0}
+                  {formatCurrency(monthlySummary?.netCashFlow)}
                 </p>
                 <p className="text-sm text-gray-500 mt-1">This month</p>
               </div>
@@ -165,27 +209,65 @@ export default function Dashboard() {
                   <div key={transaction.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
                     <div className="flex items-center space-x-3">
                       <div className="h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center">
-                        <span className="text-lg">💳</span>
+                        <span className="text-lg">
+                          {getCategoryIcon(transaction.category)}
+                        </span>
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">{transaction.name}</p>
+                        <p className="font-medium text-gray-900">
+                          {transaction.merchantName || transaction.name}
+                        </p>
                         <p className="text-sm text-gray-500">
                           {new Date(transaction.date).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
-                    <p className="font-semibold text-gray-900">
-                      ${transaction.amount?.toFixed(2)}
+                    <p className={`font-semibold ${
+                      transaction.amount < 0 ? 'text-green-600' : 'text-gray-900'
+                    }`}>
+                      {transaction.amount < 0 ? '+' : ''}${Math.abs(transaction.amount).toFixed(2)}
                     </p>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500 text-center py-8">No transactions yet</p>
+              <div className="text-center py-12">
+                <span className="text-6xl mb-4 block">💳</span>
+                <p className="text-gray-500 mb-2">No transactions yet</p>
+                <p className="text-sm text-gray-400 mb-4">
+                  Sync your bank accounts to see transactions
+                </p>
+                <button
+                  onClick={handleSync}
+                  disabled={syncing}
+                  className="btn-primary inline-flex items-center space-x-2"
+                >
+                  <span className={syncing ? 'animate-spin' : ''}>🔄</span>
+                  <span>{syncing ? 'Syncing...' : 'Sync Now'}</span>
+                </button>
+              </div>
             )}
           </div>
         </div>
       </div>
     </Layout>
   );
+}
+
+// Helper function for category icons
+function getCategoryIcon(category) {
+  const icons = {
+    'FOOD_AND_DRINK': '🍔',
+    'TRANSPORTATION': '🚗',
+    'ENTERTAINMENT': '🎬',
+    'SHOPPING': '🛍️',
+    'TRAVEL': '✈️',
+    'GENERAL_MERCHANDISE': '🏪',
+    'RENT_AND_UTILITIES': '🏠',
+    'TRANSFER_OUT': '💸',
+    'TRANSFER_IN': '💰',
+    'PERSONAL_CARE': '💅',
+    'HEALTHCARE': '🏥',
+  };
+  return icons[category] || '💳';
 }

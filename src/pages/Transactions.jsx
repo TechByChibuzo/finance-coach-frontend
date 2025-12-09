@@ -4,6 +4,8 @@ import Layout from '../components/layout/Layout';
 import { transactionsAPI } from '../services/api';
 import { MagnifyingGlassIcon, FunnelIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import EmptyState from '../components/common/EmptyState';
 
 
 export default function Transactions() {
@@ -74,9 +76,7 @@ export default function Transactions() {
   if (loading) {
     return (
       <Layout>
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-        </div>
+         <LoadingSpinner message="Loading transactions..." />
       </Layout>
     );
   }
@@ -188,6 +188,15 @@ export default function Transactions() {
                 </div>
               ))}
             </div>
+          ) : (
+            transactions.length === 0 ? (
+              <EmptyState
+                icon="💳"
+                title="No transactions yet"
+                message="Sync your bank accounts to see your transactions here"
+                action={syncTransactions}
+                actionLabel="Sync Transactions"
+              />
           ) : (
             <div className="text-center py-12">
               <p className="text-gray-500 text-lg">No transactions found</p>
