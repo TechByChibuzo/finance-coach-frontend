@@ -91,4 +91,16 @@ export const aiCoachAPI = {
     api.post('/ai-coach/savings-recommendations', { savingsGoal }),
 };
 
+// Plaid API
+export const plaidAPI = {
+  createLinkToken: () => 
+    api.post('/plaid/create-link-token'),
+  
+  exchangeToken: (publicToken) => 
+    api.post('/plaid/exchange-token', { publicToken }),
+  
+  getAccounts: () => 
+    api.get('/plaid/accounts'),
+};
+
 export default api;
