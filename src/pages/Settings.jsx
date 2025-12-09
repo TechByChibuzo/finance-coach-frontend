@@ -120,22 +120,34 @@ export default function Settings() {
                   {accounts.map((account) => (
                     <div
                       key={account.id}
-                      className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
+                      className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
                     >
                       <div className="flex items-center space-x-4">
                         <div className="h-12 w-12 bg-sky-100 rounded-full flex items-center justify-center">
                           <span className="text-2xl">🏦</span>
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900">{account.name}</p>
-                          <p className="text-sm text-gray-500">{account.officialName}</p>
+                          <p className="font-semibold text-gray-900">
+                            {account.name || 'Bank Account'}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {account.officialName || account.subtype || 'Account'}
+                          </p>
+                          <p className="text-xs text-gray-400">
+                            ****{account.mask || '0000'}
+                          </p>
                         </div>
                       </div>
                       <div className="text-right">
                         <p className="font-bold text-gray-900">
-                          ${account.currentBalance?.toLocaleString() || '0'}
+                          ${(account.balances?.current || 0).toLocaleString('en-US', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                          })}
                         </p>
-                        <p className="text-xs text-gray-500">{account.type}</p>
+                        <p className="text-xs text-gray-500 capitalize">
+                          {account.type}
+                        </p>
                       </div>
                     </div>
                   ))}
