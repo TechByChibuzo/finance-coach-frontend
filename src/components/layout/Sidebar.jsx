@@ -6,10 +6,12 @@ import {
   Cog6ToothIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
+import { PiggyBank } from 'lucide-react';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
   { name: 'Transactions', href: '/transactions', icon: CreditCardIcon },
+  { name: 'Budgets', href: '/budget', icon: PiggyBank },
   { name: 'AI Coach', href: '/ai-coach', icon: ChatBubbleLeftRightIcon },
   { name: 'Settings', href: '/settings', icon: Cog6ToothIcon },
 ];

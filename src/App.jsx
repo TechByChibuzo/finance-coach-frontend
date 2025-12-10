@@ -13,6 +13,7 @@ import Register from './pages/Register';
 // Lazy load main app pages (only load when needed)
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Transactions = lazy(() => import('./pages/Transactions'));
+const Budget = lazy(() => import('./pages/Budget')); // ADD THIS LINE
 const AICoach = lazy(() => import('./pages/AICoach'));
 const Settings = lazy(() => import('./pages/Settings'));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -86,6 +87,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Transactions />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/budget"
+                element={
+                  <ProtectedRoute>
+                    <Budget />
                   </ProtectedRoute>
                 }
               />
