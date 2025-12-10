@@ -1,10 +1,10 @@
-// src/components/budget/BudgetCard.jsx
+// src/components/budget/BudgetCard.jsx - POLISHED VERSION
 import { MoreVertical, AlertCircle, CheckCircle, AlertTriangle } from 'lucide-react';
 import { useState } from 'react';
 import BudgetProgress from './BudgetProgress';
 import { formatDistanceToNow } from 'date-fns';
 
-const BudgetCard = ({ budget, onEdit, onDelete }) => {
+export default function BudgetCard({ budget, onEdit, onDelete }) {
   const [showMenu, setShowMenu] = useState(false);
 
   // Determine status and styling
@@ -64,16 +64,23 @@ const BudgetCard = ({ budget, onEdit, onDelete }) => {
 
   return (
     <div
-      className={`bg-white rounded-xl border-l-4 ${status.borderColor} ${
-        budget.isExceeded ? 'animate-pulse-once' : ''
-      } p-6 shadow-sm hover:shadow-md transition-all duration-200 relative ${
-        status.color === 'amber' || status.color === 'red' ? status.bgColor : ''
-      }`}
+      className={`
+        card
+        border-l-4 ${status.borderColor}
+        ${budget.isExceeded ? 'animate-pulse-once' : ''}
+        ${status.color === 'amber' || status.color === 'red' ? status.bgColor : ''}
+        transition-all duration-300 ease-in-out
+        hover:shadow-lg hover:-translate-y-1
+        cursor-pointer
+        relative
+      `}
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
-          <span className="text-2xl">{getCategoryEmoji(budget.category)}</span>
+          <div className="text-2xl transition-transform duration-200 hover:scale-110">
+            {getCategoryEmoji(budget.category)}
+          </div>
           <div>
             <h3 className="text-lg font-semibold text-gray-900">{budget.category}</h3>
             {budget.notes && (
@@ -86,32 +93,41 @@ const BudgetCard = ({ budget, onEdit, onDelete }) => {
         <div className="relative">
           <button
             onClick={() => setShowMenu(!showMenu)}
-            className="p-1 hover:bg-gray-100 rounded transition-colors"
+            className="p-1 hover:bg-gray-100 rounded transition-colors icon-hover"
           >
             <MoreVertical className="w-5 h-5 text-gray-400" />
           </button>
 
           {showMenu && (
-            <div className="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-[120px]">
-              <button
-                onClick={() => {
-                  onEdit(budget);
-                  setShowMenu(false);
-                }}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => {
-                  onDelete(budget.id);
-                  setShowMenu(false);
-                }}
-                className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 transition-colors"
-              >
-                Delete
-              </button>
-            </div>
+            <>
+              {/* Backdrop */}
+              <div 
+                className="fixed inset-0 z-10"
+                onClick={() => setShowMenu(false)}
+              />
+              
+              {/* Menu */}
+              <div className="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20 min-w-[120px] fade-in">
+                <button
+                  onClick={() => {
+                    onEdit(budget);
+                    setShowMenu(false);
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => {
+                    onDelete(budget.id);
+                    setShowMenu(false);
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
+            </>
           )}
         </div>
       </div>
@@ -119,7 +135,7 @@ const BudgetCard = ({ budget, onEdit, onDelete }) => {
       {/* Amount */}
       <div className="mb-4">
         <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-bold text-gray-900">
+          <span className="text-2xl font-bold text-gray-900 transition-colors">
             ${budget.spent.toFixed(2)}
           </span>
           <span className="text-lg text-gray-500">/ ${budget.amount.toFixed(2)}</span>
@@ -135,7 +151,7 @@ const BudgetCard = ({ budget, onEdit, onDelete }) => {
       </div>
 
       {/* Status Message */}
-      <div className={`flex items-center gap-2 ${status.textColor}`}>
+      <div className={`flex items-center gap-2 ${status.textColor} transition-colors`}>
         <StatusIcon className={`w-4 h-4 ${status.iconColor}`} />
         <span className="text-sm font-medium">{status.message}</span>
       </div>
@@ -148,6 +164,4 @@ const BudgetCard = ({ budget, onEdit, onDelete }) => {
       </div>
     </div>
   );
-};
-
-export default BudgetCard;
+}
