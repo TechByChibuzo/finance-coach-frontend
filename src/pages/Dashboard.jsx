@@ -74,7 +74,7 @@ export default function Dashboard() {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Total Spending */}
-          <div className="card hover:shadow-lg transition-all duration-200">
+          <div className="card stat-card">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Spending</p>
@@ -90,7 +90,7 @@ export default function Dashboard() {
           </div>
 
           {/* Total Income */}
-          <div className="card hover:shadow-lg transition-all duration-200">
+          <div className="card stat-card">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Income</p>
@@ -106,7 +106,7 @@ export default function Dashboard() {
           </div>
 
           {/* Net Cash Flow */}
-          <div className="card hover:shadow-lg transition-all duration-200">
+          <div className="card stat-card">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Net Cash Flow</p>
@@ -146,7 +146,7 @@ export default function Dashboard() {
             {recentTransactions.length > 0 ? (
               <div className="space-y-3">
                 {recentTransactions.map((transaction) => (
-                  <div key={transaction.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+                  <div key={transaction.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0 transaction-item rounded-lg px-2 -mx-2">
                     <div className="flex items-center space-x-3">
                       <div className="h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center">
                         <span className="text-lg">
