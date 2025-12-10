@@ -169,4 +169,51 @@ export const plaidAPI = {
     api.get('/plaid/accounts'),
 };
 
+// Budget API 
+export const budgetAPI = {
+  // Create or update a budget
+  createBudget: (budgetData) => 
+    api.post('/budgets', budgetData),
+
+  // Get current month budgets with summary
+  getCurrentMonthBudgets: () => 
+    api.get('/budgets/current'),
+
+  // Get budgets for specific month
+  getBudgetsForMonth: (month) => 
+    api.get('/budgets', { params: { month } }),
+
+  // Get budget progress (category breakdown)
+  getBudgetProgress: (month) => 
+    api.get('/budgets/progress', { params: month ? { month } : {} }),
+
+  // Get AI-powered budget recommendations
+  getBudgetRecommendations: () => 
+    api.get('/budgets/recommendations'),
+
+  // Get exceeded budgets
+  getExceededBudgets: () => 
+    api.get('/budgets/exceeded'),
+
+  // Get budgets needing alerts (80%+ spent)
+  getBudgetAlerts: () => 
+    api.get('/budgets/alerts'),
+
+  // Refresh budget spending amounts
+  refreshBudgetSpending: (month) => 
+    api.post('/budgets/refresh', null, { params: month ? { month } : {} }),
+
+  // Copy previous month's budgets to current month
+  copyPreviousMonthBudgets: () => 
+    api.post('/budgets/copy-previous'),
+
+  // Update a budget
+  updateBudget: (budgetData) => 
+    api.post('/budgets', budgetData),
+
+  // Delete a budget
+  deleteBudget: (budgetId) => 
+    api.delete(`/budgets/${budgetId}`),
+};
+
 export default api;
