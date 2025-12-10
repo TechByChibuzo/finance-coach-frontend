@@ -1,88 +1,28 @@
-import { useEffect, useState } from 'react';
-import { format, subDays } from 'date-fns';
 import Layout from '../components/layout/Layout';
 import SpendingChart from '../components/dashboard/SpendingChart';
 import CategoryBreakdown from '../components/dashboard/CategoryBreakdown';
 import TopMerchants from '../components/dashboard/TopMerchants';
-import { analyticsAPI, transactionsAPI } from '../services/api';
-import toast from 'react-hot-toast';
-import { formatCurrency, formatDate } from '../utils/helpers';
 import { DashboardSkeleton } from '../components/common/Skeleton';
-import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
+import { useAnalytics } from '../hooks/useAnalytics';
+import { useTransactions } from '../hooks/useTransactions';
+import { formatCurrency } from '../utils/helpers';
 
 export default function Dashboard() {
-  const [loading, setLoading] = useState(true);
-  const [syncing, setSyncing] = useState(false);
-  const [error, setError] = useState(null);
-  const [data, setData] = useState({
-    monthlySummary: null,
-    spendingTrend: {},
-    categoryBreakdown: {},
-    topMerchants: {},
-    recentTransactions: [],
-  });
+  const { 
+    monthlySummary, 
+    spendingTrend, 
+    categoryBreakdown, 
+    topMerchants, 
+    isLoading, 
+    error,
+    refetch 
+  } = useAnalytics();
+  
+  const { transactions, sync, isSyncing } = useTransactions();
+  const recentTransactions = transactions.slice(0, 5);
 
-  useEffect(() => {
-    loadDashboardData(false);
-  }, []);
-
-  const loadDashboardData = async (showToast = false) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const endDate = format(new Date(), 'yyyy-MM-dd');
-      const startDate = format(subDays(new Date(), 30), 'yyyy-MM-dd');
-
-      const [summaryRes, trendRes, categoryRes, merchantsRes, transactionsRes] = await Promise.all([
-        analyticsAPI.getMonthlySummary(),
-        analyticsAPI.getSpendingTrend(startDate, endDate).catch(() => ({ data: {} })),
-        analyticsAPI.getSpendingByCategory(startDate, endDate),
-        analyticsAPI.getTopMerchants(startDate, endDate, 5),
-        transactionsAPI.getAll(),
-      ]);
-
-      setData({
-        monthlySummary: summaryRes.data,
-        spendingTrend: trendRes.data,
-        categoryBreakdown: categoryRes.data,
-        topMerchants: merchantsRes.data,
-        recentTransactions: transactionsRes.data.slice(0, 5),
-      });
-      
-      if (showToast) {
-        toast.success('Dashboard refreshed!');
-      }
-    } catch (err) {
-      console.error('Failed to load dashboard:', err);
-      setError('Failed to load dashboard data');
-      toast.error('Failed to load dashboard data');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSync = async () => {
-    try {
-      setSyncing(true);
-      toast.loading('Syncing transactions...', { id: 'sync' });
-      
-      await transactionsAPI.sync();
-      
-      toast.success('✅ Transactions synced!', { id: 'sync' });
-      
-      // Reload dashboard data after sync
-      await loadDashboardData(false);
-    } catch (err) {
-      console.error('Sync failed:', err);
-      toast.error('Failed to sync transactions', { id: 'sync' });
-    } finally {
-      setSyncing(false);
-    }
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
       <Layout>
         <DashboardSkeleton />
@@ -93,17 +33,18 @@ export default function Dashboard() {
   if (error) {
     return (
       <Layout>
-        <ErrorMessage message={error} onRetry={() => loadDashboardData(false)} />
+        <ErrorMessage 
+          message={error?.message || 'Failed to load dashboard'} 
+          onRetry={refetch} 
+        />
       </Layout>
     );
   }
 
-  const { monthlySummary, spendingTrend, categoryBreakdown, topMerchants, recentTransactions } = data;
-
   return (
     <Layout>
       <div className="space-y-6">
-        {/* Header with Sync Button */}
+        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
@@ -112,7 +53,7 @@ export default function Dashboard() {
           
           <div className="flex items-center space-x-3">
             <button 
-              onClick={() => loadDashboardData(true)}
+              onClick={refetch}
               className="btn-secondary flex items-center space-x-2"
             >
               <span>🔄</span>
@@ -120,12 +61,12 @@ export default function Dashboard() {
             </button>
             
             <button 
-              onClick={handleSync}
-              disabled={syncing}
+              onClick={sync}
+              disabled={isSyncing}
               className="btn-primary flex items-center space-x-2 disabled:opacity-50"
             >
-              <span className={syncing ? 'animate-spin' : ''}>🔄</span>
-              <span>{syncing ? 'Syncing...' : 'Sync Transactions'}</span>
+              <span className={isSyncing ? 'animate-spin' : ''}>🔄</span>
+              <span>{isSyncing ? 'Syncing...' : 'Sync Transactions'}</span>
             </button>
           </div>
         </div>
@@ -133,7 +74,7 @@ export default function Dashboard() {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Total Spending */}
-          <div className="card hover:shadow-md transition-shadow">
+          <div className="card hover:shadow-lg transition-all duration-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Spending</p>
@@ -149,7 +90,7 @@ export default function Dashboard() {
           </div>
 
           {/* Total Income */}
-          <div className="card hover:shadow-md transition-shadow">
+          <div className="card hover:shadow-lg transition-all duration-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Income</p>
@@ -165,7 +106,7 @@ export default function Dashboard() {
           </div>
 
           {/* Net Cash Flow */}
-          <div className="card hover:shadow-md transition-shadow">
+          <div className="card hover:shadow-lg transition-all duration-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Net Cash Flow</p>
@@ -191,7 +132,6 @@ export default function Dashboard() {
 
         {/* Bottom Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Top Merchants */}
           <TopMerchants merchants={topMerchants} />
 
           {/* Recent Transactions */}
@@ -238,12 +178,12 @@ export default function Dashboard() {
                   Sync your bank accounts to see transactions
                 </p>
                 <button
-                  onClick={handleSync}
-                  disabled={syncing}
+                  onClick={sync}
+                  disabled={isSyncing}
                   className="btn-primary inline-flex items-center space-x-2"
                 >
-                  <span className={syncing ? 'animate-spin' : ''}>🔄</span>
-                  <span>{syncing ? 'Syncing...' : 'Sync Now'}</span>
+                  <span className={isSyncing ? 'animate-spin' : ''}>🔄</span>
+                  <span>{isSyncing ? 'Syncing...' : 'Sync Now'}</span>
                 </button>
               </div>
             )}
@@ -254,7 +194,6 @@ export default function Dashboard() {
   );
 }
 
-// Helper function for category icons
 function getCategoryIcon(category) {
   const icons = {
     'FOOD_AND_DRINK': '🍔',
