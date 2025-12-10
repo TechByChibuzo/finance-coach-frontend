@@ -9,7 +9,7 @@ import { useTransactions } from '../hooks/useTransactions';
 import { formatCurrency } from '../utils/helpers';
 
 export default function Dashboard() {
-  throw new Error('Test error boundary!');
+  
   const { 
     monthlySummary, 
     spendingTrend, 
