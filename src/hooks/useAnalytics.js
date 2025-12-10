@@ -38,6 +38,33 @@ export function useAnalytics(dateRange = 30) {
     },
   });
 
+  // Enhanced error detection
+  const getErrorType = () => {
+    const errors = [
+      monthlySummary.error,
+      spendingTrend.error,
+      categoryBreakdown.error,
+      topMerchants.error,
+    ].filter(Boolean);
+
+    if (errors.length === 0) return null;
+
+    const firstError = errors[0];
+    
+    // Network error (no response)
+    if (!firstError.response) {
+      return 'network';
+    }
+    
+    // Server error (5xx)
+    if (firstError.response?.status >= 500) {
+      return 'error';
+    }
+    
+    // Client error (4xx)
+    return 'warning';
+  };
+
   return {
     monthlySummary: monthlySummary.data,
     spendingTrend: spendingTrend.data,
@@ -53,6 +80,7 @@ export function useAnalytics(dateRange = 30) {
       spendingTrend.error || 
       categoryBreakdown.error || 
       topMerchants.error,
+    errorType: getErrorType(),
     refetch: () => {
       monthlySummary.refetch();
       spendingTrend.refetch();

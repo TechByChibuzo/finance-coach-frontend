@@ -9,6 +9,7 @@ import { useTransactions } from '../hooks/useTransactions';
 import { formatCurrency } from '../utils/helpers';
 
 export default function Dashboard() {
+  throw new Error('Test error boundary!');
   const { 
     monthlySummary, 
     spendingTrend, 
@@ -16,6 +17,7 @@ export default function Dashboard() {
     topMerchants, 
     isLoading, 
     error,
+    errorType,
     refetch 
   } = useAnalytics();
   
@@ -36,6 +38,7 @@ export default function Dashboard() {
         <ErrorMessage 
           message={error?.message || 'Failed to load dashboard'} 
           onRetry={refetch} 
+          type={errorType || 'error'}
         />
       </Layout>
     );
