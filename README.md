@@ -4,13 +4,13 @@ AI-powered personal finance coach built with React, Tailwind CSS, and Recharts.
 
 ![Finance Coach Dashboard](https://via.placeholder.com/800x400?text=Dashboard+Screenshot)
 
-## 🚀 Features
+## Features
 
-- 📊 **Dashboard** - Real-time spending analytics with beautiful charts
-- 💳 **Transactions** - Search, filter, and manage all your transactions
-- 🤖 **AI Coach** - Chat with Claude AI for personalized financial advice
-- 📱 **Responsive** - Works perfectly on mobile, tablet, and desktop
-- 🎨 **Modern UI** - Clean, professional design inspired by top fintech apps
+- **Dashboard** - Real-time spending analytics with beautiful charts
+- **Transactions** - Search, filter, and manage all your transactions
+- **AI Coach** - Chat with Claude AI for personalized financial advice
+- **Responsive** - Works perfectly on mobile, tablet, and desktop
+- **Modern UI** - Clean, professional design inspired by top fintech apps
 
 ## 🛠️ Tech Stack
 
@@ -22,7 +22,7 @@ AI-powered personal finance coach built with React, Tailwind CSS, and Recharts.
 - **React Hot Toast** - Notifications
 - **Vite** - Build tool
 
-## 📦 Installation
+## Installation
 
 ### Prerequisites
 
@@ -43,7 +43,7 @@ npm run dev
 
 Open [http://localhost:5173](http://localhost:5173)
 
-## 🌍 Environment Variables
+## Environment Variables
 
 Create a `.env` file in the root directory:
 ```env
@@ -55,7 +55,7 @@ For production, create `.env.production`:
 VITE_API_BASE_URL=https://your-production-api.com/api
 ```
 
-## 🚀 Build for Production
+## Build for Production
 ```bash
 # Create optimized production build
 npm run build
@@ -64,13 +64,13 @@ npm run build
 npm run preview
 ```
 
-## 📱 Demo Credentials
+## Demo Credentials
 ```
 Email: alice@example.com
 Password: password123
 ```
 
-## 🎯 Key Features
+## Key Features
 
 ### Dashboard
 - Real-time spending overview
@@ -94,7 +94,7 @@ Password: password123
 - Savings strategies
 - Category analysis
 
-## 📂 Project Structure
+## Project Structure
 ```
 src/
 ├── components/
@@ -110,7 +110,7 @@ src/
 └── App.jsx             # Main app component
 ```
 
-## 🎨 Color Scheme
+## Color Scheme
 ```javascript
 primary: {
   50: '#f0f9ff',
@@ -119,7 +119,7 @@ primary: {
 }
 ```
 
-## 🔗 API Integration
+## API Integration
 
 All API calls go through `src/services/api.js`:
 ```javascript
@@ -148,22 +148,22 @@ npm run preview       # Preview production build
 npm run lint          # Run ESLint
 ```
 
-## 📊 Performance
+## Performance
 
 - First Contentful Paint: < 1s
 - Largest Contentful Paint: < 2s
 - Time to Interactive: < 3s
 - Lighthouse Score: 95+
 
-## 🤝 Contributing
+## Contributing
 
 This is a personal project, but suggestions are welcome!
 
-## 📝 License
+## License
 
 MIT License
 
-## 👨‍💻 Author
+## Author
 
 Built by [Chibuzo Ufomba]
 
@@ -171,7 +171,7 @@ Built by [Chibuzo Ufomba]
 - LinkedIn: [your-linkedin](https://linkedin.com/in/yourprofile)
 - GitHub: [@yourusername](https://github.com/yourusername)
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - [Plaid](https://plaid.com) - Bank account integration
 - [Anthropic Claude](https://anthropic.com) - AI financial advice
@@ -180,4 +180,4 @@ Built by [Chibuzo Ufomba]
 
 ---
 
-**⭐ Star this repo if you found it helpful!**
+**Star this repo if you found it helpful!**
