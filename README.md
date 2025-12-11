@@ -12,7 +12,7 @@ AI-powered personal finance coach built with React, Tailwind CSS, and Recharts.
 - **Responsive** - Works perfectly on mobile, tablet, and desktop
 - **Modern UI** - Clean, professional design inspired by top fintech apps
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **React 18** - Frontend framework
 - **Tailwind CSS v4** - Styling
