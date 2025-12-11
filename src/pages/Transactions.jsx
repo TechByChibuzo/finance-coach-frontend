@@ -1,23 +1,69 @@
+// src/pages/Transactions.jsx - WITH PROFESSIONAL ICONS
 import { useEffect, useState } from 'react';
+import { format, subDays } from 'date-fns';
 import Layout from '../components/layout/Layout';
+import CategoryIcon from '../components/common/CategoryIcon'; // NEW IMPORT
+import { transactionsAPI } from '../services/api';
 import { MagnifyingGlassIcon, FunnelIcon } from '@heroicons/react/24/outline';
+import { formatCurrency } from '../utils/helpers'; // NEW IMPORT
+import toast from 'react-hot-toast';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import EmptyState from '../components/common/EmptyState';
-import { useTransactions } from '../hooks/useTransactions';
+import { RefreshCw, ArrowDownUp } from 'lucide-react';
+
+
 
 export default function Transactions() {
-  const { transactions, isLoading, sync, isSyncing } = useTransactions();
+  const [transactions, setTransactions] = useState([]);
   const [filteredTransactions, setFilteredTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [syncing, setSyncing] = useState(false);
+
+  useEffect(() => {
+    loadTransactions();
+  }, []);
 
   useEffect(() => {
     filterTransactions();
   }, [searchTerm, selectedCategory, transactions]);
 
+  const loadTransactions = async () => {
+    try {
+      setLoading(true);
+      const response = await transactionsAPI.getAll();
+      setTransactions(response.data);
+      setFilteredTransactions(response.data);
+    } catch (error) {
+      console.error('Failed to load transactions:', error);
+      toast.error('Failed to load transactions');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const syncTransactions = async () => {
+    try {
+      setSyncing(true);
+      toast.loading('Syncing transactions...', { id: 'sync' });
+      
+      await transactionsAPI.sync();
+      await loadTransactions();
+      
+      toast.success('✅ Transactions synced!', { id: 'sync' });
+    } catch (error) {
+      console.error('Failed to sync transactions:', error);
+      toast.error('Failed to sync transactions', { id: 'sync' });
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   const filterTransactions = () => {
     let filtered = [...transactions];
 
+    // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(t => 
         t.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -25,6 +71,7 @@ export default function Transactions() {
       );
     }
 
+    // Filter by category
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(t => t.category === selectedCategory);
     }
@@ -32,9 +79,10 @@ export default function Transactions() {
     setFilteredTransactions(filtered);
   };
 
+  // Get unique categories
   const categories = ['all', ...new Set(transactions.map(t => t.category).filter(Boolean))];
 
-  if (isLoading) {
+  if (loading) {
     return (
       <Layout>
         <LoadingSpinner message="Loading transactions..." />
@@ -54,18 +102,20 @@ export default function Transactions() {
             </p>
           </div>
           <button 
-            onClick={sync}
-            disabled={isSyncing}
+            onClick={syncTransactions}
+            disabled={syncing}
             className="btn-primary flex items-center space-x-2 disabled:opacity-50"
           >
-            <span className={isSyncing ? 'animate-spin' : ''}>🔄</span>
-            <span>{isSyncing ? 'Syncing...' : 'Sync Transactions'}</span>
+            <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
+            <span>{syncing ? 'Syncing...' : 'Sync Transactions'}</span>
+            
           </button>
         </div>
 
         {/* Filters */}
         <div className="card">
           <div className="flex flex-col sm:flex-row gap-4">
+            {/* Search */}
             <div className="flex-1 relative">
               <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
@@ -77,6 +127,7 @@ export default function Transactions() {
               />
             </div>
 
+            {/* Category Filter */}
             <div className="sm:w-64">
               <div className="relative">
                 <FunnelIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -96,20 +147,24 @@ export default function Transactions() {
           </div>
         </div>
 
-        {/* Transactions List */}
+        {/* Transactions List - WITH PROFESSIONAL ICONS */}
         <div className="card">
           {filteredTransactions.length > 0 ? (
             <div className="divide-y divide-gray-200">
               {filteredTransactions.map((transaction) => (
-                <div key={transaction.id} className="py-4 hover:bg-gray-50 transition-colors px-4 -mx-4">
+                <div 
+                  key={transaction.id} 
+                  className="py-4 hover:bg-gray-50 transition-colors px-4 -mx-4 rounded-lg"
+                >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4 flex-1">
-                      <div className="h-12 w-12 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-xl">
-                          {getCategoryIcon(transaction.category)}
-                        </span>
-                      </div>
+                      {/* PROFESSIONAL ICON - REPLACED EMOJI */}
+                      <CategoryIcon 
+                        category={transaction.category} 
+                        size="md"
+                      />
 
+                      {/* Details */}
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-gray-900 truncate">
                           {transaction.merchantName || transaction.name}
@@ -134,11 +189,12 @@ export default function Transactions() {
                       </div>
                     </div>
 
+                    {/* Amount - WITH PROPER FORMATTING */}
                     <div className="text-right ml-4">
                       <p className={`font-bold text-lg ${
                         transaction.amount < 0 ? 'text-green-600' : 'text-gray-900'
                       }`}>
-                        {transaction.amount < 0 ? '+' : ''}${Math.abs(transaction.amount).toFixed(2)}
+                        {transaction.amount < 0 ? '+' : ''}{formatCurrency(Math.abs(transaction.amount))}
                       </p>
                     </div>
                   </div>
@@ -150,7 +206,7 @@ export default function Transactions() {
               icon="💳"
               title="No transactions yet"
               message="Sync your bank accounts to see your transactions here"
-              action={sync}
+              action={syncTransactions}
               actionLabel="Sync Transactions"
             />
           ) : (
@@ -164,21 +220,4 @@ export default function Transactions() {
       </div>
     </Layout>
   );
-}
-
-function getCategoryIcon(category) {
-  const icons = {
-    'FOOD_AND_DRINK': '🍔',
-    'TRANSPORTATION': '🚗',
-    'ENTERTAINMENT': '🎬',
-    'SHOPPING': '🛍️',
-    'TRAVEL': '✈️',
-    'GENERAL_MERCHANDISE': '🏪',
-    'RENT_AND_UTILITIES': '🏠',
-    'TRANSFER_OUT': '💸',
-    'TRANSFER_IN': '💰',
-    'PERSONAL_CARE': '💅',
-    'HEALTHCARE': '🏥',
-  };
-  return icons[category] || '💳';
 }

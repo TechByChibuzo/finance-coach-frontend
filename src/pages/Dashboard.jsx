@@ -13,6 +13,9 @@ import { formatCurrency, formatDate } from '../utils/helpers';
 import { DashboardSkeleton } from '../components/common/Skeleton';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
+import CategoryIcon from '../components/common/CategoryIcon';
+import { TrendingDown, TrendingUp, DollarSign } from 'lucide-react';
+import { RefreshCw, ArrowDownUp } from 'lucide-react';
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -130,22 +133,24 @@ export default function Dashboard() {
               onClick={() => loadDashboardData(true)}
               className="btn-secondary flex items-center space-x-2"
             >
-              <span>🔄</span>
+              <RefreshCw className="w-4 h-4" />
               <span>Refresh</span>
             </button>
-            
+
             <button 
               onClick={handleSync}
               disabled={syncing}
               className="btn-primary flex items-center space-x-2 disabled:opacity-50"
             >
-              <span className={syncing ? 'animate-spin' : ''}>🔄</span>
+              <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
               <span>{syncing ? 'Syncing...' : 'Sync Transactions'}</span>
             </button>
           </div>
         </div>
 
-        {/* Stats Grid with Trends */}
+       
+
+        {/* Stats Grid with Trends - PROFESSIONAL ICONS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Total Spending */}
           <div className="card stat-card">
@@ -158,7 +163,7 @@ export default function Dashboard() {
                 <p className="text-sm text-gray-500 mt-1">This month</p>
               </div>
               <div className="h-12 w-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-2xl">💸</span>
+                <TrendingDown className="w-6 h-6 text-red-600" strokeWidth={2} />
               </div>
             </div>
             <TrendIndicator 
@@ -179,7 +184,7 @@ export default function Dashboard() {
                 <p className="text-sm text-gray-500 mt-1">This month</p>
               </div>
               <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-2xl">💰</span>
+                <TrendingUp className="w-6 h-6 text-green-600" strokeWidth={2} />
               </div>
             </div>
             <TrendIndicator 
@@ -202,7 +207,7 @@ export default function Dashboard() {
                 <p className="text-sm text-gray-500 mt-1">This month</p>
               </div>
               <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-2xl">📊</span>
+                <DollarSign className="w-6 h-6 text-blue-600" strokeWidth={2} />
               </div>
             </div>
             <TrendIndicator 
@@ -226,7 +231,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <TopMerchants merchants={topMerchants} />
 
-          {/* Recent Transactions */}
+          {/* Recent Transactions - WITH PROFESSIONAL ICONS */}
           <div className="card">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-gray-900">Recent Transactions</h2>
@@ -238,13 +243,11 @@ export default function Dashboard() {
             {recentTransactions.length > 0 ? (
               <div className="space-y-3">
                 {recentTransactions.map((transaction) => (
-                  <div key={transaction.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+                  <div key={transaction.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0 hover:bg-gray-50 rounded-lg px-2 -mx-2 transition-colors">
                     <div className="flex items-center space-x-3">
-                      <div className="h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center">
-                        <span className="text-lg">
-                          {getCategoryIcon(transaction.category)}
-                        </span>
-                      </div>
+                      {/* PROFESSIONAL ICON INSTEAD OF EMOJI */}
+                      <CategoryIcon category={transaction.category} size="md" />
+                      
                       <div>
                         <p className="font-medium text-gray-900">
                           {transaction.merchantName || transaction.name}
@@ -257,7 +260,7 @@ export default function Dashboard() {
                     <p className={`font-semibold ${
                       transaction.amount < 0 ? 'text-green-600' : 'text-gray-900'
                     }`}>
-                      {transaction.amount < 0 ? '+' : ''}${Math.abs(transaction.amount).toFixed(2)}
+                      {transaction.amount < 0 ? '+' : ''}{formatCurrency(Math.abs(transaction.amount))}
                     </p>
                   </div>
                 ))}
