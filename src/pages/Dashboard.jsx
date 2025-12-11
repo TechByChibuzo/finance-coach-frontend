@@ -1,7 +1,9 @@
+// src/pages/Dashboard.jsx 
 import Layout from '../components/layout/Layout';
 import SpendingChart from '../components/dashboard/SpendingChart';
 import CategoryBreakdown from '../components/dashboard/CategoryBreakdown';
 import TopMerchants from '../components/dashboard/TopMerchants';
+import BudgetSummaryWidget from '../components/dashboard/BudgetSummaryWidget'; // NEW IMPORT
 import { DashboardSkeleton } from '../components/common/Skeleton';
 import ErrorMessage from '../components/common/ErrorMessage';
 import { useAnalytics } from '../hooks/useAnalytics';
@@ -133,64 +135,68 @@ export default function Dashboard() {
           <CategoryBreakdown data={categoryBreakdown} />
         </div>
 
-        {/* Bottom Row */}
+        {/* NEW: Budget + Other Widgets Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <TopMerchants merchants={topMerchants} />
+          {/* Budget Summary Widget - NEW! */}
+          <BudgetSummaryWidget />
 
-          {/* Recent Transactions */}
-          <div className="card">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900">Recent Transactions</h2>
-              <a href="/transactions" className="text-sm text-primary-600 hover:text-primary-700 font-medium">
-                View all →
-              </a>
-            </div>
-            
-            {recentTransactions.length > 0 ? (
-              <div className="space-y-3">
-                {recentTransactions.map((transaction) => (
-                  <div key={transaction.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0 transaction-item rounded-lg px-2 -mx-2">
-                    <div className="flex items-center space-x-3">
-                      <div className="h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center">
-                        <span className="text-lg">
-                          {getCategoryIcon(transaction.category)}
-                        </span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-900">
-                          {transaction.merchantName || transaction.name}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          {new Date(transaction.date).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                    <p className={`font-semibold ${
-                      transaction.amount < 0 ? 'text-green-600' : 'text-gray-900'
-                    }`}>
-                      {transaction.amount < 0 ? '+' : ''}${Math.abs(transaction.amount).toFixed(2)}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <span className="text-6xl mb-4 block">💳</span>
-                <p className="text-gray-500 mb-2">No transactions yet</p>
-                <p className="text-sm text-gray-400 mb-4">
-                  Sync your bank accounts to see transactions
-                </p>
-                <button
-                  onClick={sync}
-                  disabled={isSyncing}
-                  className="btn-primary inline-flex items-center space-x-2"
-                >
-                  <span className={isSyncing ? 'animate-spin' : ''}>🔄</span>
-                  <span>{isSyncing ? 'Syncing...' : 'Sync Now'}</span>
-                </button>
-              </div>
-            )}
+          {/* Top Merchants */}
+          <TopMerchants merchants={topMerchants} />
+        </div>
+
+        {/* Recent Transactions */}
+        <div className="card">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-gray-900">Recent Transactions</h2>
+            <a href="/transactions" className="text-sm text-primary-600 hover:text-primary-700 font-medium">
+              View all →
+            </a>
           </div>
+          
+          {recentTransactions.length > 0 ? (
+            <div className="space-y-3">
+              {recentTransactions.map((transaction) => (
+                <div key={transaction.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0 transaction-item rounded-lg px-2 -mx-2">
+                  <div className="flex items-center space-x-3">
+                    <div className="h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center">
+                      <span className="text-lg">
+                        {getCategoryIcon(transaction.category)}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        {transaction.merchantName || transaction.name}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {new Date(transaction.date).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                  <p className={`font-semibold ${
+                    transaction.amount < 0 ? 'text-green-600' : 'text-gray-900'
+                  }`}>
+                    {transaction.amount < 0 ? '+' : ''}${Math.abs(transaction.amount).toFixed(2)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <span className="text-6xl mb-4 block">💳</span>
+              <p className="text-gray-500 mb-2">No transactions yet</p>
+              <p className="text-sm text-gray-400 mb-4">
+                Sync your bank accounts to see transactions
+              </p>
+              <button
+                onClick={sync}
+                disabled={isSyncing}
+                className="btn-primary inline-flex items-center space-x-2"
+              >
+                <span className={isSyncing ? 'animate-spin' : ''}>🔄</span>
+                <span>{isSyncing ? 'Syncing...' : 'Sync Now'}</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </Layout>

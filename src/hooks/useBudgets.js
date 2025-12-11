@@ -19,7 +19,8 @@ export const useBudgets = (month) => {
       ? budgetAPI.getBudgetsForMonth(monthStr)
       : budgetAPI.getCurrentMonthBudgets(),
     select: (response) => response.data,
-    staleTime: 30000, // 30 seconds
+    staleTime: 0, // FIXED: Always refetch (was 30000)
+    gcTime: 0, // FIXED: Don't cache (was default)
   });
 };
 
@@ -31,7 +32,8 @@ export const useCurrentBudgets = () => {
     queryKey: ['budgets', 'current'],
     queryFn: budgetAPI.getCurrentMonthBudgets,
     select: (response) => response.data,
-    staleTime: 30000,
+    staleTime: 0, // FIXED: Always refetch
+    gcTime: 0, // FIXED: Don't cache
   });
 };
 
@@ -45,7 +47,7 @@ export const useBudgetProgress = (month) => {
     queryKey: ['budgetProgress', monthStr],
     queryFn: () => budgetAPI.getBudgetProgress(monthStr),
     select: (response) => response.data,
-    staleTime: 30000,
+    staleTime: 0, // FIXED: Always refetch
   });
 };
 
@@ -57,7 +59,7 @@ export const useBudgetRecommendations = () => {
     queryKey: ['budgetRecommendations'],
     queryFn: budgetAPI.getBudgetRecommendations,
     select: (response) => response.data,
-    staleTime: 300000, // 5 minutes
+    staleTime: 300000, // 5 minutes (recommendations don't change often)
   });
 };
 
@@ -69,7 +71,7 @@ export const useExceededBudgets = () => {
     queryKey: ['budgets', 'exceeded'],
     queryFn: budgetAPI.getExceededBudgets,
     select: (response) => response.data,
-    staleTime: 30000,
+    staleTime: 0, // FIXED: Always refetch
   });
 };
 
@@ -81,7 +83,7 @@ export const useBudgetAlerts = () => {
     queryKey: ['budgets', 'alerts'],
     queryFn: budgetAPI.getBudgetAlerts,
     select: (response) => response.data,
-    staleTime: 30000,
+    staleTime: 0, // FIXED: Always refetch
   });
 };
 
@@ -94,9 +96,10 @@ export const useCreateBudget = () => {
   return useMutation({
     mutationFn: budgetAPI.createBudget,
     onSuccess: () => {
-      // Invalidate all budget queries to refetch
+      // FIXED: Invalidate AND refetch immediately
       queryClient.invalidateQueries({ queryKey: ['budgets'] });
       queryClient.invalidateQueries({ queryKey: ['budgetProgress'] });
+      queryClient.refetchQueries({ queryKey: ['budgets'] }); // ADDED: Force refetch
     },
   });
 };
@@ -110,8 +113,10 @@ export const useUpdateBudget = () => {
   return useMutation({
     mutationFn: budgetAPI.updateBudget,
     onSuccess: () => {
+      // FIXED: Invalidate AND refetch immediately
       queryClient.invalidateQueries({ queryKey: ['budgets'] });
       queryClient.invalidateQueries({ queryKey: ['budgetProgress'] });
+      queryClient.refetchQueries({ queryKey: ['budgets'] }); // ADDED: Force refetch
     },
   });
 };
@@ -125,8 +130,10 @@ export const useDeleteBudget = () => {
   return useMutation({
     mutationFn: budgetAPI.deleteBudget,
     onSuccess: () => {
+      // FIXED: Invalidate AND refetch immediately
       queryClient.invalidateQueries({ queryKey: ['budgets'] });
       queryClient.invalidateQueries({ queryKey: ['budgetProgress'] });
+      queryClient.refetchQueries({ queryKey: ['budgets'] }); // ADDED: Force refetch
     },
   });
 };
@@ -143,8 +150,10 @@ export const useRefreshBudgetSpending = () => {
       return budgetAPI.refreshBudgetSpending(monthStr);
     },
     onSuccess: () => {
+      // FIXED: Invalidate AND refetch immediately
       queryClient.invalidateQueries({ queryKey: ['budgets'] });
       queryClient.invalidateQueries({ queryKey: ['budgetProgress'] });
+      queryClient.refetchQueries({ queryKey: ['budgets'] }); // ADDED: Force refetch
     },
   });
 };
@@ -158,8 +167,10 @@ export const useCopyPreviousBudgets = () => {
   return useMutation({
     mutationFn: budgetAPI.copyPreviousMonthBudgets,
     onSuccess: () => {
+      // FIXED: Invalidate AND refetch immediately
       queryClient.invalidateQueries({ queryKey: ['budgets'] });
       queryClient.invalidateQueries({ queryKey: ['budgetProgress'] });
+      queryClient.refetchQueries({ queryKey: ['budgets'] }); // ADDED: Force refetch
     },
   });
 };
