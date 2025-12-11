@@ -1,7 +1,8 @@
-// src/components/dashboard/BudgetVsActual.jsx - FIXED LAYOUT
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
+// src/components/dashboard/BudgetVsActual.jsx - FIXED VERSION
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell, LabelList } from 'recharts';
 import { TrendingUp, AlertCircle } from 'lucide-react';
 import { useCurrentBudgets } from '../../hooks/useBudgets';
+import { formatCurrency, formatCurrencyCompact } from '../../utils/helpers';
 import Skeleton from '../common/Skeleton';
 
 export default function BudgetVsActual() {
@@ -11,7 +12,7 @@ export default function BudgetVsActual() {
     return (
       <div className="card">
         <Skeleton className="h-6 w-48 mb-4" />
-        <Skeleton className="h-64 w-full" />
+        <Skeleton className="h-80 w-full" />
       </div>
     );
   }
@@ -23,7 +24,7 @@ export default function BudgetVsActual() {
   // Prepare chart data
   const chartData = budgetData.budgets
     .map(budget => {
-      // Shorten long category names for better display
+      // Shorten long category names for chart
       let shortName = budget.category;
       if (shortName === 'Food & Dining') shortName = 'Food';
       if (shortName === 'Bills & Utilities') shortName = 'Bills';
@@ -31,11 +32,12 @@ export default function BudgetVsActual() {
       
       return {
         category: shortName,
-        fullCategory: budget.category, // Keep full name for tooltip
+        fullCategory: budget.category,
         budgeted: budget.amount,
         actual: budget.spent,
         percentage: budget.percentageSpent,
         exceeded: budget.isExceeded,
+        isWarning: budget.percentageSpent >= 80 && !budget.isExceeded,
       };
     })
     .sort((a, b) => b.percentage - a.percentage);
@@ -54,18 +56,18 @@ export default function BudgetVsActual() {
         <div className="space-y-1 text-sm">
           <div className="flex justify-between gap-4">
             <span className="text-gray-600">Budgeted:</span>
-            <span className="font-medium text-blue-600">${data.budgeted.toLocaleString()}</span>
+            <span className="font-medium text-blue-600">{formatCurrency(data.budgeted)}</span>
           </div>
           <div className="flex justify-between gap-4">
             <span className="text-gray-600">Actual:</span>
             <span className={`font-medium ${isOver ? 'text-red-600' : 'text-gray-900'}`}>
-              ${data.actual.toLocaleString()}
+              {formatCurrency(data.actual)}
             </span>
           </div>
           <div className="flex justify-between gap-4 pt-1 border-t border-gray-200">
             <span className="text-gray-600">Difference:</span>
             <span className={`font-semibold ${isOver ? 'text-red-600' : 'text-green-600'}`}>
-              {isOver ? '+' : ''}${Math.abs(difference).toLocaleString()}
+              {isOver ? '+' : ''}{formatCurrency(Math.abs(difference))}
             </span>
           </div>
           <div className="flex justify-between gap-4">
@@ -77,18 +79,35 @@ export default function BudgetVsActual() {
     );
   };
 
-  // Format Y-axis values with $ and commas
+  // Format Y-axis
   const formatYAxis = (value) => {
-    if (value >= 1000) {
-      return `$${(value / 1000).toFixed(1)}k`;
-    }
-    return `$${value}`;
+    return formatCurrencyCompact(value).replace('k', 'K').replace('m', 'M');
+  };
+
+  // Custom label for bars
+  const renderCustomLabel = (props) => {
+    const { x, y, width, height, value } = props;
+    if (height < 30) return null;
+    
+    return (
+      <text
+        x={x + width / 2}
+        y={y + height / 2}
+        fill="#fff"
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontSize="11"
+        fontWeight="600"
+      >
+        {formatCurrencyCompact(value).replace('k', 'K')}
+      </text>
+    );
   };
 
   // Calculate summary stats
   const exceededCount = chartData.filter(d => d.exceeded).length;
-  const warningCount = chartData.filter(d => d.percentage >= 80 && !d.exceeded).length;
-  const onTrackCount = chartData.filter(d => d.percentage < 80).length;
+  const warningCount = chartData.filter(d => d.isWarning).length;
+  const onTrackCount = chartData.filter(d => !d.exceeded && !d.isWarning).length;
 
   return (
     <div className="card">
@@ -103,7 +122,7 @@ export default function BudgetVsActual() {
       </div>
 
       {/* Summary Pills */}
-      <div className="flex flex-wrap gap-2 mb-4">
+      <div className="flex flex-wrap gap-2 mb-6">
         {exceededCount > 0 && (
           <div className="inline-flex items-center gap-1 px-3 py-1 bg-red-50 text-red-700 rounded-full text-xs font-medium">
             <AlertCircle className="w-3 h-3" />
@@ -124,32 +143,30 @@ export default function BudgetVsActual() {
         )}
       </div>
 
-      {/* Chart - FIXED MARGINS */}
-      <div className="h-80">
+      {/* Chart */}
+      <div className="h-96">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
-            margin={{ top: 20, right: 30, left: 60, bottom: 80 }} // INCREASED left and bottom margins
+            margin={{ top: 20, right: 30, left: 60, bottom: 80 }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
             
-            {/* X-axis - FIXED ANGLE */}
             <XAxis
               dataKey="category"
-              angle={-35} // CHANGED from -45 for better readability
+              angle={-35}
               textAnchor="end"
-              height={100} // INCREASED height
-              interval={0} // Show all labels
+              height={100}
+              interval={0}
               tick={{ fontSize: 11, fill: '#666' }}
               stroke="#999"
             />
             
-            {/* Y-axis - FIXED FORMATTING */}
             <YAxis
               tickFormatter={formatYAxis}
               tick={{ fontSize: 11, fill: '#666' }}
               stroke="#999"
-              width={50} // FIXED width to accommodate label
+              width={60}
             />
             
             <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }} />
@@ -160,39 +177,36 @@ export default function BudgetVsActual() {
               iconSize={12}
             />
             
-            {/* Budgeted amounts - always blue */}
+            {/* Budgeted */}
             <Bar
               dataKey="budgeted"
               name="Budgeted"
               fill="#3b82f6"
               radius={[4, 4, 0, 0]}
               maxBarSize={60}
-            />
+            >
+              <LabelList content={renderCustomLabel} />
+            </Bar>
             
-            {/* Actual amounts - color coded by status */}
+            {/* Actual */}
             <Bar
               dataKey="actual"
               name="Actual"
               radius={[4, 4, 0, 0]}
               maxBarSize={60}
+              minPointSize={5}
             >
               {chartData.map((entry, index) => {
-                let color;
-                if (entry.exceeded) {
-                  color = '#ef4444'; // red-500
-                } else if (entry.percentage >= 80) {
-                  color = '#f59e0b'; // amber-500
-                } else {
-                  color = '#10b981'; // emerald-500
-                }
+                let color = entry.exceeded ? '#ef4444' : entry.isWarning ? '#f59e0b' : '#10b981';
                 return <Cell key={`cell-${index}`} fill={color} />;
               })}
+              <LabelList content={renderCustomLabel} />
             </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
 
-      {/* Legend explanation */}
+      {/* Legend */}
       <div className="mt-4 pt-4 border-t border-gray-200">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs text-gray-600">
           <div className="flex items-center gap-2">
