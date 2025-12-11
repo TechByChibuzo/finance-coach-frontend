@@ -1,11 +1,12 @@
-// src/pages/Dashboard.jsx - WITH TREND INDICATORS
+// src/pages/Dashboard.jsx - WITH TRENDS + BUDGET VS ACTUAL CHART
 import { useEffect, useState } from 'react';
 import { format, subDays, subMonths, startOfMonth, endOfMonth } from 'date-fns';
 import Layout from '../components/layout/Layout';
 import SpendingChart from '../components/dashboard/SpendingChart';
 import CategoryBreakdown from '../components/dashboard/CategoryBreakdown';
 import TopMerchants from '../components/dashboard/TopMerchants';
-import TrendIndicator from '../components/dashboard/TrendIndicator'; // NEW IMPORT
+import TrendIndicator from '../components/dashboard/TrendIndicator';
+import BudgetVsActual from '../components/dashboard/BudgetVsActual'; // NEW IMPORT
 import { analyticsAPI, transactionsAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import { formatCurrency, formatDate } from '../utils/helpers';
@@ -19,7 +20,7 @@ export default function Dashboard() {
   const [error, setError] = useState(null);
   const [data, setData] = useState({
     monthlySummary: null,
-    lastMonthSummary: null, // NEW: for trend comparison
+    lastMonthSummary: null,
     spendingTrend: {},
     categoryBreakdown: {},
     topMerchants: {},
@@ -38,20 +39,19 @@ export default function Dashboard() {
       const endDate = format(new Date(), 'yyyy-MM-dd');
       const startDate = format(subDays(new Date(), 30), 'yyyy-MM-dd');
 
-      // NEW: Get last month's dates for comparison
       const lastMonthStart = format(startOfMonth(subMonths(new Date(), 1)), 'yyyy-MM-dd');
       const lastMonthEnd = format(endOfMonth(subMonths(new Date(), 1)), 'yyyy-MM-dd');
 
       const [
         summaryRes, 
-        lastMonthRes, // NEW: fetch last month's summary
+        lastMonthRes,
         trendRes, 
         categoryRes, 
         merchantsRes, 
         transactionsRes
       ] = await Promise.all([
         analyticsAPI.getMonthlySummary(),
-        analyticsAPI.getMonthlySummary(lastMonthStart, lastMonthEnd).catch(() => ({ data: null })), // NEW
+        analyticsAPI.getMonthlySummary(lastMonthStart, lastMonthEnd).catch(() => ({ data: null })),
         analyticsAPI.getSpendingTrend(startDate, endDate).catch(() => ({ data: {} })),
         analyticsAPI.getSpendingByCategory(startDate, endDate),
         analyticsAPI.getTopMerchants(startDate, endDate, 5),
@@ -60,7 +60,7 @@ export default function Dashboard() {
 
       setData({
         monthlySummary: summaryRes.data,
-        lastMonthSummary: lastMonthRes.data, // NEW
+        lastMonthSummary: lastMonthRes.data,
         spendingTrend: trendRes.data,
         categoryBreakdown: categoryRes.data,
         topMerchants: merchantsRes.data,
@@ -88,7 +88,6 @@ export default function Dashboard() {
       
       toast.success('✅ Transactions synced!', { id: 'sync' });
       
-      // Reload dashboard data after sync
       await loadDashboardData(false);
     } catch (err) {
       console.error('Sync failed:', err);
@@ -119,7 +118,7 @@ export default function Dashboard() {
   return (
     <Layout>
       <div className="space-y-6">
-        {/* Header with Sync Button */}
+        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
@@ -146,7 +145,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Stats Grid - NOW WITH TREND INDICATORS */}
+        {/* Stats Grid with Trends */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Total Spending */}
           <div className="card stat-card">
@@ -162,7 +161,6 @@ export default function Dashboard() {
                 <span className="text-2xl">💸</span>
               </div>
             </div>
-            {/* TREND INDICATOR */}
             <TrendIndicator 
               current={monthlySummary?.totalSpending} 
               previous={lastMonthSummary?.totalSpending}
@@ -184,7 +182,6 @@ export default function Dashboard() {
                 <span className="text-2xl">💰</span>
               </div>
             </div>
-            {/* TREND INDICATOR */}
             <TrendIndicator 
               current={monthlySummary?.totalIncome || monthlySummary?.totalSpending} 
               previous={lastMonthSummary?.totalIncome || lastMonthSummary?.totalSpending}
@@ -208,7 +205,6 @@ export default function Dashboard() {
                 <span className="text-2xl">📊</span>
               </div>
             </div>
-            {/* TREND INDICATOR */}
             <TrendIndicator 
               current={monthlySummary?.netCashFlow} 
               previous={lastMonthSummary?.netCashFlow}
@@ -216,6 +212,9 @@ export default function Dashboard() {
             />
           </div>
         </div>
+
+        {/* NEW: Budget vs Actual Chart - Full Width */}
+        <BudgetVsActual />
 
         {/* Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -225,7 +224,6 @@ export default function Dashboard() {
 
         {/* Bottom Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Top Merchants */}
           <TopMerchants merchants={topMerchants} />
 
           {/* Recent Transactions */}
@@ -288,7 +286,6 @@ export default function Dashboard() {
   );
 }
 
-// Helper function for category icons
 function getCategoryIcon(category) {
   const icons = {
     'FOOD_AND_DRINK': '🍔',

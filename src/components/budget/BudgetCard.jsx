@@ -3,6 +3,8 @@ import { MoreVertical, AlertCircle, CheckCircle, AlertTriangle } from 'lucide-re
 import { useState } from 'react';
 import BudgetProgress from './BudgetProgress';
 import { formatDistanceToNow } from 'date-fns';
+import { formatCurrency, formatPercentage } from '../../utils/helpers';
+
 
 export default function BudgetCard({ budget, onEdit, onDelete }) {
   const [showMenu, setShowMenu] = useState(false);
@@ -17,7 +19,7 @@ export default function BudgetCard({ budget, onEdit, onDelete }) {
         bgColor: 'bg-red-50',
         textColor: 'text-red-700',
         iconColor: 'text-red-500',
-        message: `$${Math.abs(budget.remaining).toFixed(2)} over budget`,
+        message: `${formatCurrency(Math.abs(budget.remaining))} over budget`,
       };
     } else if (budget.shouldAlert) {
       return {
@@ -27,7 +29,7 @@ export default function BudgetCard({ budget, onEdit, onDelete }) {
         bgColor: 'bg-amber-50',
         textColor: 'text-amber-700',
         iconColor: 'text-amber-500',
-        message: `$${budget.remaining.toFixed(2)} remaining`,
+        message: `${formatCurrency(budget.remaining)} remaining`,
       };
     } else {
       return {
@@ -37,7 +39,7 @@ export default function BudgetCard({ budget, onEdit, onDelete }) {
         bgColor: 'bg-white',
         textColor: 'text-emerald-700',
         iconColor: 'text-emerald-500',
-        message: `$${budget.remaining.toFixed(2)} remaining`,
+        message: `${formatCurrency(budget.remaining)} remaining`,
       };
     }
   };
@@ -136,9 +138,9 @@ export default function BudgetCard({ budget, onEdit, onDelete }) {
       <div className="mb-4">
         <div className="flex items-baseline gap-2">
           <span className="text-2xl font-bold text-gray-900 transition-colors">
-            ${budget.spent.toFixed(2)}
+            {formatCurrency(budget.spent)}
           </span>
-          <span className="text-lg text-gray-500">/ ${budget.amount.toFixed(2)}</span>
+          <span className="text-lg text-gray-500">/ {formatCurrency(budget.amount)}</span>
         </div>
       </div>
 
@@ -146,7 +148,7 @@ export default function BudgetCard({ budget, onEdit, onDelete }) {
       <div className="mb-4">
         <BudgetProgress percentage={budget.percentageSpent} size="md" />
         <div className="mt-2 text-sm text-gray-600">
-          {budget.percentageSpent.toFixed(1)}% spent
+          {formatPercentage(budget.percentageSpent)} spent
         </div>
       </div>
 

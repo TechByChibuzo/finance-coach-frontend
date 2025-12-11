@@ -2,6 +2,8 @@
 import { X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
+import { formatCurrency, formatPercentage } from '../../utils/helpers';
+
 
 export default function BudgetModal({ 
   isOpen, 
@@ -156,7 +158,7 @@ export default function BudgetModal({
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                 <p className="text-sm text-blue-800">
                   💡 <strong>AI Recommendation:</strong> Based on your spending history, 
-                  we suggest <strong>${recommendationData.amount.toFixed(2)}</strong> for{' '}
+                  we suggest <strong>{formatCurrency(recommendationData.amount)}</strong> for{' '}
                   <strong>{recommendationData.category}</strong>
                 </p>
               </div>

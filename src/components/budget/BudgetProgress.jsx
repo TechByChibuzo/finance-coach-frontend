@@ -1,4 +1,5 @@
 // src/components/budget/BudgetProgress.jsx
+import { formatCurrency, formatPercentage } from '../../utils/helpers';
 
 const BudgetProgress = ({ percentage, size = 'md', showLabel = false }) => {
   // Clamp percentage between 0 and 100 for display (can be > 100 in data)
@@ -33,10 +34,10 @@ const BudgetProgress = ({ percentage, size = 'md', showLabel = false }) => {
       
       {showLabel && (
         <div className="mt-1 flex justify-between items-center text-xs text-gray-600">
-          <span>{percentage.toFixed(1)}% spent</span>
+          <span>{formatPercentage(percentage)} spent</span>
           {percentage > 100 && (
             <span className="text-red-600 font-medium">
-              {(percentage - 100).toFixed(1)}% over
+              {formatPercentage((percentage - 100))} over
             </span>
           )}
         </div>

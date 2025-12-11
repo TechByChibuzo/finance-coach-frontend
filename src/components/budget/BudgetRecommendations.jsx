@@ -1,6 +1,8 @@
 // src/components/budget/BudgetRecommendations.jsx
 import { Lightbulb, TrendingUp, Loader2 } from 'lucide-react';
 import { useBudgetRecommendations } from '../../hooks/useBudgets';
+import { formatCurrency, formatPercentage } from '../../utils/helpers';
+
 
 const BudgetRecommendations = ({ onCreateFromRecommendation }) => {
   const { data: recommendations, isLoading, isError } = useBudgetRecommendations();
@@ -42,7 +44,7 @@ const BudgetRecommendations = ({ onCreateFromRecommendation }) => {
               <div>
                 <p className="text-sm font-medium text-gray-700">{category}</p>
                 <p className="text-2xl font-bold text-gray-900 mt-1">
-                  ${amount.toFixed(2)}
+                  {formatCurrency(amount)}
                 </p>
               </div>
               <TrendingUp className="w-5 h-5 text-green-500" />
