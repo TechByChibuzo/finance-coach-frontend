@@ -1,7 +1,7 @@
-// src/pages/Budget.jsx - POLISHED VERSION
+// src/pages/Budget.jsx 
 import { useState } from 'react';
 import { Plus, RefreshCw, Copy } from 'lucide-react';
-import { startOfMonth } from 'date-fns';
+import { startOfMonth, format } from 'date-fns';
 import { toast } from 'react-hot-toast';
 
 // Components
@@ -29,6 +29,7 @@ export default function Budget() {
   const [selectedMonth, setSelectedMonth] = useState(startOfMonth(new Date()));
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBudget, setEditingBudget] = useState(null);
+  const [recommendationData, setRecommendationData] = useState(null); // NEW STATE
   const [showRecommendations, setShowRecommendations] = useState(false);
 
   // Queries
@@ -44,11 +45,13 @@ export default function Budget() {
   // Handlers
   const handleCreateBudget = () => {
     setEditingBudget(null);
+    setRecommendationData(null); // CLEAR recommendation data
     setIsModalOpen(true);
   };
 
   const handleEditBudget = (budget) => {
     setEditingBudget(budget);
+    setRecommendationData(null); // CLEAR recommendation data
     setIsModalOpen(true);
   };
 
@@ -63,6 +66,7 @@ export default function Budget() {
       }
       setIsModalOpen(false);
       setEditingBudget(null);
+      setRecommendationData(null); // CLEAR recommendation data
     } catch (error) {
       toast.error(error.response?.data?.error || 'Failed to save budget');
     }
@@ -97,8 +101,10 @@ export default function Budget() {
     }
   };
 
+  // FIXED: Handle recommendation click
   const handleCreateFromRecommendation = ({ category, amount }) => {
     setEditingBudget(null);
+    setRecommendationData({ category, amount }); // SET recommendation data
     setIsModalOpen(true);
   };
 
@@ -220,15 +226,17 @@ export default function Budget() {
           </>
         )}
 
-        {/* Budget Modal */}
+        {/* Budget Modal - FIXED: Pass recommendationData */}
         <BudgetModal
           isOpen={isModalOpen}
           onClose={() => {
             setIsModalOpen(false);
             setEditingBudget(null);
+            setRecommendationData(null); // CLEAR on close
           }}
           onSubmit={handleSubmitBudget}
           editBudget={editingBudget}
+          recommendationData={recommendationData} // PASS recommendation data
           currentMonth={selectedMonth}
         />
       </div>

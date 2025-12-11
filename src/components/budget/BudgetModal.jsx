@@ -1,9 +1,16 @@
-// src/components/budget/BudgetModal.jsx - POLISHED VERSION
+// src/components/budget/BudgetModal.jsx 
 import { X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 
-export default function BudgetModal({ isOpen, onClose, onSubmit, editBudget = null, currentMonth }) {
+export default function BudgetModal({ 
+  isOpen, 
+  onClose, 
+  onSubmit, 
+  editBudget = null, 
+  recommendationData = null, // NEW PROP
+  currentMonth 
+}) {
   const [formData, setFormData] = useState({
     category: '',
     amount: '',
@@ -14,9 +21,10 @@ export default function BudgetModal({ isOpen, onClose, onSubmit, editBudget = nu
 
   const [errors, setErrors] = useState({});
 
-  // Populate form when editing
+  // Populate form when editing OR using recommendation
   useEffect(() => {
     if (editBudget) {
+      // EDITING existing budget
       setFormData({
         category: editBudget.category,
         amount: editBudget.amount.toString(),
@@ -24,13 +32,23 @@ export default function BudgetModal({ isOpen, onClose, onSubmit, editBudget = nu
         alertThreshold: editBudget.alertThreshold,
         month: editBudget.month,
       });
+    } else if (recommendationData) {
+      // USING recommendation
+      setFormData({
+        category: recommendationData.category,
+        amount: recommendationData.amount.toString(),
+        notes: '',
+        alertThreshold: 80,
+        month: currentMonth ? format(currentMonth, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
+      });
     } else if (currentMonth) {
+      // NEW budget
       setFormData(prev => ({
         ...prev,
         month: format(currentMonth, 'yyyy-MM-dd'),
       }));
     }
-  }, [editBudget, currentMonth]);
+  }, [editBudget, recommendationData, currentMonth]); // ADDED recommendationData dependency
 
   // Reset form when modal closes
   useEffect(() => {
@@ -100,6 +118,13 @@ export default function BudgetModal({ isOpen, onClose, onSubmit, editBudget = nu
 
   if (!isOpen) return null;
 
+  // Determine modal title
+  const getModalTitle = () => {
+    if (editBudget) return 'Edit Budget';
+    if (recommendationData) return 'Create Budget from Recommendation';
+    return 'Create Budget';
+  };
+
   return (
     <>
       {/* Backdrop with fade-in */}
@@ -115,7 +140,7 @@ export default function BudgetModal({ isOpen, onClose, onSubmit, editBudget = nu
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white z-10">
             <h2 className="text-2xl font-bold text-gray-900">
-              {editBudget ? 'Edit Budget' : 'Create Budget'}
+              {getModalTitle()}
             </h2>
             <button
               onClick={onClose}
@@ -124,6 +149,19 @@ export default function BudgetModal({ isOpen, onClose, onSubmit, editBudget = nu
               <X className="w-5 h-5 text-gray-500" />
             </button>
           </div>
+
+          {/* Show recommendation info if present */}
+          {recommendationData && (
+            <div className="px-6 pt-4 pb-2">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-sm text-blue-800">
+                  💡 <strong>AI Recommendation:</strong> Based on your spending history, 
+                  we suggest <strong>${recommendationData.amount.toFixed(2)}</strong> for{' '}
+                  <strong>{recommendationData.category}</strong>
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
