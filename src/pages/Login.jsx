@@ -77,7 +77,7 @@ export default function Login() {
 
       {/* Login Card */}
       <div className="relative w-full max-w-md">
-        {/* Logo & Title */}
+        {/* Logo & Title - keeping as-is per your request */}
         <div className="text-center mb-8 animate-fade-in">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-4 transform hover:scale-110 transition-transform duration-300">
             <span className="text-3xl">💎</span>
@@ -87,17 +87,17 @@ export default function Login() {
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-3xl shadow-2xl p-8 backdrop-blur-lg animate-slide-up">
+        <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-10 backdrop-blur-lg animate-slide-up">
           {/* Welcome Message */}
-          <div className="mb-6">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back! 👋</h2>
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">Welcome back! 👋</h2>
             <p className="text-gray-600">Sign in to continue to your dashboard</p>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Input */}
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <label className="text-sm font-semibold text-gray-700">Email</label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -110,7 +110,7 @@ export default function Login() {
                   onChange={handleChange}
                   placeholder="you@example.com"
                   className="
-                    w-full pl-12 pr-4 py-3 
+                    w-full pl-12 pr-4 py-3.5 
                     border-2 border-gray-200 
                     rounded-xl 
                     focus:border-primary-500 focus:ring-4 focus:ring-primary-100 
@@ -125,7 +125,7 @@ export default function Login() {
             </div>
 
             {/* Password Input */}
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <label className="text-sm font-semibold text-gray-700">Password</label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -138,7 +138,7 @@ export default function Login() {
                   onChange={handleChange}
                   placeholder="••••••••"
                   className="
-                    w-full pl-12 pr-12 py-3 
+                    w-full pl-12 pr-12 py-3.5 
                     border-2 border-gray-200 
                     rounded-xl 
                     focus:border-primary-500 focus:ring-4 focus:ring-primary-100 
@@ -179,13 +179,12 @@ export default function Login() {
                   Remember me
                 </span>
               </label>
-              <button
-                type="button"
-                onClick={() => toast.info('Password reset coming soon!')}
+              <Link 
+                to="/forgot-password" 
                 className="text-primary-600 hover:text-primary-700 font-medium transition-colors"
               >
                 Forgot password?
-              </button>
+              </Link>
             </div>
 
             {/* Sign In Button */}
@@ -193,7 +192,7 @@ export default function Login() {
               type="submit"
               disabled={loading}
               className="
-                w-full py-3 px-4 
+                w-full py-3.5 px-6 
                 bg-gradient-to-r from-primary-600 to-primary-700 
                 hover:from-primary-700 hover:to-primary-800
                 text-white font-semibold rounded-xl 
@@ -202,7 +201,7 @@ export default function Login() {
                 transition-all duration-200
                 disabled:opacity-50 disabled:cursor-not-allowed
                 disabled:transform-none
-                flex items-center justify-center gap-2
+                flex items-center justify-center gap-2.5
                 group
               "
             >
@@ -221,14 +220,14 @@ export default function Login() {
           </form>
 
           {/* Divider */}
-          <div className="mt-6 mb-6 flex items-center">
+          <div className="mt-8 mb-8 flex items-center">
             <div className="flex-1 border-t border-gray-200"></div>
             <span className="px-4 text-sm text-gray-500">or</span>
             <div className="flex-1 border-t border-gray-200"></div>
           </div>
 
           {/* Sign Up Link */}
-          <div className="text-center">
+          <div className="text-center mb-8">
             <p className="text-gray-600">
               Don't have an account?{' '}
               <Link
@@ -241,7 +240,7 @@ export default function Login() {
           </div>
 
           {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-100">
+          <div className="p-5 bg-blue-50 rounded-xl border border-blue-100">
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                 <span className="text-blue-600 text-sm">ℹ️</span>
@@ -265,7 +264,7 @@ export default function Login() {
         </div>
 
         {/* Footer */}
-        <p className="text-center mt-6 text-sm text-blue-100">
+        <p className="text-center mt-8 text-sm text-blue-100">
           © 2025 Finance Coach. All rights reserved.
         </p>
       </div>

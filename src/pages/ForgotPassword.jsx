@@ -48,7 +48,7 @@ export default function ForgotPassword() {
       {/* Card */}
       <div className="relative w-full max-w-md">
         {/* Logo & Title */}
-        <div className="text-center mb-8 animate-fade-in">
+       <div className="text-center mb-8 animate-fade-in">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-4 transform hover:scale-110 transition-transform duration-300">
             <span className="text-3xl">💎</span>
           </div>
@@ -57,11 +57,11 @@ export default function ForgotPassword() {
         </div>
 
         {/* Main Card */}
-        <div className="bg-white rounded-3xl shadow-2xl p-8 backdrop-blur-lg animate-slide-up">
+        <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-10 backdrop-blur-lg animate-slide-up">
           {/* Back to Login Link */}
           <Link
             to="/login"
-            className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors mb-6 group"
+            className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors mb-8 group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             <span>Back to login</span>
@@ -70,17 +70,17 @@ export default function ForgotPassword() {
           {!emailSent ? (
             <>
               {/* Header */}
-              <div className="mb-6">
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">Forgot password? 🔑</h2>
+              <div className="mb-8">
+                <h2 className="text-3xl font-bold text-gray-900 mb-3">Forgot password?</h2>
                 <p className="text-gray-600">
                   No worries! Enter your email and we'll send you reset instructions.
                 </p>
               </div>
 
               {/* Form */}
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Email Input */}
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   <label className="text-sm font-semibold text-gray-700">Email Address</label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -92,7 +92,7 @@ export default function ForgotPassword() {
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
                       className="
-                        w-full pl-12 pr-4 py-3 
+                        w-full pl-12 pr-4 py-3.5 
                         border-2 border-gray-200 
                         rounded-xl 
                         focus:border-primary-500 focus:ring-4 focus:ring-primary-100 
@@ -112,7 +112,7 @@ export default function ForgotPassword() {
                   type="submit"
                   disabled={loading}
                   className="
-                    w-full py-3 px-4 
+                    w-full py-3.5 px-6 
                     bg-gradient-to-r from-primary-600 to-primary-700 
                     hover:from-primary-700 hover:to-primary-800
                     text-white font-semibold rounded-xl 
@@ -121,7 +121,7 @@ export default function ForgotPassword() {
                     transition-all duration-200
                     disabled:opacity-50 disabled:cursor-not-allowed
                     disabled:transform-none
-                    flex items-center justify-center gap-2
+                    flex items-center justify-center gap-2.5
                     group
                   "
                 >
@@ -149,24 +149,24 @@ export default function ForgotPassword() {
                 </div>
 
                 {/* Success Message */}
-                <h2 className="text-3xl font-bold text-gray-900 mb-3">Check your email! 📧</h2>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Check your email! 📧</h2>
                 <p className="text-gray-600 mb-2">
                   We've sent password reset instructions to:
                 </p>
-                <p className="text-primary-600 font-semibold mb-6">{email}</p>
+                <p className="text-primary-600 font-semibold mb-8">{email}</p>
                 
-                <div className="bg-blue-50 rounded-xl p-4 mb-6 text-left">
-                  <p className="text-sm text-gray-700 mb-2">
+                <div className="bg-blue-50 rounded-xl p-5 mb-8 text-left">
+                  <p className="text-sm text-gray-700 mb-3">
                     <strong>Next steps:</strong>
                   </p>
-                  <ol className="text-sm text-gray-600 space-y-1 list-decimal list-inside">
+                  <ol className="text-sm text-gray-600 space-y-2 list-decimal list-inside">
                     <li>Check your email inbox</li>
                     <li>Click the reset link in the email</li>
                     <li>Create your new password</li>
                   </ol>
                 </div>
 
-                <p className="text-sm text-gray-500 mb-6">
+                <p className="text-sm text-gray-500 mb-8">
                   Didn't receive the email? Check your spam folder or{' '}
                   <button
                     onClick={() => setEmailSent(false)}
@@ -190,7 +190,7 @@ export default function ForgotPassword() {
         </div>
 
         {/* Footer */}
-        <p className="text-center mt-6 text-sm text-blue-100">
+        <p className="text-center mt-8 text-sm text-blue-100">
           © 2025 Finance Coach. All rights reserved.
         </p>
       </div>

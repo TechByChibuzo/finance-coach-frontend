@@ -107,6 +107,14 @@ export const authAPI = {
   
   getCurrentUser: () => 
     api.get('/users/me'),
+
+  forgotPassword: async (email) => {
+    return api.post('/auth/forgot-password', { email });
+  },
+
+  resetPassword: async (token, newPassword) => {
+    return api.post('/auth/reset-password', { token, newPassword });
+  },
 };
 
 // Transactions API

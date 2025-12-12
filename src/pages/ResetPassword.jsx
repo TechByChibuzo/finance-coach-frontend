@@ -141,7 +141,7 @@ export default function ResetPassword() {
             <span className="text-3xl">💎</span>
           </div>
           <h1 className="text-4xl font-bold text-white mb-2">Finance Coach</h1>
-          <p className="text-blue-100 text-lg">Your AI-powered financial advisor</p>
+          <p className="text-blue-100 text-lg">YourSS AI-powered financial advisor</p>
         </div>
 
         {/* Main Card */}
