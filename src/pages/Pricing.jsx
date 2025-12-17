@@ -235,7 +235,7 @@ function PricingCard({
         disabled={ctaDisabled || loading}
         className={`w-full py-3 px-6 rounded-xl font-semibold transition-all mb-6 ${
           isPopular
-            ? 'bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-300'
+            ? 'bg-primary-600 text-white hover:bg-primary-700 disabled:bg-gray-300'
             : 'bg-gray-900 text-white hover:bg-gray-800 disabled:bg-gray-300'
         } disabled:cursor-not-allowed disabled:opacity-50`}
       >

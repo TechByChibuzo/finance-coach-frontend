@@ -1,7 +1,7 @@
 // src/components/budget/BudgetRecommendations.jsx
 import { Lightbulb, TrendingUp, Loader2 } from 'lucide-react';
 import { useBudgetRecommendations } from '../../hooks/useBudgets';
-import { formatCurrency, formatPercentage } from '../../utils/helpers';
+import { formatCurrency} from '../../utils/helpers';
 
 
 const BudgetRecommendations = ({ onCreateFromRecommendation }) => {
@@ -21,7 +21,7 @@ const BudgetRecommendations = ({ onCreateFromRecommendation }) => {
   }
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl shadow-md p-6 border border-blue-100">
+    <div className="bg-linear-to-bl from-blue-50 to-indigo-50 rounded-xl shadow-md p-6 border border-blue-100">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         <div className="p-2 bg-blue-100 rounded-lg">

@@ -93,7 +93,7 @@ export default function ResetPassword() {
   if (!tokenValid) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 opacity-90"></div>
+        <div className="absolute inset-0 bg-linear-to-br from-blue-500 via-purple-500 to-pink-500 opacity-90"></div>
         
         <div className="relative w-full max-w-md">
           <div className="text-center mb-8">
