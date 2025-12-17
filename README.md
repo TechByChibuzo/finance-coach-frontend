@@ -47,7 +47,7 @@ Open [http://localhost:5173](http://localhost:5173)
 
 Create a `.env` file in the root directory:
 ```env
-VITE_API_BASE_URL=http://localhost:8080/api
+VITE_API_BASE_URL=http://localhost:8090/api
 ```
 
 For production, create `.env.production`:

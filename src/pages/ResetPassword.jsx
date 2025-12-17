@@ -141,25 +141,25 @@ export default function ResetPassword() {
             <span className="text-3xl">💎</span>
           </div>
           <h1 className="text-4xl font-bold text-white mb-2">Finance Coach</h1>
-          <p className="text-blue-100 text-lg">YourSS AI-powered financial advisor</p>
+          <p className="text-blue-100 text-lg">Your AI-powered financial advisor</p>
         </div>
 
         {/* Main Card */}
-        <div className="bg-white rounded-3xl shadow-2xl p-8 backdrop-blur-lg animate-slide-up">
+        <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-10 backdrop-blur-lg animate-slide-up">
           {!resetSuccess ? (
             <>
               {/* Header */}
-              <div className="mb-6">
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">Reset your password 🔐</h2>
+              <div className="mb-8">
+                <h2 className="text-3xl font-bold text-gray-900 mb-3">Reset your password 🔐</h2>
                 <p className="text-gray-600">
                   Choose a strong password for your account.
                 </p>
               </div>
 
               {/* Form */}
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 {/* New Password Input */}
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   <label className="text-sm font-semibold text-gray-700">New Password</label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -286,7 +286,7 @@ export default function ResetPassword() {
                   type="submit"
                   disabled={loading}
                   className="
-                    w-full py-3 px-4 
+                    w-full py-3.5 px-6
                     bg-gradient-to-r from-primary-600 to-primary-700 
                     hover:from-primary-700 hover:to-primary-800
                     text-white font-semibold rounded-xl 
