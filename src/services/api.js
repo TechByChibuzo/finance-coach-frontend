@@ -225,4 +225,15 @@ export const budgetAPI = {
     api.delete(`/budgets/${budgetId}`),
 };
 
+// Subscription API
+export const subscriptionAPI = {
+  getPlans: () => api.get('/subscriptions/plans'),
+  getCurrentSubscription: () => api.get('/subscriptions/current'),
+  checkFeatureAccess: (featureName) => 
+    api.get(`/subscriptions/features/${featureName}/access`),
+  createCheckout: (planId, billingCycle) => 
+    api.post('/subscriptions/checkout', { planId, billingCycle }),
+  cancelSubscription: () => 
+    api.post('/subscriptions/cancel'),
+};
 export default api;
