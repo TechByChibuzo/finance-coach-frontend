@@ -1,6 +1,6 @@
 // src/hooks/useSubscription.js
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { subscriptionAPI } from '../services/subscriptionAPI';
+import { subscriptionAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 /**

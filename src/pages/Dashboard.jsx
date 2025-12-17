@@ -16,6 +16,8 @@ import ErrorMessage from '../components/common/ErrorMessage';
 import CategoryIcon from '../components/common/CategoryIcon';
 import { TrendingDown, TrendingUp, DollarSign } from 'lucide-react';
 import { RefreshCw, ArrowDownUp } from 'lucide-react';
+import SubscriptionStatusWidget from '../components/subscription/SubscriptionStatusWidget';
+
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -230,6 +232,7 @@ export default function Dashboard() {
         {/* Bottom Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <TopMerchants merchants={topMerchants} />
+          <SubscriptionStatusWidget />
 
           {/* Recent Transactions - WITH PROFESSIONAL ICONS */}
           <div className="card">

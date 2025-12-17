@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import Layout from '../components/layout/Layout';
 import PlaidLink from '../components/plaid/PlaidLink';
+import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react'; 
 import { plaidAPI } from '../services/api';
 
 export default function Settings() {
@@ -13,6 +15,7 @@ export default function Settings() {
   const tabs = [
     { id: 'profile', name: 'Profile' },
     { id: 'banks', name: 'Bank Accounts' },
+    { id: 'billing', name: 'Billing' },
     { id: 'notifications', name: 'Notifications' },
     { id: 'security', name: 'Security' },
   ];
@@ -166,6 +169,22 @@ export default function Settings() {
                   </p>
                 </div>
               )}
+            </div>
+          )}
+
+          {activeTab === 'billing' && (
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold text-gray-900">Subscription & Billing</h2>
+              <p className="text-gray-600">
+                Manage your subscription, payment method, and billing history
+              </p>
+              <Link
+                to="/settings/billing"
+                className="btn-primary inline-flex items-center gap-2"
+              >
+                <span>Manage Billing</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           )}
 

@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader } from 'lucide-react';
-import { useAuth } from '../context/AuthContext'; // USE AUTH CONTEXT
+import { useAuth } from '../hooks/useAuth';
 import toast from 'react-hot-toast';
 
 export default function Login() {
