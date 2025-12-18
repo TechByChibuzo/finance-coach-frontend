@@ -78,7 +78,7 @@ function DefaultUpgradePrompt({ feature, requiredPlan }) {
   };
 
   return (
-    <div className="card bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200">
+    <div className="card bg-linear-to-br from-blue-50 to-purple-50 border-2 border-blue-200">
       <div className="text-center py-12">
         {/* Lock Icon */}
         <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-100 rounded-full mb-6">
@@ -98,7 +98,7 @@ function DefaultUpgradePrompt({ feature, requiredPlan }) {
         {/* Upgrade CTA */}
         <Link
           to="/pricing"
-          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all"
+          className="inline-flex items-center gap-2 px-8 py-4 bg-linear-to-br from-blue-600 to-purple-600 text-white rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all"
         >
           <Crown className="w-6 h-6" />
           <span>Upgrade to {requiredPlan}</span>

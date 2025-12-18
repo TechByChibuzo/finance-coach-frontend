@@ -126,7 +126,7 @@ export default function ResetPassword() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
       {/* Animated Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 opacity-90"></div>
+      <div className="absolute inset-0 bg-linear-to-br from-blue-500 via-purple-500 to-pink-500 opacity-90"></div>
       
       {/* Animated Circles */}
       <div className="absolute top-0 left-0 w-72 h-72 bg-white rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
@@ -287,7 +287,7 @@ export default function ResetPassword() {
                   disabled={loading}
                   className="
                     w-full py-3.5 px-6
-                    bg-gradient-to-r from-primary-600 to-primary-700 
+                    bg-linear-to-r from-primary-600 to-primary-700 
                     hover:from-primary-700 hover:to-primary-800
                     text-white font-semibold rounded-xl 
                     shadow-lg hover:shadow-xl

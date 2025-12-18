@@ -113,7 +113,7 @@ export default function ForgotPassword() {
                   disabled={loading}
                   className="
                     w-full py-3.5 px-6 
-                    bg-linear-to-br from-primary-600 to-primary-700 
+                    bg-linear-to-r from-primary-600 to-primary-700 
                     hover:from-primary-700 hover:to-primary-800
                     text-white font-semibold rounded-xl 
                     shadow-lg hover:shadow-xl

@@ -52,7 +52,7 @@ const BudgetRecommendations = ({ onCreateFromRecommendation }) => {
             
             <button
               onClick={() => onCreateFromRecommendation({ category, amount })}
-              className="w-full mt-3 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+              className="w-full mt-3 px-3 py-1.5 bg-primary-600 text-white text-sm rounded-lg hover:bg-primary-700 transition-colors"
             >
               Use this budget
             </button>

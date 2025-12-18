@@ -1,6 +1,5 @@
-// src/pages/Pricing.jsx
 import { useState } from 'react';
-import { Check, X, Sparkles, Zap, Crown, Loader } from 'lucide-react';
+import { Check, Sparkles, Zap, Crown, Loader } from 'lucide-react';
 import Layout from '../components/layout/Layout';
 import { useSubscriptionPlans, useCurrentSubscription, useCreateCheckout } from '../hooks/useSubscription';
 import LoadingSpinner from '../components/common/LoadingSpinner';
@@ -33,7 +32,6 @@ export default function Pricing() {
     );
   }
 
-  // Organize plans by name
   const freePlan = plans?.find(p => p.name === 'FREE');
   const premiumPlan = plans?.find(p => p.name === 'PREMIUM');
   const proPlan = plans?.find(p => p.name === 'PRO');
@@ -81,69 +79,78 @@ export default function Pricing() {
           </div>
         </div>
 
-        {/* Pricing Cards */}
+        {/* Pricing Cards - NO ANIMATION */}
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {/* FREE PLAN */}
-          {freePlan && (
-            <PricingCard
-              name="Free"
-              displayName={freePlan.displayName}
-              description={freePlan.description}
-              price={0}
-              icon={Sparkles}
-              iconColor="text-gray-600"
-              iconBg="bg-gray-100"
-              features={parseFeatures(freePlan.features)}
-              limits={parseLimits(freePlan.limits)}
-              isCurrentPlan={currentPlanName === 'FREE'}
-              onSelect={() => {}}
-              ctaText="Current Plan"
-              ctaDisabled={true}
-            />
-          )}
+          <div>
+            {freePlan && (
+              <PricingCard
+                name="Free"
+                displayName={freePlan.displayName}
+                description={freePlan.description}
+                price={0}
+                icon={Sparkles}
+                iconColor="text-gray-600"
+                iconBg="bg-gray-100"
+                features={parseFeatures(freePlan.features)}
+                limits={parseLimits(freePlan.limits)}
+                isCurrentPlan={currentPlanName === 'FREE'}
+                onSelect={() => {}}
+                ctaText="Current Plan"
+                ctaDisabled={true}
+              />
+            )}
+          </div>
 
           {/* PREMIUM PLAN */}
-          {premiumPlan && (
-            <PricingCard
-              name="Premium"
-              displayName={premiumPlan.displayName}
-              description={premiumPlan.description}
-              price={isYearly ? premiumPlan.priceYearly : premiumPlan.priceMonthly}
-              billingCycle={isYearly ? 'year' : 'month'}
-              icon={Zap}
-              iconColor="text-blue-600"
-              iconBg="bg-blue-100"
-              features={parseFeatures(premiumPlan.features)}
-              limits={parseLimits(premiumPlan.limits)}
-              isCurrentPlan={currentPlanName === 'PREMIUM'}
-              isPopular={true}
-              onSelect={() => handleUpgrade(premiumPlan.id)}
-              ctaText={currentPlanName === 'FREE' ? 'Upgrade to Premium' : 'Current Plan'}
-              ctaDisabled={currentPlanName !== 'FREE'}
-              loading={createCheckout.isPending}
-            />
-          )}
+          <div>
+            {premiumPlan && (
+              <PricingCard
+                name="Premium"
+                displayName={premiumPlan.displayName}
+                description={premiumPlan.description}
+                price={isYearly ? premiumPlan.priceYearly : premiumPlan.priceMonthly}
+                billingCycle={isYearly ? 'year' : 'month'}
+                icon={Zap}
+                iconColor="text-primary-600"
+                iconBg="bg-primary-100"
+                features={parseFeatures(premiumPlan.features)}
+                limits={parseLimits(premiumPlan.limits)}
+                isCurrentPlan={currentPlanName === 'PREMIUM'}
+                isPopular={true}
+                onSelect={() => handleUpgrade(premiumPlan.id)}
+                ctaText={
+                  currentPlanName === 'PREMIUM' ? 'Current Plan' :     // If on Premium
+                  currentPlanName === 'PRO' ? 'Downgrade to Premium' : // If on Pro
+                  'Upgrade to Premium'                                  // If on Free
+                }
+                loading={createCheckout.isPending}
+              />
+            )}
+          </div>
 
           {/* PRO PLAN */}
-          {proPlan && (
-            <PricingCard
-              name="Pro"
-              displayName={proPlan.displayName}
-              description={proPlan.description}
-              price={isYearly ? proPlan.priceYearly : proPlan.priceMonthly}
-              billingCycle={isYearly ? 'year' : 'month'}
-              icon={Crown}
-              iconColor="text-purple-600"
-              iconBg="bg-purple-100"
-              features={parseFeatures(proPlan.features)}
-              limits={parseLimits(proPlan.limits)}
-              isCurrentPlan={currentPlanName === 'PRO'}
-              onSelect={() => handleUpgrade(proPlan.id)}
-              ctaText={currentPlanName === 'PRO' ? 'Current Plan' : 'Upgrade to Pro'}
-              ctaDisabled={currentPlanName === 'PRO'}
-              loading={createCheckout.isPending}
-            />
-          )}
+          <div>
+            {proPlan && (
+              <PricingCard
+                name="Pro"
+                displayName={proPlan.displayName}
+                description={proPlan.description}
+                price={isYearly ? proPlan.priceYearly : proPlan.priceMonthly}
+                billingCycle={isYearly ? 'year' : 'month'}
+                icon={Crown}
+                iconColor="text-purple-600"
+                iconBg="bg-purple-100"
+                features={parseFeatures(proPlan.features)}
+                limits={parseLimits(proPlan.limits)}
+                isCurrentPlan={currentPlanName === 'PRO'}
+                onSelect={() => handleUpgrade(proPlan.id)}
+                ctaText={currentPlanName === 'PRO' ? 'Current Plan' : 'Upgrade to Pro'}
+                ctaDisabled={currentPlanName === 'PRO'}
+                loading={createCheckout.isPending}
+              />
+            )}
+          </div>
         </div>
 
         {/* FAQ Section */}
@@ -194,21 +201,21 @@ function PricingCard({
 }) {
   return (
     <div
-      className={`relative bg-white rounded-2xl shadow-xl p-8 transition-all duration-300 hover:shadow-2xl ${
-        isPopular ? 'ring-2 ring-blue-600 transform scale-105' : ''
+      className={`relative bg-white rounded-2xl shadow-xl p-8 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
+        isPopular ? 'ring-2 ring-primary-600 scale-105' : ''
       }`}
     >
       {/* Popular Badge */}
       {isPopular && (
         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-          <span className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
-            Most Popular
+          <span className="bg-primary-600 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
+            ⭐ Most Popular
           </span>
         </div>
       )}
 
       {/* Icon */}
-      <div className={`inline-flex p-3 rounded-xl ${iconBg} mb-4`}>
+      <div className={`inline-flex p-3 rounded-xl ${iconBg} mb-4 transition-transform hover:scale-110`}>
         <Icon className={`w-8 h-8 ${iconColor}`} />
       </div>
 
@@ -233,11 +240,11 @@ function PricingCard({
       <button
         onClick={onSelect}
         disabled={ctaDisabled || loading}
-        className={`w-full py-3 px-6 rounded-xl font-semibold transition-all mb-6 ${
+        className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 mb-6 transform hover:-translate-y-1 hover:shadow-lg ${
           isPopular
             ? 'bg-primary-600 text-white hover:bg-primary-700 disabled:bg-gray-300'
             : 'bg-gray-900 text-white hover:bg-gray-800 disabled:bg-gray-300'
-        } disabled:cursor-not-allowed disabled:opacity-50`}
+        } disabled:cursor-not-allowed disabled:opacity-50 disabled:transform-none disabled:shadow-none`}
       >
         {loading ? (
           <span className="flex items-center justify-center gap-2">
@@ -254,7 +261,7 @@ function PricingCard({
         <p className="text-sm font-semibold text-gray-900 mb-3">Features:</p>
         {features.map((feature, index) => (
           <div key={index} className="flex items-start gap-2">
-            <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+            <Check className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
             <span className="text-sm text-gray-700">{feature}</span>
           </div>
         ))}
@@ -293,10 +300,10 @@ function FAQItem({ question, answer }) {
     <div className="bg-white rounded-lg shadow-sm border border-gray-200">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+        className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors rounded-lg"
       >
         <span className="font-semibold text-gray-900">{question}</span>
-        <span className="text-gray-400">{isOpen ? '−' : '+'}</span>
+        <span className="text-gray-400 text-xl">{isOpen ? '−' : '+'}</span>
       </button>
       {isOpen && (
         <div className="px-6 pb-4">
@@ -311,7 +318,7 @@ function FAQItem({ question, answer }) {
 function parseFeatures(featuresJson) {
   try {
     const features = JSON.parse(featuresJson);
-    return features || [];
+    return Array.isArray(features) ? features : [];
   } catch {
     return [];
   }
@@ -320,9 +327,15 @@ function parseFeatures(featuresJson) {
 function parseLimits(limitsJson) {
   try {
     const limits = JSON.parse(limitsJson);
-    return Object.entries(limits || {}).map(([key, value]) => 
-      `${key.replace(/_/g, ' ')}: ${value}`
-    );
+    if (!limits || Object.keys(limits).length === 0) return [];
+    
+    return Object.entries(limits).map(([key, value]) => {
+      const formattedKey = key
+        .split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+      return `${formattedKey}: ${value}`;
+    });
   } catch {
     return [];
   }

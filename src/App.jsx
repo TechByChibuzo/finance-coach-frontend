@@ -7,6 +7,9 @@ import LoadingSpinner from './components/common/LoadingSpinner';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import SubscriptionSuccess from './pages/SubscriptionSuccess';
+import SubscriptionCancel from './pages/SubscriptionCancel';
+
 
 
 // Eagerly load auth pages (small and needed immediately)
@@ -132,6 +135,22 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <BillingSettings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/subscription/success"
+                element={
+                  <ProtectedRoute>
+                    <SubscriptionSuccess />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/subscription/cancel"
+                element={
+                  <ProtectedRoute>
+                    <SubscriptionCancel />
                   </ProtectedRoute>
                 }
               />
