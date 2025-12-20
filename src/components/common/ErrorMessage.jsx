@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { XCircleIcon, ExclamationTriangleIcon, WifiIcon } from '@heroicons/react/24/outline';
 
 export default function ErrorMessage({ 
@@ -45,7 +44,7 @@ export default function ErrorMessage({
       transition={{ duration: 0.2 }}
     >
       <div className="flex items-start">
-        <div className="flex-shrink-0">
+        <div className="shrink-0">
           <Icon className={`h-6 w-6 ${iconColor}`} />
         </div>
         

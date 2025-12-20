@@ -108,7 +108,7 @@ export default function AICoach() {
         {/* Error Banner */}
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start space-x-3">
-            <ExclamationTriangleIcon className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <ExclamationTriangleIcon className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-sm text-red-800">{error}</p>
             </div>
@@ -134,12 +134,12 @@ export default function AICoach() {
                   message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''
                 }`}>
                   {/* Avatar */}
-                  <div className={`flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center ${
+                  <div className={`shrink-0 h-8 w-8 rounded-full flex items-center justify-center ${
                     message.role === 'user' 
                       ? 'bg-primary-600' 
                       : message.isError
                         ? 'bg-red-500'
-                        : 'bg-gradient-to-br from-purple-500 to-pink-500'
+                        : 'bg-linear-to-br from-purple-500 to-pink-500'
                   }`}>
                     <span className="text-white text-sm font-semibold">
                       {message.role === 'user' ? '👤' : message.isError ? '⚠️' : '🤖'}
@@ -166,7 +166,7 @@ export default function AICoach() {
             {loading && (
               <div className="flex justify-start">
                 <div className="flex items-start space-x-2 max-w-3xl">
-                  <div className="flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center bg-gradient-to-br from-purple-500 to-pink-500">
+                  <div className="shrink-0 h-8 w-8 rounded-full flex items-center justify-center bg-linear-to-br from-purple-500 to-pink-500">
                     <span className="text-white text-sm">🤖</span>
                   </div>
                   <div className="px-4 py-3 rounded-2xl bg-gray-100">
@@ -185,7 +185,7 @@ export default function AICoach() {
 
           {/* Quick Actions */}
           {messages.length === 1 && (
-            <div className="border-t border-gray-200 p-4 bg-gradient-to-r from-purple-50 to-pink-50">
+            <div className="border-t border-gray-200 p-4 bg-linear-to-r from-purple-50 to-pink-50">
               <p className="text-sm font-medium text-gray-700 mb-3">Quick actions:</p>
               <div className="flex flex-wrap gap-2">
                 {quickActions.map((action, index) => (

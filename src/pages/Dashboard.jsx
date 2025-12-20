@@ -9,13 +9,14 @@ import TrendIndicator from '../components/dashboard/TrendIndicator';
 import BudgetVsActual from '../components/dashboard/BudgetVsActual'; // NEW IMPORT
 import { analyticsAPI, transactionsAPI } from '../services/api';
 import toast from 'react-hot-toast';
-import { formatCurrency, formatDate } from '../utils/helpers';
+import { formatCurrency} from '../utils/helpers';
 import { DashboardSkeleton } from '../components/common/Skeleton';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
 import CategoryIcon from '../components/common/CategoryIcon';
 import { TrendingDown, TrendingUp, DollarSign } from 'lucide-react';
 import { RefreshCw, ArrowDownUp } from 'lucide-react';
+
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -162,7 +163,7 @@ export default function Dashboard() {
                 </p>
                 <p className="text-sm text-gray-500 mt-1">This month</p>
               </div>
-              <div className="h-12 w-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="h-12 w-12 bg-red-100 rounded-full flex items-center justify-center shrink-0">
                 <TrendingDown className="w-6 h-6 text-red-600" strokeWidth={2} />
               </div>
             </div>
@@ -183,7 +184,7 @@ export default function Dashboard() {
                 </p>
                 <p className="text-sm text-gray-500 mt-1">This month</p>
               </div>
-              <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center shrink-0">
                 <TrendingUp className="w-6 h-6 text-green-600" strokeWidth={2} />
               </div>
             </div>
@@ -206,7 +207,7 @@ export default function Dashboard() {
                 </p>
                 <p className="text-sm text-gray-500 mt-1">This month</p>
               </div>
-              <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
                 <DollarSign className="w-6 h-6 text-blue-600" strokeWidth={2} />
               </div>
             </div>
@@ -289,19 +290,3 @@ export default function Dashboard() {
   );
 }
 
-function getCategoryIcon(category) {
-  const icons = {
-    'FOOD_AND_DRINK': '🍔',
-    'TRANSPORTATION': '🚗',
-    'ENTERTAINMENT': '🎬',
-    'SHOPPING': '🛍️',
-    'TRAVEL': '✈️',
-    'GENERAL_MERCHANDISE': '🏪',
-    'RENT_AND_UTILITIES': '🏠',
-    'TRANSFER_OUT': '💸',
-    'TRANSFER_IN': '💰',
-    'PERSONAL_CARE': '💅',
-    'HEALTHCARE': '🏥',
-  };
-  return icons[category] || '💳';
-}

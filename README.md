@@ -110,6 +110,14 @@ src/
 └── App.jsx             # Main app component
 ```
 
+## 🔌 Backend API
+
+This frontend requires the **Finance Coach Backend API** running on port 8090.
+
+- Repository: [[link-to-backend-repo](https://github.com/TechByChibuzo/finance-coach-backend)]
+- Setup: Follow backend README for installation
+- API Docs: Available at `/api/docs` (if you have Swagger)
+
 ## Color Scheme
 ```javascript
 primary: {
@@ -148,6 +156,24 @@ npm run preview       # Preview production build
 npm run lint          # Run ESLint
 ```
 
+## 🚀 Deployment
+
+### Vercel (Recommended)
+
+1. Push to GitHub
+2. Import to Vercel
+3. Set environment variables:
+```
+   VITE_API_BASE_URL=https://your-backend.onrender.com/api
+```
+4. Deploy!
+
+### Build for Production
+```bash
+npm run build
+# Output: dist/ folder
+```
+
 ## Performance
 
 - First Contentful Paint: < 1s
@@ -168,8 +194,8 @@ MIT License
 Built by [Chibuzo Ufomba]
 
 - Portfolio: [your-portfolio.com](https://your-portfolio.com)
-- LinkedIn: [your-linkedin](https://linkedin.com/in/yourprofile)
-- GitHub: [@yourusername](https://github.com/yourusername)
+- LinkedIn: [chibuzo-ufomba](https://www.linkedin.com/in/chibuzo-ufomba-498790173/)
+- GitHub: [@techbychibuzo](https://github.com/techbychibuzo)
 
 ## Acknowledgments
 

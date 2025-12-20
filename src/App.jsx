@@ -1,11 +1,15 @@
 import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext';
+import { useAuth } from './hooks/useAuth';
 import LoadingSpinner from './components/common/LoadingSpinner';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import SubscriptionSuccess from './pages/SubscriptionSuccess';
+import SubscriptionCancel from './pages/SubscriptionCancel';
+
 
 
 // Eagerly load auth pages (small and needed immediately)
@@ -19,6 +23,8 @@ const Budget = lazy(() => import('./pages/Budget')); // ADD THIS LINE
 const AICoach = lazy(() => import('./pages/AICoach'));
 const Settings = lazy(() => import('./pages/Settings'));
 const NotFound = lazy(() => import('./pages/NotFound'));
+const Pricing = lazy(() => import('./pages/Pricing'));
+const BillingSettings = lazy(() => import('./pages/BillingSettings'));
 
 // Loading fallback component
 function PageLoader() {
@@ -113,6 +119,38 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Settings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/pricing"
+                element={
+                  <ProtectedRoute>
+                    <Pricing />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings/billing"
+                element={
+                  <ProtectedRoute>
+                    <BillingSettings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/subscription/success"
+                element={
+                  <ProtectedRoute>
+                    <SubscriptionSuccess />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/subscription/cancel"
+                element={
+                  <ProtectedRoute>
+                    <SubscriptionCancel />
                   </ProtectedRoute>
                 }
               />

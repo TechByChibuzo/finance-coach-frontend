@@ -1,4 +1,4 @@
-// src/components/dashboard/CategoryBreakdown.jsx - DONUT CHART VERSION
+// src/components/dashboard/CategoryBreakdown.jsx
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { CategoryIconSimple } from '../common/CategoryIcon';
 import { formatCurrency, formatPercentage } from '../../utils/helpers';
@@ -21,21 +21,74 @@ const CATEGORY_NAME_MAP = {
 
 // Color palette for chart
 const COLORS = {
-  'Food & Dining': '#f97316',      // orange-500
-  'Transportation': '#3b82f6',     // blue-500
-  'Shopping': '#a855f7',           // purple-500
-  'Entertainment': '#ec4899',      // pink-500
-  'Travel': '#06b6d4',             // cyan-500
-  'Personal Care': '#6366f1',      // indigo-500
-  'Bills & Utilities': '#eab308',  // yellow-500
-  'Healthcare': '#ef4444',         // red-500
-  'Home': '#10b981',               // emerald-500
-  'Transfer In': '#22c55e',        // green-500
-  'Transfer Out': '#8b5cf6',       // violet-500
-  'Income': '#84cc16',             // lime-500
-  'Other': '#6b7280',              // gray-500
+  'Food & Dining': '#f97316',
+  'Transportation': '#3b82f6',
+  'Shopping': '#a855f7',
+  'Entertainment': '#ec4899',
+  'Travel': '#06b6d4',
+  'Personal Care': '#6366f1',
+  'Bills & Utilities': '#eab308',
+  'Healthcare': '#ef4444',
+  'Home': '#10b981',
+  'Transfer In': '#22c55e',
+  'Transfer Out': '#8b5cf6',
+  'Income': '#84cc16',
+  'Other': '#6b7280',
 };
 
+// ✅ MOVE COMPONENTS OUTSIDE - BEFORE THE MAIN COMPONENT
+// Custom tooltip component
+const CustomTooltip = ({ active, payload }) => {
+  if (!active || !payload || !payload.length) return null;
+
+  const data = payload[0].payload;
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-3">
+      <p className="font-semibold text-gray-900 mb-1">{data.category}</p>
+      <p className="text-sm text-gray-600">
+        {formatCurrency(data.amount)} ({formatPercentage(data.percentage, 0)})
+      </p>
+    </div>
+  );
+};
+
+// Custom center label component
+const CenterLabel = ({ viewBox }) => {
+  const { cx, cy } = viewBox;
+  return (
+    <g>
+      <text
+        x={cx}
+        y={cy - 10}
+        textAnchor="middle"
+        dominantBaseline="central"
+        className="fill-gray-500 text-sm"
+      >
+        Total Spent
+      </text>
+      <text
+        x={cx}
+        y={cy + 15}
+        textAnchor="middle"
+        dominantBaseline="central"
+        className="fill-gray-900 text-2xl font-bold"
+      >
+        {/* This will be populated by the parent */}
+      </text>
+      <text
+        x={cx}
+        y={cy + 35}
+        textAnchor="middle"
+        dominantBaseline="central"
+        className="fill-gray-500 text-xs"
+      >
+        This month
+      </text>
+    </g>
+  );
+};
+
+// ✅ MAIN COMPONENT STARTS HERE
 export default function CategoryBreakdown({ data = {} }) {
   // Process data
   const categories = Object.entries(data)
@@ -56,57 +109,6 @@ export default function CategoryBreakdown({ data = {} }) {
     percentage: (item.amount / total) * 100,
     color: COLORS[item.category] || COLORS['Other'],
   }));
-
-  // Custom tooltip
-  const CustomTooltip = ({ active, payload }) => {
-    if (!active || !payload || !payload.length) return null;
-
-    const data = payload[0].payload;
-    return (
-      <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-3">
-        <p className="font-semibold text-gray-900 mb-1">{data.category}</p>
-        <p className="text-sm text-gray-600">
-          {formatCurrency(data.amount)} ({formatPercentage(data.percentage, 0)})
-        </p>
-      </div>
-    );
-  };
-
-  // Custom center label
-  const CenterLabel = ({ viewBox }) => {
-    const { cx, cy } = viewBox;
-    return (
-      <g>
-        <text
-          x={cx}
-          y={cy - 10}
-          textAnchor="middle"
-          dominantBaseline="central"
-          className="fill-gray-500 text-sm"
-        >
-          Total Spent
-        </text>
-        <text
-          x={cx}
-          y={cy + 15}
-          textAnchor="middle"
-          dominantBaseline="central"
-          className="fill-gray-900 text-2xl font-bold"
-        >
-          {formatCurrency(total, false)}
-        </text>
-        <text
-          x={cx}
-          y={cy + 35}
-          textAnchor="middle"
-          dominantBaseline="central"
-          className="fill-gray-500 text-xs"
-        >
-          This month
-        </text>
-      </g>
-    );
-  };
 
   if (categories.length === 0) {
     return (
@@ -139,20 +141,20 @@ export default function CategoryBreakdown({ data = {} }) {
               dataKey="amount"
               label={false}
             >
-              {chartData.map((entry, index) => (
+              {chartData.map((entry) => (
                 <Cell 
-                  key={`cell-${index}`} 
+                  key={`cell-${entry.category}`}
                   fill={entry.color}
                   className="hover:opacity-80 transition-opacity cursor-pointer"
                 />
               ))}
             </Pie>
-            <Tooltip content={<CustomTooltip />} />
-            <text content={<CenterLabel />} />
+            {/* ✅ FIXED - No angle brackets around component */}
+            <Tooltip content={CustomTooltip} />
           </PieChart>
         </ResponsiveContainer>
 
-        {/* Center Label Overlay (since Recharts center label can be tricky) */}
+        {/* Center Label Overlay */}
         <div className="relative -mt-72 h-72 flex items-center justify-center pointer-events-none">
           <div className="text-center">
             <p className="text-sm text-gray-500">Total Spent</p>
@@ -166,7 +168,7 @@ export default function CategoryBreakdown({ data = {} }) {
 
       {/* Category List */}
       <div className="space-y-3 border-t border-gray-200 pt-4">
-        {chartData.map((item, index) => (
+        {chartData.map((item) => (
           <div
             key={item.category}
             className="flex items-center justify-between py-2 hover:bg-gray-50 rounded-lg px-2 -mx-2 transition-colors"
@@ -174,7 +176,7 @@ export default function CategoryBreakdown({ data = {} }) {
             <div className="flex items-center gap-3 flex-1">
               {/* Color dot matching chart */}
               <div
-                className="w-3 h-3 rounded-full flex-shrink-0"
+                className="w-3 h-3 rounded-full shrink-0"
                 style={{ backgroundColor: item.color }}
               />
 
