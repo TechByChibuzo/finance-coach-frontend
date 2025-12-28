@@ -236,4 +236,52 @@ export const subscriptionAPI = {
   cancelSubscription: () => 
     api.post('/subscriptions/cancel'),
 };
+
+export const investmentsAPI = {
+  // Sync holdings from Plaid
+  syncAllHoldings: () => api.post('/investments/sync'),
+  
+  syncAccountHoldings: (accountId) => 
+    api.post(`/investments/sync/${accountId}`),
+  
+  // Get portfolio data
+  getPortfolio: () => api.get('/investments/portfolio'),
+  
+  getHoldingsByAccount: (accountId) => 
+    api.get(`/investments/holdings/${accountId}`),
+  
+  getAllocation: () => api.get('/investments/allocation'),
+  
+  getHistory: (days = 30) => 
+    api.get('/investments/history', { params: { days } }),
+};
+
+export const networthAPI = {
+  // Net worth
+  getCurrent: () => api.get('/net-worth/current'),
+  
+  getHistory: (days = 30) => 
+    api.get('/net-worth/history', { params: { days } }),
+  
+  // Manual assets
+  getAssets: () => api.get('/net-worth/assets'),
+  
+  addAsset: (data) => api.post('/net-worth/assets', data),
+  
+  updateAsset: (id, data) => 
+    api.put(`/net-worth/assets/${id}`, data),
+  
+  deleteAsset: (id) => api.delete(`/net-worth/assets/${id}`),
+  
+  // Manual liabilities
+  getLiabilities: () => api.get('/net-worth/liabilities'),
+  
+  addLiability: (data) => api.post('/net-worth/liabilities', data),
+  
+  updateLiability: (id, data) => 
+    api.put(`/net-worth/liabilities/${id}`, data),
+  
+  deleteLiability: (id) => 
+    api.delete(`/net-worth/liabilities/${id}`),
+};
 export default api;
