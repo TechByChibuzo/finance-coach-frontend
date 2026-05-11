@@ -63,14 +63,14 @@ body {
 .card {
   background-color: white;
   border-radius: 0.75rem;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px 0 rgb(0 0 0 / 0.06);
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px 0 rgb(0 0 0 / 0.06);
+  border: 1px solid rgb(0 0 0 / 0.05);
   padding: 1.5rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: box-shadow 0.2s ease;
 }
 
 .card:hover {
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05);
-  transform: translateY(-2px);
+  box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.10), 0 2px 6px -1px rgb(0 0 0 / 0.06);
 }
 
 /* Shimmer animation for loading skeletons */
@@ -231,15 +231,14 @@ a:hover {
   animation: bounce 1s infinite;
 }
 
-/* Improved stat card hover effect */
+/* Stat card hover effect */
 .stat-card {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
+  transition: box-shadow 0.2s ease;
+  cursor: default;
 }
 
 .stat-card:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04);
+  box-shadow: 0 8px 20px -4px rgb(0 0 0 / 0.08), 0 4px 8px -2px rgb(0 0 0 / 0.04);
 }
 
 /* Transaction item hover effect */

@@ -1,24 +1,25 @@
-// src/pages/Dashboard.jsx - WITH TRENDS + BUDGET VS ACTUAL CHART
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { format, subDays, subMonths, startOfMonth, endOfMonth } from 'date-fns';
 import Layout from '../components/layout/Layout';
 import SpendingChart from '../components/dashboard/SpendingChart';
 import CategoryBreakdown from '../components/dashboard/CategoryBreakdown';
 import TopMerchants from '../components/dashboard/TopMerchants';
 import TrendIndicator from '../components/dashboard/TrendIndicator';
-import BudgetVsActual from '../components/dashboard/BudgetVsActual'; // NEW IMPORT
+import BudgetVsActual from '../components/dashboard/BudgetVsActual';
 import { analyticsAPI, transactionsAPI } from '../services/api';
 import toast from 'react-hot-toast';
-import { formatCurrency} from '../utils/helpers';
+import { formatCurrency } from '../utils/helpers';
 import { DashboardSkeleton } from '../components/common/Skeleton';
-import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
 import CategoryIcon from '../components/common/CategoryIcon';
-import { TrendingDown, TrendingUp, DollarSign } from 'lucide-react';
-import { RefreshCw, ArrowDownUp } from 'lucide-react';
+import { TrendingDown, TrendingUp, DollarSign, CreditCard, RotateCw, RefreshCw } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
+
 
 
 export default function Dashboard() {
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState(null);
@@ -125,23 +126,25 @@ export default function Dashboard() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-            <p className="text-gray-500 mt-1">Welcome back! Here's your financial overview.</p>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Welcome back{user?.fullName ? `, ${user.fullName.split(' ')[0]}` : ''}
+            </h1>
+            <p className="text-sm text-gray-500 mt-1">Here's your financial overview.</p>
           </div>
           
-          <div className="flex items-center space-x-3">
-            <button 
+          <div className="flex items-center gap-2">
+            <button
               onClick={() => loadDashboardData(true)}
-              className="btn-secondary flex items-center space-x-2"
+              className="btn-secondary p-2 rounded-lg"
+              title="Refresh"
             >
-              <RefreshCw className="w-4 h-4" />
-              <span>Refresh</span>
+              <RotateCw className="w-4 h-4" />
             </button>
 
-            <button 
+            <button
               onClick={handleSync}
               disabled={syncing}
-              className="btn-primary flex items-center space-x-2 disabled:opacity-50"
+              className="btn-primary flex items-center gap-2 disabled:opacity-50"
             >
               <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
               <span>{syncing ? 'Syncing...' : 'Sync Transactions'}</span>
@@ -151,114 +154,104 @@ export default function Dashboard() {
 
        
 
-        {/* Stats Grid with Trends - PROFESSIONAL ICONS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {/* Total Spending */}
           <div className="card stat-card">
             <div className="flex items-center justify-between mb-3">
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600">Total Spending</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">
+                <p className="text-sm font-medium text-gray-500">Total Spending</p>
+                <p className="text-2xl font-bold text-gray-900 mt-1.5">
                   {formatCurrency(monthlySummary?.totalSpending)}
                 </p>
-                <p className="text-sm text-gray-500 mt-1">This month</p>
               </div>
-              <div className="h-12 w-12 bg-red-100 rounded-full flex items-center justify-center shrink-0">
-                <TrendingDown className="w-6 h-6 text-red-600" strokeWidth={2} />
+              <div className="h-11 w-11 bg-red-50 rounded-xl flex items-center justify-center shrink-0">
+                <TrendingDown className="w-5 h-5 text-red-500" strokeWidth={2} />
               </div>
             </div>
-            <TrendIndicator 
-              current={monthlySummary?.totalSpending} 
+            <TrendIndicator
+              current={monthlySummary?.totalSpending}
               previous={lastMonthSummary?.totalSpending}
               type="spending"
             />
           </div>
 
-          {/* Total Income */}
           <div className="card stat-card">
             <div className="flex items-center justify-between mb-3">
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600">Total Income</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">
+                <p className="text-sm font-medium text-gray-500">Total Income</p>
+                <p className="text-2xl font-bold text-gray-900 mt-1.5">
                   {formatCurrency(monthlySummary?.totalIncome || monthlySummary?.totalSpending)}
                 </p>
-                <p className="text-sm text-gray-500 mt-1">This month</p>
               </div>
-              <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center shrink-0">
-                <TrendingUp className="w-6 h-6 text-green-600" strokeWidth={2} />
+              <div className="h-11 w-11 bg-green-50 rounded-xl flex items-center justify-center shrink-0">
+                <TrendingUp className="w-5 h-5 text-green-500" strokeWidth={2} />
               </div>
             </div>
-            <TrendIndicator 
-              current={monthlySummary?.totalIncome || monthlySummary?.totalSpending} 
+            <TrendIndicator
+              current={monthlySummary?.totalIncome || monthlySummary?.totalSpending}
               previous={lastMonthSummary?.totalIncome || lastMonthSummary?.totalSpending}
               type="income"
             />
           </div>
 
-          {/* Net Cash Flow */}
           <div className="card stat-card">
             <div className="flex items-center justify-between mb-3">
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600">Net Cash Flow</p>
-                <p className={`text-3xl font-bold mt-2 ${
+                <p className="text-sm font-medium text-gray-500">Net Cash Flow</p>
+                <p className={`text-2xl font-bold mt-1.5 ${
                   (monthlySummary?.netCashFlow || 0) >= 0 ? 'text-green-600' : 'text-red-600'
                 }`}>
                   {formatCurrency(monthlySummary?.netCashFlow)}
                 </p>
-                <p className="text-sm text-gray-500 mt-1">This month</p>
               </div>
-              <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
-                <DollarSign className="w-6 h-6 text-blue-600" strokeWidth={2} />
+              <div className="h-11 w-11 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
+                <DollarSign className="w-5 h-5 text-blue-600" strokeWidth={2} />
               </div>
             </div>
-            <TrendIndicator 
-              current={monthlySummary?.netCashFlow} 
+            <TrendIndicator
+              current={monthlySummary?.netCashFlow}
               previous={lastMonthSummary?.netCashFlow}
               type="neutral"
             />
           </div>
         </div>
 
-        {/* NEW: Budget vs Actual Chart - Full Width */}
         <BudgetVsActual />
 
-        {/* Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <SpendingChart data={spendingTrend} />
           <CategoryBreakdown data={categoryBreakdown} />
         </div>
 
-        {/* Bottom Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <TopMerchants merchants={topMerchants} />
 
-          {/* Recent Transactions - WITH PROFESSIONAL ICONS */}
           <div className="card">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900">Recent Transactions</h2>
-              <a href="/transactions" className="text-sm text-primary-600 hover:text-primary-700 font-medium">
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h2 className="text-base font-semibold text-gray-900">Recent Transactions</h2>
+                <p className="text-xs text-gray-400 mt-0.5">Last {recentTransactions.length} transactions</p>
+              </div>
+              <Link to="/transactions" className="text-xs text-primary-600 hover:text-primary-700 font-medium transition-colors">
                 View all →
-              </a>
+              </Link>
             </div>
             
             {recentTransactions.length > 0 ? (
               <div className="space-y-3">
                 {recentTransactions.map((transaction) => (
                   <div key={transaction.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0 hover:bg-gray-50 rounded-lg px-2 -mx-2 transition-colors">
-                    <div className="flex items-center space-x-3">
-                      {/* PROFESSIONAL ICON INSTEAD OF EMOJI */}
+                    <div className="flex items-center gap-3">
                       <CategoryIcon category={transaction.category} size="md" />
-                      
                       <div>
-                        <p className="font-medium text-gray-900">
+                        <p className="text-sm font-medium text-gray-900">
                           {transaction.merchantName || transaction.name}
                         </p>
-                        <p className="text-sm text-gray-500">
-                          {new Date(transaction.date).toLocaleDateString()}
+                        <p className="text-xs text-gray-400">
+                          {format(new Date(transaction.date), 'MMM d, yyyy')}
                         </p>
                       </div>
                     </div>
-                    <p className={`font-semibold ${
+                    <p className={`text-sm font-semibold ${
                       transaction.amount < 0 ? 'text-green-600' : 'text-gray-900'
                     }`}>
                       {transaction.amount < 0 ? '+' : ''}{formatCurrency(Math.abs(transaction.amount))}
@@ -268,17 +261,15 @@ export default function Dashboard() {
               </div>
             ) : (
               <div className="text-center py-12">
-                <span className="text-6xl mb-4 block">💳</span>
+                <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <CreditCard className="w-6 h-6 text-gray-400" />
+                </div>
                 <p className="text-gray-500 mb-2">No transactions yet</p>
                 <p className="text-sm text-gray-400 mb-4">
                   Sync your bank accounts to see transactions
                 </p>
-                <button
-                  onClick={handleSync}
-                  disabled={syncing}
-                  className="btn-primary inline-flex items-center space-x-2"
-                >
-                  <span className={syncing ? 'animate-spin' : ''}>🔄</span>
+                <button onClick={handleSync} disabled={syncing} className="btn-primary inline-flex items-center gap-2">
+                  <RefreshCw className={`w-5 h-5 ${syncing ? 'animate-spin' : ''}`} />
                   <span>{syncing ? 'Syncing...' : 'Sync Now'}</span>
                 </button>
               </div>

@@ -1,56 +1,40 @@
-// src/pages/Login.jsx - FIXED TO USE AUTH CONTEXT
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import toast from 'react-hot-toast';
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth(); // GET LOGIN FROM CONTEXT
-  
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
+  const { login } = useAuth();
+
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+  const [staySignedIn, setStaySignedIn] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!formData.email || !formData.password) {
       toast.error('Please fill in all fields');
       return;
     }
-
     try {
       setLoading(true);
-      
-      // USE CONTEXT LOGIN (this updates user state properly)
       await login(formData.email, formData.password);
-      
-      if (rememberMe) {
-        localStorage.setItem('rememberedEmail', formData.email);
-      }
-      
-      toast.success('Welcome back! 🎉');
+      if (staySignedIn) localStorage.setItem('rememberedEmail', formData.email);
+      toast.success('Welcome back!');
       navigate('/dashboard', { replace: true });
-      
     } catch (error) {
-      console.error('Login failed:', error);
-      const errorMessage = error.response?.data?.message 
-        || error.response?.data?.error 
-        || error.message 
-        || 'Invalid email or password';
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        error.message ||
+        'Invalid email or password';
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -58,50 +42,84 @@ export default function Login() {
   };
 
   const fillDemoCredentials = () => {
-    setFormData({
-      email: 'alice@example.com',
-      password: 'password123',
-    });
+    setFormData({ email: 'alice@example.com', password: 'password123' });
     toast.success('Demo credentials filled!');
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated Gradient Background */}
-      <div className="absolute inset-0 bg-linear-to-br from-blue-500 via-purple-500 to-pink-500 opacity-90"></div>
-      
-      {/* Animated Circles */}
-      <div className="absolute top-0 left-0 w-72 h-72 bg-white rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-      <div className="absolute top-0 right-0 w-72 h-72 bg-yellow-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-      <div className="absolute bottom-0 left-20 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+    <div className="relative min-h-screen bg-slate-950 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
 
-      {/* Login Card */}
-      <div className="relative w-full max-w-md">
-        {/* Logo & Title - keeping as-is per your request */}
-        <div className="text-center mb-8 animate-fade-in">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-4 transform hover:scale-110 transition-transform duration-300">
-            <span className="text-3xl">💎</span>
-          </div>
-          <h1 className="text-4xl font-bold text-white mb-2">Finance Coach</h1>
-          <p className="text-blue-100 text-lg">Your AI-powered financial advisor</p>
+      {/* Background depth orbs */}
+      <div className="pointer-events-none absolute -top-40 -right-40 w-96 h-96 rounded-full bg-primary-700 opacity-10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-sky-700 opacity-10 blur-3xl" />
+
+      {/* Logo + branding */}
+      <div className="relative sm:mx-auto sm:w-full sm:max-w-md text-center mb-8">
+        <div className="inline-flex items-center justify-center w-14 h-14 bg-primary-600 rounded-2xl mb-4 shadow-lg shadow-primary-500/30">
+          <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M15 2L4 6.8V14.5C4 21.2 8.8 27.4 15 29C21.2 27.4 26 21.2 26 14.5V6.8L15 2Z"
+              fill="white"
+              fillOpacity="0.15"
+              stroke="white"
+              strokeWidth="1.5"
+              strokeLinejoin="round"
+            />
+            <line x1="15" y1="9" x2="15" y2="22" stroke="white" strokeWidth="1.8" strokeLinecap="round" />
+            <path
+              d="M18 12C18 10.9 16.7 10 15 10C13.3 10 12 10.9 12 12C12 13.1 13.3 13.8 15 14C16.7 14.2 18 15 18 16.2C18 17.4 16.7 18.2 15 18.2C13.3 18.2 12 17.3 12 16.2"
+              stroke="white"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              fill="none"
+            />
+          </svg>
         </div>
+        <h1 className="text-2xl font-bold text-white tracking-tight">Finance Coach</h1>
+        <p className="mt-1 text-sm text-slate-400">Your AI-powered financial advisor</p>
+      </div>
 
-        {/* Card */}
-        <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-10 backdrop-blur-lg animate-slide-up">
-          {/* Welcome Message */}
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">Welcome back! 👋</h2>
-            <p className="text-gray-600">Sign in to continue to your dashboard</p>
+      {/* Card */}
+      <div className="relative sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/70 ring-1 ring-gray-900/5 px-8 py-10">
+
+          {/* Card header row */}
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900">Sign in</h2>
+              <p className="mt-0.5 text-sm text-gray-500">Welcome back!</p>
+            </div>
+            {/* Stay signed in toggle */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-500 select-none">Stay signed in</span>
+              <button
+                type="button"
+                onClick={() => setStaySignedIn(!staySignedIn)}
+                disabled={loading}
+                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 ${
+                  staySignedIn ? 'bg-primary-600' : 'bg-gray-200'
+                }`}
+                aria-checked={staySignedIn}
+                role="switch"
+              >
+                <span
+                  className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                    staySignedIn ? 'translate-x-4.5' : 'translate-x-0.5'
+                  }`}
+                />
+              </button>
+            </div>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email Input */}
-            <div className="space-y-2.5">
-              <label className="text-sm font-semibold text-gray-700">Email</label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400 group-focus-within:text-primary-500 transition-colors" />
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Email address
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                  <Mail className="h-4 w-4 text-gray-400" />
                 </div>
                 <input
                   type="email"
@@ -109,27 +127,27 @@ export default function Login() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="you@example.com"
-                  className="
-                    w-full pl-12 pr-4 py-3.5 
-                    border-2 border-gray-200 
-                    rounded-xl 
-                    focus:border-primary-500 focus:ring-4 focus:ring-primary-100 
-                    transition-all duration-200
-                    placeholder-gray-400
-                    text-gray-900
-                  "
                   disabled={loading}
                   autoComplete="email"
+                  className="w-full pl-10 pr-4 py-3 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-400 text-gray-900 transition-all hover:border-gray-300"
                 />
               </div>
             </div>
 
-            {/* Password Input */}
-            <div className="space-y-2.5">
-              <label className="text-sm font-semibold text-gray-700">Password</label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-primary-500 transition-colors" />
+            {/* Password */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-sm font-medium text-gray-700">Password</label>
+                <Link
+                  to="/forgot-password"
+                  className="text-xs font-medium text-primary-600 hover:text-primary-700 transition-colors"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                  <Lock className="h-4 w-4 text-gray-400" />
                 </div>
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -137,134 +155,86 @@ export default function Login() {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="
-                    w-full pl-12 pr-12 py-3.5 
-                    border-2 border-gray-200 
-                    rounded-xl 
-                    focus:border-primary-500 focus:ring-4 focus:ring-primary-100 
-                    transition-all duration-200
-                    placeholder-gray-400
-                    text-gray-900
-                  "
                   disabled={loading}
                   autoComplete="current-password"
+                  className="w-full pl-10 pr-10 py-3 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-400 text-gray-900 transition-all hover:border-gray-300"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
                   disabled={loading}
                   tabIndex={-1}
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
             </div>
 
-            {/* Remember Me & Forgot Password */}
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center cursor-pointer group">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500 cursor-pointer"
-                  disabled={loading}
-                />
-                <span className="ml-2 text-gray-700 group-hover:text-gray-900 transition-colors">
-                  Remember me
-                </span>
-              </label>
-              <Link 
-                to="/forgot-password" 
-                className="text-primary-600 hover:text-primary-700 font-medium transition-colors"
-              >
-                Forgot password?
-              </Link>
-            </div>
-
-            {/* Sign In Button */}
+            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
-              className="
-                w-full py-3.5 px-6 
-                bg-linear-to-r from-primary-600 to-primary-700 
-                hover:from-primary-700 hover:to-primary-800
-                text-white font-semibold rounded-xl 
-                shadow-lg hover:shadow-xl
-                transform hover:-translate-y-0.5
-                transition-all duration-200
-                disabled:opacity-50 disabled:cursor-not-allowed
-                disabled:transform-none
-                flex items-center justify-center gap-2.5
-                group
-              "
+              className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-primary-600 hover:bg-primary-700 active:scale-[0.98] text-white text-sm font-semibold rounded-xl shadow-sm hover:shadow-md transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
             >
               {loading ? (
                 <>
-                  <Loader className="w-5 h-5 animate-spin" />
+                  <Loader className="w-4 h-4 animate-spin" />
                   <span>Signing in...</span>
                 </>
               ) : (
                 <>
-                  <span>Sign In</span>
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  <span>Sign in</span>
+                  <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>
           </form>
 
           {/* Divider */}
-          <div className="mt-8 mb-8 flex items-center">
-            <div className="flex-1 border-t border-gray-200"></div>
-            <span className="px-4 text-sm text-gray-500">or</span>
-            <div className="flex-1 border-t border-gray-200"></div>
+          <div className="my-6 flex items-center gap-3">
+            <div className="flex-1 border-t border-gray-100" />
+            <span className="text-xs text-gray-400 select-none">or</span>
+            <div className="flex-1 border-t border-gray-100" />
           </div>
 
-          {/* Sign Up Link */}
-          <div className="text-center mb-8">
-            <p className="text-gray-600">
-              Don't have an account?{' '}
-              <Link
-                to="/register"
-                className="text-primary-600 hover:text-primary-700 font-semibold transition-colors"
+          {/* Sign up */}
+          <p className="text-center text-sm text-gray-600 mb-6">
+            Don't have an account?{' '}
+            <Link
+              to="/register"
+              className="text-primary-600 hover:text-primary-700 font-semibold transition-colors"
+            >
+              Sign up free
+            </Link>
+          </p>
+
+          {/* Demo credentials */}
+          <div className="rounded-xl bg-gray-50 border border-dashed border-gray-200 p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs font-semibold text-gray-600 mb-0.5">Demo account</p>
+                <p className="text-xs text-gray-400">alice@example.com · password123</p>
+              </div>
+              <button
+                type="button"
+                onClick={fillDemoCredentials}
+                disabled={loading}
+                className="text-xs font-medium text-primary-600 hover:text-primary-700 transition-colors whitespace-nowrap ml-3 mt-0.5"
               >
-                Sign up
-              </Link>
-            </p>
-          </div>
-
-          {/* Demo Credentials */}
-          <div className="p-5 bg-blue-50 rounded-xl border border-blue-100">
-            <div className="flex items-start gap-3">
-              <div className="shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <span className="text-blue-600 text-sm">ℹ️</span>
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-blue-900 mb-1">Demo Account</p>
-                <p className="text-xs text-blue-700 mb-2">
-                  alice@example.com / password123
-                </p>
-                <button
-                  type="button"
-                  onClick={fillDemoCredentials}
-                  className="text-xs font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors"
-                  disabled={loading}
-                >
-                  Click to fill credentials →
-                </button>
-              </div>
+                Fill in →
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Footer */}
-        <p className="text-center mt-8 text-sm text-blue-100">
+        {/* Security trust badge */}
+        <div className="flex items-center justify-center gap-1.5 mt-5 text-xs text-slate-500">
+          <ShieldCheck className="w-3.5 h-3.5" />
+          <span>256-bit SSL encrypted · Bank-level security</span>
+        </div>
+
+        <p className="text-center mt-3 text-xs text-slate-600">
           © 2025 Finance Coach. All rights reserved.
         </p>
       </div>
