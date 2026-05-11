@@ -1,8 +1,8 @@
-// src/components/dashboard/BudgetSummaryWidget.jsx
 import { useCurrentBudgets } from '../../hooks/useBudgets';
 import { Link } from 'react-router-dom';
 import { PiggyBank, TrendingUp, AlertCircle, CheckCircle, ArrowRight } from 'lucide-react';
 import Skeleton from '../common/Skeleton';
+import { formatCurrency } from '../../utils/helpers';
 
 export default function BudgetSummaryWidget() {
   const { data: budgetData, isLoading, error } = useCurrentBudgets();
@@ -24,30 +24,26 @@ export default function BudgetSummaryWidget() {
   }
 
   if (error) {
-    return null; // Silently fail - budget is optional
+    return null;
   }
 
   const hasBudgets = budgetData?.budgets && budgetData.budgets.length > 0;
 
   if (!hasBudgets) {
     return (
-      <div className="card fade-in">
+      <div className="card">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <PiggyBank className="w-6 h-6 text-primary-600" />
+          <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2">
+            <PiggyBank className="w-5 h-5 text-primary-600" />
             Budget Tracking
           </h2>
         </div>
-
         <div className="text-center py-6">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-3">
-            <PiggyBank className="w-8 h-8 text-blue-600" />
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-100 rounded-xl mb-3">
+            <PiggyBank className="w-7 h-7 text-blue-600" />
           </div>
-          <p className="text-gray-600 mb-4">Start tracking your spending with budgets</p>
-          <Link
-            to="/budget"
-            className="btn-primary inline-flex items-center gap-2"
-          >
+          <p className="text-sm text-gray-500 mb-4">Start tracking your spending with budgets</p>
+          <Link to="/budget" className="btn-primary inline-flex items-center gap-2">
             <span>Create Budget</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
@@ -56,12 +52,10 @@ export default function BudgetSummaryWidget() {
     );
   }
 
-  // Get status config
   const getStatusConfig = () => {
     if (budgetData.status === 'exceeded') {
       return {
         icon: AlertCircle,
-        color: 'red',
         bgColor: 'bg-red-50',
         textColor: 'text-red-700',
         iconColor: 'text-red-500',
@@ -71,7 +65,6 @@ export default function BudgetSummaryWidget() {
     } else if (budgetData.status === 'warning') {
       return {
         icon: TrendingUp,
-        color: 'amber',
         bgColor: 'bg-amber-50',
         textColor: 'text-amber-700',
         iconColor: 'text-amber-500',
@@ -81,7 +74,6 @@ export default function BudgetSummaryWidget() {
     } else {
       return {
         icon: CheckCircle,
-        color: 'green',
         bgColor: 'bg-emerald-50',
         textColor: 'text-emerald-700',
         iconColor: 'text-emerald-500',
@@ -94,7 +86,6 @@ export default function BudgetSummaryWidget() {
   const statusConfig = getStatusConfig();
   const StatusIcon = statusConfig.icon;
 
-  // Get top 3 categories to show (exceeded first, then by spent percentage)
   const topCategories = [...budgetData.budgets]
     .sort((a, b) => {
       if (a.isExceeded && !b.isExceeded) return -1;
@@ -104,11 +95,10 @@ export default function BudgetSummaryWidget() {
     .slice(0, 3);
 
   return (
-    <div className="card fade-in hover:shadow-lg transition-all duration-300">
-      {/* Header */}
+    <div className="card">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-          <PiggyBank className="w-6 h-6 text-primary-600" />
+        <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2">
+          <PiggyBank className="w-5 h-5 text-primary-600" />
           Budget Tracking
         </h2>
         <Link
@@ -120,16 +110,15 @@ export default function BudgetSummaryWidget() {
         </Link>
       </div>
 
-      {/* Status Card */}
       <div className={`rounded-lg border ${statusConfig.borderColor} ${statusConfig.bgColor} p-4 mb-4`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <StatusIcon className={`w-6 h-6 ${statusConfig.iconColor}`} />
+            <StatusIcon className={`w-5 h-5 ${statusConfig.iconColor}`} />
             <div>
               <p className={`text-sm font-semibold ${statusConfig.textColor}`}>
                 {statusConfig.label}
               </p>
-              <p className="text-xs text-gray-600 mt-0.5">
+              <p className="text-xs text-gray-500 mt-0.5">
                 {budgetData.budgets.length} {budgetData.budgets.length === 1 ? 'budget' : 'budgets'} active
               </p>
             </div>
@@ -138,40 +127,38 @@ export default function BudgetSummaryWidget() {
             <p className="text-2xl font-bold text-gray-900">
               {budgetData.percentageSpent.toFixed(0)}%
             </p>
-            <p className="text-xs text-gray-500">spent</p>
+            <p className="text-xs text-gray-400">spent</p>
           </div>
         </div>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-3 gap-3 mb-4">
         <div className="text-center">
-          <p className="text-xs text-gray-600 mb-1">Budgeted</p>
-          <p className="text-lg font-bold text-gray-900">
-            ${budgetData.totalBudget.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+          <p className="text-xs text-gray-400 mb-1">Budgeted</p>
+          <p className="text-base font-semibold text-gray-900">
+            {formatCurrency(budgetData.totalBudget)}
           </p>
         </div>
         <div className="text-center">
-          <p className="text-xs text-gray-600 mb-1">Spent</p>
-          <p className={`text-lg font-bold ${
-            budgetData.percentageSpent > 100 ? 'text-red-600' : 
-            budgetData.percentageSpent > 80 ? 'text-amber-600' : 
+          <p className="text-xs text-gray-400 mb-1">Spent</p>
+          <p className={`text-base font-semibold ${
+            budgetData.percentageSpent > 100 ? 'text-red-600' :
+            budgetData.percentageSpent > 80 ? 'text-amber-600' :
             'text-emerald-600'
           }`}>
-            ${budgetData.totalSpent.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+            {formatCurrency(budgetData.totalSpent)}
           </p>
         </div>
         <div className="text-center">
-          <p className="text-xs text-gray-600 mb-1">Remaining</p>
-          <p className={`text-lg font-bold ${budgetData.totalRemaining < 0 ? 'text-red-600' : 'text-gray-900'}`}>
-            ${Math.abs(budgetData.totalRemaining).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+          <p className="text-xs text-gray-400 mb-1">Remaining</p>
+          <p className={`text-base font-semibold ${budgetData.totalRemaining < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+            {formatCurrency(Math.abs(budgetData.totalRemaining))}
           </p>
         </div>
       </div>
 
-      {/* Top Categories */}
       <div className="space-y-2">
-        <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">
+        <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">
           Top Categories
         </p>
         {topCategories.map((budget) => (
@@ -180,8 +167,8 @@ export default function BudgetSummaryWidget() {
               <div className="flex items-center justify-between mb-1">
                 <span className="text-sm font-medium text-gray-900">{budget.category}</span>
                 <span className={`text-sm font-semibold ${
-                  budget.isExceeded ? 'text-red-600' : 
-                  budget.shouldAlert ? 'text-amber-600' : 
+                  budget.isExceeded ? 'text-red-600' :
+                  budget.shouldAlert ? 'text-amber-600' :
                   'text-gray-600'
                 }`}>
                   {budget.percentageSpent.toFixed(0)}%
@@ -202,12 +189,11 @@ export default function BudgetSummaryWidget() {
         ))}
       </div>
 
-      {/* View All Link */}
       <Link
         to="/budget"
         className="block mt-4 text-center py-2 text-sm font-medium text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded-lg transition-colors"
       >
-        Manage Budgets →
+        Manage Budgets
       </Link>
     </div>
   );
