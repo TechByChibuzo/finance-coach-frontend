@@ -1,4 +1,3 @@
-// src/components/subscription/SubscriptionStatusWidget.jsx
 import { Crown, Sparkles, Zap, ArrowRight, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCurrentSubscription } from '../../hooks/useSubscription';
@@ -77,10 +76,10 @@ export default function SubscriptionStatusWidget() {
             <Icon className="w-6 h-6" />
           </div>
           <div>
-            <h3 className={`text-lg font-bold ${config.textColor}`}>
+            <h3 className={`text-base font-semibold ${config.textColor}`}>
               {planDisplayName}
             </h3>
-            <p className="text-sm text-gray-600">Subscription Plan</p>
+            <p className="text-xs text-gray-400">Subscription Plan</p>
           </div>
         </div>
 
@@ -131,7 +130,7 @@ export default function SubscriptionStatusWidget() {
       {planName === 'FREE' ? (
         <Link
           to="/pricing"
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all font-semibold shadow-sm hover:shadow-md"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm font-semibold"
         >
           <span>Upgrade to Premium</span>
           <ArrowRight className="w-4 h-4" />
@@ -139,7 +138,7 @@ export default function SubscriptionStatusWidget() {
       ) : planName === 'PREMIUM' ? (
         <Link
           to="/pricing"
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-purple-600 text-purple-600 rounded-lg hover:bg-purple-50 transition-all font-semibold"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-purple-200 text-purple-600 rounded-lg hover:bg-purple-50 transition-colors text-sm font-semibold"
         >
           <Crown className="w-4 h-4" />
           <span>Upgrade to Pro</span>
@@ -147,7 +146,7 @@ export default function SubscriptionStatusWidget() {
       ) : (
         <Link
           to="/settings/billing"
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all font-medium"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
         >
           <span>Manage Subscription</span>
           <ArrowRight className="w-4 h-4" />

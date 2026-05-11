@@ -39,15 +39,14 @@ export default function SubscriptionSuccess() {
           {/* Success Card */}
           <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
             {/* Success Icon */}
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
-              <CheckCircle className="w-12 h-12 text-green-600" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 rounded-2xl mb-6">
+              <CheckCircle className="w-9 h-9 text-emerald-600" />
             </div>
 
-            {/* Success Message */}
-            <h1 className="text-3xl font-bold text-gray-900 mb-3">
-              Welcome to Premium! 🎉
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              Welcome to Premium!
             </h1>
-            <p className="text-lg text-gray-600 mb-6">
+            <p className="text-sm text-gray-500 mb-6">
               Your subscription has been activated successfully
             </p>
 
@@ -78,16 +77,6 @@ export default function SubscriptionSuccess() {
                 </div>
               </div>
             </div>
-
-            {/* Session ID (for debugging) */}
-            {sessionId && (
-              <div className="mb-6 p-3 bg-gray-50 rounded-lg">
-                <p className="text-xs text-gray-500 mb-1">Session ID:</p>
-                <p className="text-xs font-mono text-gray-700 break-all">
-                  {sessionId}
-                </p>
-              </div>
-            )}
 
             {/* Redirect Message */}
             <div className="flex items-center justify-center gap-2 text-gray-600 mb-4">

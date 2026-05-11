@@ -12,15 +12,14 @@ export default function SubscriptionCancel() {
           {/* Cancel Card */}
           <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
             {/* Cancel Icon */}
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-yellow-100 rounded-full mb-6">
-              <XCircle className="w-12 h-12 text-yellow-600" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-amber-100 rounded-2xl mb-6">
+              <XCircle className="w-9 h-9 text-amber-600" />
             </div>
 
-            {/* Cancel Message */}
-            <h1 className="text-3xl font-bold text-gray-900 mb-3">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
               Subscription Cancelled
             </h1>
-            <p className="text-lg text-gray-600 mb-6">
+            <p className="text-sm text-gray-500 mb-6">
               No worries! You can upgrade anytime.
             </p>
 
@@ -55,7 +54,7 @@ export default function SubscriptionCancel() {
               </button>
               <button
                 onClick={() => navigate('/dashboard')}
-                className="w-full px-6 py-3 text-gray-700 hover:text-gray-900 font-medium transition-colors flex items-center justify-center gap-2"
+                className="btn-secondary w-full flex items-center justify-center gap-2"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Back to Dashboard

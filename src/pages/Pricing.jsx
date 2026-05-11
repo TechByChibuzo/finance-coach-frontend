@@ -1,13 +1,28 @@
 import { useState } from 'react';
-import { Check, Sparkles, Zap, Crown, Loader } from 'lucide-react';
+import { Check, Star, Sparkles, Zap, Crown, Loader, ChevronDown } from 'lucide-react';
 import Layout from '../components/layout/Layout';
 import { useSubscriptionPlans, useCurrentSubscription, useCreateCheckout } from '../hooks/useSubscription';
-import LoadingSpinner from '../components/common/LoadingSpinner';
+import Skeleton from '../components/common/Skeleton';
 import ErrorMessage from '../components/common/ErrorMessage';
+
+function PricingCardSkeleton() {
+  return (
+    <div className="bg-white rounded-2xl shadow-xl p-8 space-y-4">
+      <Skeleton className="h-12 w-12 rounded-xl" />
+      <Skeleton className="h-7 w-32" />
+      <Skeleton className="h-4 w-48" />
+      <Skeleton className="h-12 w-40" />
+      <Skeleton className="h-11 w-full rounded-xl" />
+      <div className="space-y-3 pt-2">
+        {[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-4 w-full" />)}
+      </div>
+    </div>
+  );
+}
 
 export default function Pricing() {
   const [billingCycle, setBillingCycle] = useState('MONTHLY');
-  
+
   const { data: plans, isLoading: plansLoading, error: plansError } = useSubscriptionPlans();
   const { data: currentSubscription, isLoading: subscriptionLoading } = useCurrentSubscription();
   const createCheckout = useCreateCheckout();
@@ -16,13 +31,8 @@ export default function Pricing() {
     createCheckout.mutate({ planId, billingCycle });
   };
 
-  if (plansLoading || subscriptionLoading) {
-    return (
-      <Layout>
-        <LoadingSpinner message="Loading plans..." />
-      </Layout>
-    );
-  }
+  const isLoading = plansLoading || subscriptionLoading;
+  const isYearly = billingCycle === 'YEARLY';
 
   if (plansError) {
     return (
@@ -35,128 +45,117 @@ export default function Pricing() {
   const freePlan = plans?.find(p => p.name === 'FREE');
   const premiumPlan = plans?.find(p => p.name === 'PREMIUM');
   const proPlan = plans?.find(p => p.name === 'PRO');
-
   const currentPlanName = currentSubscription?.planName || 'FREE';
-  const isYearly = billingCycle === 'YEARLY';
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto space-y-12 py-8">
-        {/* Header */}
+      <div className="max-w-6xl mx-auto space-y-12 py-8">
         <div className="text-center">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">
             Choose Your Plan
           </h1>
-          <p className="text-xl text-gray-600 mb-8">
+          <p className="text-base text-gray-500 mb-8">
             Unlock powerful features to take control of your finances
           </p>
 
-          {/* Billing Toggle */}
           <div className="inline-flex items-center bg-gray-100 rounded-full p-1">
             <button
               onClick={() => setBillingCycle('MONTHLY')}
-              className={`px-6 py-2 rounded-full font-medium transition-all ${
-                !isYearly
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
+                !isYearly ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               Monthly
             </button>
             <button
               onClick={() => setBillingCycle('YEARLY')}
-              className={`px-6 py-2 rounded-full font-medium transition-all ${
-                isYearly
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
+                isYearly ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               Yearly
-              <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+              <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">
                 Save 17%
               </span>
             </button>
           </div>
         </div>
 
-        {/* Pricing Cards - NO ANIMATION */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {/* FREE PLAN */}
-          <div>
-            {freePlan && (
-              <PricingCard
-                name="Free"
-                displayName={freePlan.displayName}
-                description={freePlan.description}
-                price={0}
-                icon={Sparkles}
-                iconColor="text-gray-600"
-                iconBg="bg-gray-100"
-                features={parseFeatures(freePlan.features)}
-                limits={parseLimits(freePlan.limits)}
-                isCurrentPlan={currentPlanName === 'FREE'}
-                onSelect={() => {}}
-                ctaText="Current Plan"
-                ctaDisabled={true}
-              />
-            )}
-          </div>
-
-          {/* PREMIUM PLAN */}
-          <div>
-            {premiumPlan && (
-              <PricingCard
-                name="Premium"
-                displayName={premiumPlan.displayName}
-                description={premiumPlan.description}
-                price={isYearly ? premiumPlan.priceYearly : premiumPlan.priceMonthly}
-                billingCycle={isYearly ? 'year' : 'month'}
-                icon={Zap}
-                iconColor="text-primary-600"
-                iconBg="bg-primary-100"
-                features={parseFeatures(premiumPlan.features)}
-                limits={parseLimits(premiumPlan.limits)}
-                isCurrentPlan={currentPlanName === 'PREMIUM'}
-                isPopular={true}
-                onSelect={() => handleUpgrade(premiumPlan.id)}
-                ctaText={
-                  currentPlanName === 'PREMIUM' ? 'Current Plan' :     // If on Premium
-                  currentPlanName === 'PRO' ? 'Downgrade to Premium' : // If on Pro
-                  'Upgrade to Premium'                                  // If on Free
-                }
-                loading={createCheckout.isPending}
-              />
-            )}
-          </div>
-
-          {/* PRO PLAN */}
-          <div>
-            {proPlan && (
-              <PricingCard
-                name="Pro"
-                displayName={proPlan.displayName}
-                description={proPlan.description}
-                price={isYearly ? proPlan.priceYearly : proPlan.priceMonthly}
-                billingCycle={isYearly ? 'year' : 'month'}
-                icon={Crown}
-                iconColor="text-purple-600"
-                iconBg="bg-purple-100"
-                features={parseFeatures(proPlan.features)}
-                limits={parseLimits(proPlan.limits)}
-                isCurrentPlan={currentPlanName === 'PRO'}
-                onSelect={() => handleUpgrade(proPlan.id)}
-                ctaText={currentPlanName === 'PRO' ? 'Current Plan' : 'Upgrade to Pro'}
-                ctaDisabled={currentPlanName === 'PRO'}
-                loading={createCheckout.isPending}
-              />
-            )}
-          </div>
+        <div className="grid md:grid-cols-3 gap-8 pt-6">
+          {isLoading ? (
+            <>
+              <PricingCardSkeleton />
+              <PricingCardSkeleton />
+              <PricingCardSkeleton />
+            </>
+          ) : (
+            <>
+              {freePlan && (
+                <PricingCard
+                  name="Free"
+                  displayName={freePlan.displayName}
+                  description={freePlan.description}
+                  price={0}
+                  icon={Sparkles}
+                  iconColor="text-gray-600"
+                  iconBg="bg-gray-100"
+                  features={parseFeatures(freePlan.features)}
+                  limits={parseLimits(freePlan.limits)}
+                  isCurrentPlan={currentPlanName === 'FREE'}
+                  onSelect={() => {}}
+                  ctaText="Current Plan"
+                  ctaDisabled={true}
+                />
+              )}
+              {premiumPlan && (
+                <PricingCard
+                  name="Premium"
+                  displayName={premiumPlan.displayName}
+                  description={premiumPlan.description}
+                  price={isYearly ? premiumPlan.priceYearly : premiumPlan.priceMonthly}
+                  billingCycle={isYearly ? 'year' : 'month'}
+                  icon={Zap}
+                  iconColor="text-primary-600"
+                  iconBg="bg-primary-100"
+                  features={parseFeatures(premiumPlan.features)}
+                  limits={parseLimits(premiumPlan.limits)}
+                  isCurrentPlan={currentPlanName === 'PREMIUM'}
+                  isPopular={true}
+                  onSelect={() => handleUpgrade(premiumPlan.id)}
+                  ctaText={
+                    currentPlanName === 'PREMIUM' ? 'Current Plan' :
+                    currentPlanName === 'PRO' ? 'Downgrade to Premium' :
+                    'Upgrade to Premium'
+                  }
+                  loading={createCheckout.isPending}
+                />
+              )}
+              {proPlan && (
+                <PricingCard
+                  name="Pro"
+                  displayName={proPlan.displayName}
+                  description={proPlan.description}
+                  price={isYearly ? proPlan.priceYearly : proPlan.priceMonthly}
+                  billingCycle={isYearly ? 'year' : 'month'}
+                  icon={Crown}
+                  iconColor="text-purple-600"
+                  iconBg="bg-purple-100"
+                  features={parseFeatures(proPlan.features)}
+                  limits={parseLimits(proPlan.limits)}
+                  isCurrentPlan={currentPlanName === 'PRO'}
+                  onSelect={() => handleUpgrade(proPlan.id)}
+                  ctaText={currentPlanName === 'PRO' ? 'Current Plan' : 'Upgrade to Pro'}
+                  ctaDisabled={currentPlanName === 'PRO'}
+                  loading={createCheckout.isPending}
+                />
+              )}
+            </>
+          )}
         </div>
 
-        {/* FAQ Section */}
-        <div className="max-w-3xl mx-auto mt-16">
-          <h2 className="text-3xl font-bold text-center mb-8">Frequently Asked Questions</h2>
-          <div className="space-y-4">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">Frequently Asked Questions</h2>
+          <div className="space-y-3">
             <FAQItem
               question="Can I cancel anytime?"
               answer="Yes! You can cancel your subscription at any time from your settings. Your access continues until the end of your billing period."
@@ -180,7 +179,6 @@ export default function Pricing() {
   );
 }
 
-// Pricing Card Component
 function PricingCard({
   name,
   displayName,
@@ -200,55 +198,49 @@ function PricingCard({
   loading,
 }) {
   return (
-    <div
-      className={`relative bg-white rounded-2xl shadow-xl p-8 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
-        isPopular ? 'ring-2 ring-primary-600 scale-105' : ''
-      }`}
-    >
-      {/* Popular Badge */}
+    <div className={`relative bg-white rounded-2xl shadow-xl p-8 transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl ${
+      isPopular ? 'ring-2 ring-primary-600 scale-105' : ''
+    }`}>
       {isPopular && (
-        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-          <span className="bg-primary-600 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
-            ⭐ Most Popular
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+          <span className="bg-primary-600 text-white px-4 py-1 rounded-full text-xs font-semibold shadow-lg flex items-center gap-1">
+            <Star className="w-3 h-3 fill-white" />
+            Most Popular
           </span>
         </div>
       )}
 
-      {/* Icon */}
-      <div className={`inline-flex p-3 rounded-xl ${iconBg} mb-4 transition-transform hover:scale-110`}>
-        <Icon className={`w-8 h-8 ${iconColor}`} />
+      <div className={`inline-flex p-3 rounded-xl ${iconBg} mb-4`}>
+        <Icon className={`w-6 h-6 ${iconColor}`} />
       </div>
 
-      {/* Name & Description */}
-      <h3 className="text-2xl font-bold text-gray-900 mb-2">{displayName}</h3>
-      <p className="text-gray-600 mb-6">{description}</p>
+      <h3 className="text-xl font-bold text-gray-900 mb-1">{displayName}</h3>
+      <p className="text-sm text-gray-500 mb-6">{description}</p>
 
-      {/* Price */}
       <div className="mb-6">
-        <div className="flex items-baseline">
-          <span className="text-5xl font-bold text-gray-900">${price}</span>
+        <div className="flex items-baseline gap-1">
+          <span className="text-4xl font-bold text-gray-900">${price}</span>
           {billingCycle && (
-            <span className="text-gray-600 ml-2">/{billingCycle}</span>
+            <span className="text-sm text-gray-400">/{billingCycle}</span>
           )}
         </div>
         {name === 'Free' && (
-          <p className="text-sm text-gray-500 mt-1">Forever free</p>
+          <p className="text-xs text-gray-400 mt-1">Forever free</p>
         )}
       </div>
 
-      {/* CTA Button */}
       <button
         onClick={onSelect}
         disabled={ctaDisabled || loading}
-        className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 mb-6 transform hover:-translate-y-1 hover:shadow-lg ${
+        className={`w-full py-2.5 px-6 rounded-xl text-sm font-semibold transition-colors mb-6 ${
           isPopular
             ? 'bg-primary-600 text-white hover:bg-primary-700 disabled:bg-gray-300'
             : 'bg-gray-900 text-white hover:bg-gray-800 disabled:bg-gray-300'
-        } disabled:cursor-not-allowed disabled:opacity-50 disabled:transform-none disabled:shadow-none`}
+        } disabled:cursor-not-allowed disabled:opacity-50`}
       >
         {loading ? (
           <span className="flex items-center justify-center gap-2">
-            <Loader className="w-5 h-5 animate-spin" />
+            <Loader className="w-4 h-4 animate-spin" />
             Processing...
           </span>
         ) : (
@@ -256,34 +248,29 @@ function PricingCard({
         )}
       </button>
 
-      {/* Features */}
-      <div className="space-y-3">
-        <p className="text-sm font-semibold text-gray-900 mb-3">Features:</p>
+      <div className="space-y-2.5">
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Features</p>
         {features.map((feature, index) => (
           <div key={index} className="flex items-start gap-2">
-            <Check className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
-            <span className="text-sm text-gray-700">{feature}</span>
+            <Check className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+            <span className="text-sm text-gray-600">{feature}</span>
           </div>
         ))}
       </div>
 
-      {/* Limits */}
       {limits && limits.length > 0 && (
-        <div className="mt-6 pt-6 border-t border-gray-200">
-          <p className="text-sm font-semibold text-gray-900 mb-3">Limits:</p>
+        <div className="mt-5 pt-5 border-t border-gray-100">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Limits</p>
           {limits.map((limit, index) => (
-            <div key={index} className="flex items-start gap-2 mb-2">
-              <span className="text-sm text-gray-600">{limit}</span>
-            </div>
+            <p key={index} className="text-sm text-gray-500 mb-1.5">{limit}</p>
           ))}
         </div>
       )}
 
-      {/* Current Plan Badge */}
       {isCurrentPlan && (
         <div className="mt-4 text-center">
-          <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
-            <Check className="w-4 h-4" />
+          <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-medium">
+            <Check className="w-3.5 h-3.5" />
             Current Plan
           </span>
         </div>
@@ -292,30 +279,29 @@ function PricingCard({
   );
 }
 
-// FAQ Item Component
 function FAQItem({ question, answer }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors rounded-lg"
+        className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
       >
-        <span className="font-semibold text-gray-900">{question}</span>
-        <span className="text-gray-400 text-xl">{isOpen ? '−' : '+'}</span>
+        <span className="text-sm font-semibold text-gray-900">{question}</span>
+        <ChevronDown className={`w-4 h-4 text-gray-400 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       {isOpen && (
-        <div className="px-6 pb-4">
-          <p className="text-gray-600">{answer}</p>
+        <div className="px-6 pb-4 border-t border-gray-50">
+          <p className="text-sm text-gray-500 pt-3">{answer}</p>
         </div>
       )}
     </div>
   );
 }
 
-// Helper functions
 function parseFeatures(featuresJson) {
+  if (Array.isArray(featuresJson)) return featuresJson;
   try {
     const features = JSON.parse(featuresJson);
     return Array.isArray(features) ? features : [];
@@ -325,15 +311,17 @@ function parseFeatures(featuresJson) {
 }
 
 function parseLimits(limitsJson) {
+  if (limitsJson && typeof limitsJson === 'object' && !Array.isArray(limitsJson)) {
+    return Object.entries(limitsJson).map(([key, value]) => {
+      const formattedKey = key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      return `${formattedKey}: ${value}`;
+    });
+  }
   try {
     const limits = JSON.parse(limitsJson);
     if (!limits || Object.keys(limits).length === 0) return [];
-    
     return Object.entries(limits).map(([key, value]) => {
-      const formattedKey = key
-        .split('_')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
+      const formattedKey = key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
       return `${formattedKey}: ${value}`;
     });
   } catch {
