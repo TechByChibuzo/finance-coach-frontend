@@ -1,10 +1,8 @@
-// src/pages/Budget.jsx 
 import { useState } from 'react';
 import { Plus, RefreshCw, Copy } from 'lucide-react';
-import { startOfMonth, format } from 'date-fns';
+import { startOfMonth } from 'date-fns';
 import { toast } from 'react-hot-toast';
 
-// Components
 import Layout from '../components/layout/Layout';
 import MonthSelector from '../components/budget/MonthSelector';
 import BudgetOverview from '../components/budget/BudgetOverview';
@@ -15,7 +13,6 @@ import EmptyState from '../components/budget/EmptyState';
 import BudgetSkeleton from '../components/budget/BudgetSkeleton';
 import ErrorMessage from '../components/common/ErrorMessage';
 
-// Hooks
 import {
   useBudgets,
   useCreateBudget,
@@ -29,29 +26,26 @@ export default function Budget() {
   const [selectedMonth, setSelectedMonth] = useState(startOfMonth(new Date()));
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBudget, setEditingBudget] = useState(null);
-  const [recommendationData, setRecommendationData] = useState(null); // NEW STATE
+  const [recommendationData, setRecommendationData] = useState(null);
   const [showRecommendations, setShowRecommendations] = useState(false);
 
-  // Queries
   const { data: budgetData, isLoading, error, refetch } = useBudgets(selectedMonth);
 
-  // Mutations
   const createBudget = useCreateBudget();
   const updateBudget = useUpdateBudget();
   const deleteBudget = useDeleteBudget();
   const refreshSpending = useRefreshBudgetSpending();
   const copyPrevious = useCopyPreviousBudgets();
 
-  // Handlers
   const handleCreateBudget = () => {
     setEditingBudget(null);
-    setRecommendationData(null); // CLEAR recommendation data
+    setRecommendationData(null);
     setIsModalOpen(true);
   };
 
   const handleEditBudget = (budget) => {
     setEditingBudget(budget);
-    setRecommendationData(null); // CLEAR recommendation data
+    setRecommendationData(null);
     setIsModalOpen(true);
   };
 
@@ -66,7 +60,7 @@ export default function Budget() {
       }
       setIsModalOpen(false);
       setEditingBudget(null);
-      setRecommendationData(null); // CLEAR recommendation data
+      setRecommendationData(null);
     } catch (error) {
       toast.error(error.response?.data?.error || 'Failed to save budget');
     }
@@ -74,7 +68,6 @@ export default function Budget() {
 
   const handleDeleteBudget = async (budgetId) => {
     if (!confirm('Are you sure you want to delete this budget?')) return;
-
     try {
       await deleteBudget.mutateAsync(budgetId);
       toast.success('Budget deleted successfully!');
@@ -101,14 +94,12 @@ export default function Budget() {
     }
   };
 
-  // FIXED: Handle recommendation click
   const handleCreateFromRecommendation = ({ category, amount }) => {
     setEditingBudget(null);
-    setRecommendationData({ category, amount }); // SET recommendation data
+    setRecommendationData({ category, amount });
     setIsModalOpen(true);
   };
 
-  // Loading state
   if (isLoading) {
     return (
       <Layout>
@@ -117,12 +108,11 @@ export default function Budget() {
     );
   }
 
-  // Error state
   if (error) {
     return (
       <Layout>
-        <ErrorMessage 
-          message={error?.message || 'Failed to load budgets'} 
+        <ErrorMessage
+          message={error?.message || 'Failed to load budgets'}
           onRetry={refetch}
           type="error"
         />
@@ -134,19 +124,16 @@ export default function Budget() {
 
   return (
     <Layout>
-      <div className="space-y-6 slide-in-up">
-        {/* Header */}
+      <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          {/* Title & Month Selector */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Budgets</h1>
-              <p className="text-gray-500 mt-1">Track your spending by category</p>
+              <h1 className="text-2xl font-bold text-gray-900">Budgets</h1>
+              <p className="text-sm text-gray-500 mt-1">Track your spending by category</p>
             </div>
             <MonthSelector currentMonth={selectedMonth} onMonthChange={setSelectedMonth} />
           </div>
 
-          {/* Actions */}
           <div className="flex flex-wrap gap-2">
             {hasBudgets && (
               <>
@@ -180,15 +167,12 @@ export default function Budget() {
           </div>
         </div>
 
-        {/* Content */}
         {!hasBudgets ? (
-          <div className="fade-in">
+          <div>
             <EmptyState
               onCreateBudget={handleCreateBudget}
               onGetRecommendations={() => setShowRecommendations(true)}
             />
-
-            {/* Show recommendations even when no budgets */}
             {showRecommendations && (
               <div className="mt-6">
                 <BudgetRecommendations onCreateFromRecommendation={handleCreateFromRecommendation} />
@@ -197,46 +181,33 @@ export default function Budget() {
           </div>
         ) : (
           <>
-            {/* Budget Overview - with fade in */}
-            <div className="fade-in">
-              <BudgetOverview summary={budgetData} />
-            </div>
+            <BudgetOverview summary={budgetData} />
 
-            {/* Budget Cards Grid - with staggered fade in */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {budgetData.budgets.map((budget, index) => (
-                <div 
-                  key={budget.id} 
-                  className="fade-in"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <BudgetCard
-                    budget={budget}
-                    onEdit={handleEditBudget}
-                    onDelete={handleDeleteBudget}
-                  />
-                </div>
+              {budgetData.budgets.map((budget) => (
+                <BudgetCard
+                  key={budget.id}
+                  budget={budget}
+                  onEdit={handleEditBudget}
+                  onDelete={handleDeleteBudget}
+                />
               ))}
             </div>
 
-            {/* Recommendations - with fade in */}
-            <div className="fade-in" style={{ animationDelay: '0.3s' }}>
-              <BudgetRecommendations onCreateFromRecommendation={handleCreateFromRecommendation} />
-            </div>
+            <BudgetRecommendations onCreateFromRecommendation={handleCreateFromRecommendation} />
           </>
         )}
 
-        {/* Budget Modal - FIXED: Pass recommendationData */}
         <BudgetModal
           isOpen={isModalOpen}
           onClose={() => {
             setIsModalOpen(false);
             setEditingBudget(null);
-            setRecommendationData(null); // CLEAR on close
+            setRecommendationData(null);
           }}
           onSubmit={handleSubmitBudget}
           editBudget={editingBudget}
-          recommendationData={recommendationData} // PASS recommendation data
+          recommendationData={recommendationData}
           currentMonth={selectedMonth}
         />
       </div>

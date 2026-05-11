@@ -1,4 +1,3 @@
-// src/components/budget/BudgetSkeleton.jsx
 import Skeleton from '../common/Skeleton';
 
 export default function BudgetSkeleton() {
@@ -45,7 +44,7 @@ export default function BudgetSkeleton() {
             <div className="space-y-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <Skeleton className="h-10 w-10 rounded-full" />
+                  <Skeleton className="h-10 w-10 rounded-xl" />
                   <div className="space-y-2">
                     <Skeleton className="h-5 w-32" />
                     <Skeleton className="h-3 w-24" />
@@ -62,14 +61,25 @@ export default function BudgetSkeleton() {
       </div>
 
       {/* Recommendations Skeleton */}
-      <div className="card">
-        <Skeleton className="h-6 w-48 mb-4" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="rounded-xl border border-blue-100 bg-linear-to-br from-blue-50 to-indigo-50 p-6">
+        <div className="flex items-center gap-3 mb-5">
+          <Skeleton className="h-9 w-9 rounded-xl" />
+          <div className="space-y-1.5">
+            <Skeleton className="h-4 w-44" />
+            <Skeleton className="h-3 w-32" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {[1, 2, 3].map(i => (
-            <div key={i} className="space-y-3">
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-8 w-32" />
-              <Skeleton className="h-10 w-full" />
+            <div key={i} className="bg-white rounded-xl p-4 border border-blue-100 space-y-3">
+              <div className="flex items-start justify-between">
+                <div className="space-y-1.5">
+                  <Skeleton className="h-3 w-20" />
+                  <Skeleton className="h-6 w-24" />
+                </div>
+                <Skeleton className="h-4 w-4" />
+              </div>
+              <Skeleton className="h-3 w-24" />
             </div>
           ))}
         </div>

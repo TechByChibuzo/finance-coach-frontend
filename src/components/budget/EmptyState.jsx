@@ -1,73 +1,72 @@
-// src/components/budget/EmptyState.jsx - POLISHED VERSION
-import { PiggyBank, Plus, Sparkles } from 'lucide-react';
+import { PiggyBank, Plus, Sparkles, BarChart3, Target, Lightbulb } from 'lucide-react';
+
+const features = [
+  {
+    icon: BarChart3,
+    title: 'Track Spending',
+    description: 'See exactly where your money goes',
+    bgColor: 'bg-blue-100',
+    iconColor: 'text-blue-600',
+  },
+  {
+    icon: Target,
+    title: 'Stay On Track',
+    description: 'Get alerts before you overspend',
+    bgColor: 'bg-red-100',
+    iconColor: 'text-red-500',
+  },
+  {
+    icon: Lightbulb,
+    title: 'AI Insights',
+    description: 'Get personalized recommendations',
+    bgColor: 'bg-amber-100',
+    iconColor: 'text-amber-600',
+  },
+];
 
 export default function EmptyState({ onCreateBudget, onGetRecommendations }) {
   return (
-    <div className="card text-center py-12 fade-in">
+    <div className="card text-center py-12">
       <div className="max-w-md mx-auto">
-        {/* Icon with bounce animation */}
-        <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-100 rounded-full mb-6 animate-bounce">
-          <PiggyBank className="w-10 h-10 text-blue-600" />
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-2xl mb-5">
+          <PiggyBank className="w-8 h-8 text-primary-600" />
         </div>
 
-        {/* Title */}
-        <h2 className="text-2xl font-bold text-gray-900 mb-3">
-          No budgets yet
-        </h2>
-
-        {/* Description */}
-        <p className="text-gray-600 mb-8">
-          Create your first budget to track spending and reach your financial goals. 
-          Budgets help you stay on track and make better financial decisions.
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">No budgets yet</h2>
+        <p className="text-sm text-gray-500 mb-7 leading-relaxed">
+          Create your first budget to track spending and reach your financial goals.
         </p>
 
-        {/* Actions */}
-        <div className="flex flex-col sm:flex-row gap-3 justify-center mb-12">
+        <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
           <button
             onClick={onCreateBudget}
             className="btn-primary inline-flex items-center justify-center gap-2"
           >
-            <Plus className="w-5 h-5" />
+            <Plus className="w-4 h-4" />
             Create Budget
           </button>
-          
           <button
             onClick={onGetRecommendations}
             className="btn-secondary inline-flex items-center justify-center gap-2"
           >
-            <Sparkles className="w-5 h-5" />
+            <Sparkles className="w-4 h-4" />
             Get Recommendations
           </button>
         </div>
 
-        {/* Info Cards with staggered fade-in */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
-          <div 
-            className="p-4 bg-gray-50 rounded-lg transition-all duration-300 hover:shadow-md hover:-translate-y-1 fade-in"
-            style={{ animationDelay: '0.1s' }}
-          >
-            <div className="text-2xl mb-2">📊</div>
-            <h3 className="font-semibold text-gray-900 mb-1">Track Spending</h3>
-            <p className="text-sm text-gray-600">See exactly where your money goes</p>
-          </div>
-          
-          <div 
-            className="p-4 bg-gray-50 rounded-lg transition-all duration-300 hover:shadow-md hover:-translate-y-1 fade-in"
-            style={{ animationDelay: '0.2s' }}
-          >
-            <div className="text-2xl mb-2">🎯</div>
-            <h3 className="font-semibold text-gray-900 mb-1">Stay On Track</h3>
-            <p className="text-sm text-gray-600">Get alerts before overspending</p>
-          </div>
-          
-          <div 
-            className="p-4 bg-gray-50 rounded-lg transition-all duration-300 hover:shadow-md hover:-translate-y-1 fade-in"
-            style={{ animationDelay: '0.3s' }}
-          >
-            <div className="text-2xl mb-2">💡</div>
-            <h3 className="font-semibold text-gray-900 mb-1">AI Insights</h3>
-            <p className="text-sm text-gray-600">Get personalized recommendations</p>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
+          {features.map((feature) => {
+            const Icon = feature.icon;
+            return (
+              <div key={feature.title} className="p-4 border border-gray-100 rounded-xl">
+                <div className={`w-9 h-9 ${feature.bgColor} rounded-lg flex items-center justify-center mb-3`}>
+                  <Icon className={`w-4 h-4 ${feature.iconColor}`} />
+                </div>
+                <h3 className="text-sm font-semibold text-gray-900 mb-0.5">{feature.title}</h3>
+                <p className="text-xs text-gray-500">{feature.description}</p>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
