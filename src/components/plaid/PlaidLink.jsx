@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { usePlaidLink } from 'react-plaid-link';
 import { plaidAPI } from '../../services/api';
+import { Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function PlaidLink({ onSuccess }) {
@@ -23,11 +24,11 @@ export default function PlaidLink({ onSuccess }) {
 
   const { open, ready } = usePlaidLink({
     token: linkToken,
-    onSuccess: async (publicToken, metadata) => {
+    onSuccess: async (publicToken) => {
       setLoading(true);
       try {
         await plaidAPI.exchangeToken(publicToken);
-        toast.success('✅ Bank account connected successfully!');
+        toast.success('Bank account connected successfully!');
         if (onSuccess) onSuccess();
       } catch (error) {
         console.error('Failed to exchange token:', error);
@@ -36,7 +37,7 @@ export default function PlaidLink({ onSuccess }) {
         setLoading(false);
       }
     },
-    onExit: (err, metadata) => {
+    onExit: (err) => {
       if (err) {
         console.error('Plaid Link error:', err);
         toast.error('Bank connection cancelled');
@@ -48,10 +49,10 @@ export default function PlaidLink({ onSuccess }) {
     <button
       onClick={() => open()}
       disabled={!ready || loading}
-      className="btn-primary flex items-center space-x-2"
+      className="btn-primary flex items-center gap-1.5 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      <span>🏦</span>
-      <span>{loading ? 'Connecting...' : 'Connect Bank Account'}</span>
+      <Plus className="w-4 h-4" />
+      <span>{loading ? 'Connecting...' : 'Connect Bank'}</span>
     </button>
   );
 }

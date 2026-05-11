@@ -3,22 +3,31 @@ import { useAuth } from '../hooks/useAuth';
 import Layout from '../components/layout/Layout';
 import PlaidLink from '../components/plaid/PlaidLink';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react'; 
+import { ArrowRight, Landmark, CreditCard, Home, TrendingUp, Wallet, Building2 } from 'lucide-react';
 import { plaidAPI } from '../services/api';
+import { formatCurrency } from '../utils/helpers';
+import Skeleton from '../components/common/Skeleton';
+
+const ACCOUNT_ICONS = {
+  depository: { Icon: Landmark,   bg: 'bg-blue-50',    color: 'text-blue-600' },
+  credit:     { Icon: CreditCard, bg: 'bg-red-50',     color: 'text-red-500' },
+  loan:       { Icon: Home,       bg: 'bg-amber-50',   color: 'text-amber-600' },
+  investment: { Icon: TrendingUp, bg: 'bg-emerald-50', color: 'text-emerald-600' },
+};
+
+const TABS = [
+  { id: 'profile',       name: 'Profile' },
+  { id: 'banks',         name: 'Bank Accounts' },
+  { id: 'billing',       name: 'Billing' },
+  { id: 'notifications', name: 'Notifications' },
+  { id: 'security',      name: 'Security' },
+];
 
 export default function Settings() {
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('profile');
   const [accounts, setAccounts] = useState([]);
   const [loadingAccounts, setLoadingAccounts] = useState(false);
-
-  const tabs = [
-    { id: 'profile', name: 'Profile' },
-    { id: 'banks', name: 'Bank Accounts' },
-    { id: 'billing', name: 'Billing' },
-    { id: 'notifications', name: 'Notifications' },
-    { id: 'security', name: 'Security' },
-  ];
 
   const loadAccounts = async () => {
     setLoadingAccounts(true);
@@ -32,36 +41,28 @@ export default function Settings() {
     }
   };
 
-  const handleBankConnected = () => {
-    loadAccounts();
-  };
-
   return (
     <Layout>
       <div className="space-y-6">
-        {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-          <p className="text-gray-500 mt-1">Manage your account and preferences</p>
+          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+          <p className="text-sm text-gray-500 mt-0.5">Manage your account and preferences</p>
         </div>
 
-        {/* Tabs */}
         <div className="border-b border-gray-200">
           <nav className="-mb-px flex space-x-8">
-            {tabs.map((tab) => (
+            {TABS.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => {
                   setActiveTab(tab.id);
                   if (tab.id === 'banks') loadAccounts();
                 }}
-                className={`
-                  py-4 px-1 border-b-2 font-medium text-sm
-                  ${activeTab === tab.id
-                    ? 'border-sky-600 text-sky-600'
+                className={`py-3.5 px-1 border-b-2 text-sm font-medium transition-colors ${
+                  activeTab === tab.id
+                    ? 'border-primary-600 text-primary-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }
-                `}
+                }`}
               >
                 {tab.name}
               </button>
@@ -69,102 +70,100 @@ export default function Settings() {
           </nav>
         </div>
 
-        {/* Tab Content */}
         <div className="card">
           {activeTab === 'profile' && (
-            <div className="space-y-4">
-              <h2 className="text-xl font-bold text-gray-900">Profile Information</h2>
-              <div className="space-y-3">
+            <div className="space-y-5">
+              <h2 className="text-base font-semibold text-gray-900">Profile Information</h2>
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Full Name
-                  </label>
+                  <label className="block text-sm font-medium text-gray-600 mb-1.5">Full Name</label>
                   <input
                     type="text"
                     value={user?.fullName || ''}
                     disabled
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email
-                  </label>
+                  <label className="block text-sm font-medium text-gray-600 mb-1.5">Email</label>
                   <input
                     type="email"
                     value={user?.email || ''}
                     disabled
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-500"
                   />
                 </div>
-                <button
-                  onClick={logout}
-                  className="btn-secondary mt-4"
-                >
-                  Sign Out
-                </button>
               </div>
+              <button onClick={logout} className="btn-secondary mt-2">
+                Sign Out
+              </button>
             </div>
           )}
 
           {activeTab === 'banks' && (
-            <div className="space-y-6">
+            <div className="space-y-5">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-gray-900">Connected Bank Accounts</h2>
-                <PlaidLink onSuccess={handleBankConnected} />
+                <h2 className="text-base font-semibold text-gray-900">Connected Bank Accounts</h2>
+                <PlaidLink onSuccess={loadAccounts} />
               </div>
 
               {loadingAccounts ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-600 mx-auto"></div>
-                </div>
-              ) : accounts.length > 0 ? (
                 <div className="space-y-3">
-                  {accounts.map((account) => (
-                    <div
-                      key={account.id}
-                      className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div className="h-12 w-12 bg-sky-100 rounded-full flex items-center justify-center">
-                          <span className="text-2xl">{getAccountIcon(account.accountType)}</span>
-                        </div>
-                        <div>
-                          <p className="font-semibold text-gray-900">
-                            {account.accountName}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            {account.institutionName}
-                          </p>
-                          <p className="text-xs text-gray-400 capitalize">
-                            {account.accountType}
-                          </p>
+                  {[0, 1, 2].map((i) => (
+                    <div key={i} className="flex items-center justify-between p-4 border border-gray-100 rounded-xl">
+                      <div className="flex items-center gap-4">
+                        <Skeleton className="w-10 h-10 rounded-xl" />
+                        <div className="space-y-1.5">
+                          <Skeleton className="h-4 w-36" />
+                          <Skeleton className="h-3 w-24" />
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-bold text-gray-900">
-                          ${account.currentBalance?.toLocaleString('en-US', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                          })}
-                        </p>
-                        {account.availableBalance !== null && (
-                          <p className="text-xs text-gray-500">
-                            Available: ${account.availableBalance?.toLocaleString('en-US', {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2
-                            })}
-                          </p>
-                        )}
-                      </div>
+                      <Skeleton className="h-5 w-24" />
                     </div>
                   ))}
                 </div>
+              ) : accounts.length > 0 ? (
+                <div className="space-y-3">
+                  {accounts.map((account) => {
+                    const typeKey = account.accountType?.toLowerCase();
+                    const iconConfig = ACCOUNT_ICONS[typeKey] || { Icon: Wallet, bg: 'bg-gray-100', color: 'text-gray-500' };
+                    const { Icon } = iconConfig;
+                    return (
+                      <div
+                        key={account.id}
+                        className="flex items-center justify-between p-4 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className={`w-10 h-10 ${iconConfig.bg} rounded-xl flex items-center justify-center shrink-0`}>
+                            <Icon className={`w-5 h-5 ${iconConfig.color}`} />
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-gray-900">{account.accountName}</p>
+                            <p className="text-xs text-gray-400">{account.institutionName}</p>
+                            <p className="text-xs text-gray-400 capitalize">{account.accountType}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-semibold text-gray-900">
+                            {formatCurrency(account.currentBalance)}
+                          </p>
+                          {account.availableBalance !== null && (
+                            <p className="text-xs text-gray-400">
+                              Avail: {formatCurrency(account.availableBalance)}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               ) : (
                 <div className="text-center py-12">
-                  <span className="text-6xl mb-4 block">🏦</span>
-                  <p className="text-gray-500 mb-4">No bank accounts connected yet</p>
-                  <p className="text-sm text-gray-400">
+                  <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <Building2 className="w-6 h-6 text-gray-400" />
+                  </div>
+                  <p className="text-sm text-gray-500 mb-1">No bank accounts connected yet</p>
+                  <p className="text-xs text-gray-400">
                     Connect your bank account to start tracking your finances
                   </p>
                 </div>
@@ -174,14 +173,11 @@ export default function Settings() {
 
           {activeTab === 'billing' && (
             <div className="space-y-4">
-              <h2 className="text-xl font-bold text-gray-900">Subscription & Billing</h2>
-              <p className="text-gray-600">
+              <h2 className="text-base font-semibold text-gray-900">Subscription & Billing</h2>
+              <p className="text-sm text-gray-500">
                 Manage your subscription, payment method, and billing history
               </p>
-              <Link
-                to="/settings/billing"
-                className="btn-primary inline-flex items-center gap-2"
-              >
+              <Link to="/settings/billing" className="btn-primary inline-flex items-center gap-2">
                 <span>Manage Billing</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
@@ -190,29 +186,19 @@ export default function Settings() {
 
           {activeTab === 'notifications' && (
             <div>
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Notifications</h2>
-              <p className="text-gray-500">Coming soon...</p>
+              <h2 className="text-base font-semibold text-gray-900 mb-2">Notifications</h2>
+              <p className="text-sm text-gray-400">Coming soon...</p>
             </div>
           )}
 
           {activeTab === 'security' && (
             <div>
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Security</h2>
-              <p className="text-gray-500">Coming soon...</p>
+              <h2 className="text-base font-semibold text-gray-900 mb-2">Security</h2>
+              <p className="text-sm text-gray-400">Coming soon...</p>
             </div>
           )}
         </div>
       </div>
     </Layout>
   );
-}
-
-function getAccountIcon(accountType) {
-  const icons = {
-    'depository': '🏦',
-    'credit': '💳',
-    'loan': '🏠',
-    'investment': '📈',
-  };
-  return icons[accountType] || '💰';
 }

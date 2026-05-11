@@ -19,7 +19,7 @@ export function useTransactions() {
       toast.loading('Syncing transactions...', { id: 'sync' });
     },
     onSuccess: () => {
-      toast.success('✅ Transactions synced!', { id: 'sync' });
+      toast.success('Transactions synced!', { id: 'sync' });
       queryClient.invalidateQueries();
     },
     onError: (error) => {

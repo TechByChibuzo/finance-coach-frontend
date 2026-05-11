@@ -91,7 +91,7 @@ export default function Dashboard() {
       
       await transactionsAPI.sync();
       
-      toast.success('✅ Transactions synced!', { id: 'sync' });
+      toast.success('Transactions synced!', { id: 'sync' });
       
       await loadDashboardData(false);
     } catch (err) {

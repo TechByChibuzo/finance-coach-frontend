@@ -85,7 +85,7 @@ export default function Investments() {
     onSuccess: () => {
       queryClient.invalidateQueries(['portfolio']);
       queryClient.invalidateQueries(['allocation']);
-      toast.success('✅ Holdings synced successfully!');
+      toast.success('Holdings synced successfully!');
     },
     onError: (error) => {
       toast.error(error.response?.data?.message || 'Failed to sync holdings');

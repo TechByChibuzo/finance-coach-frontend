@@ -100,7 +100,7 @@ export default function Transactions() {
       toast.loading('Syncing transactions...', { id: 'sync' });
       await transactionsAPI.sync();
       await loadTransactions();
-      toast.success('✅ Transactions synced!', { id: 'sync' });
+      toast.success('Transactions synced!', { id: 'sync' });
     } catch (error) {
       console.error('Failed to sync transactions:', error);
       toast.error('Failed to sync transactions', { id: 'sync' });
