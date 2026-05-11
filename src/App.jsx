@@ -19,7 +19,9 @@ import Register from './pages/Register';
 // Lazy load main app pages (only load when needed)
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Transactions = lazy(() => import('./pages/Transactions'));
-const Budget = lazy(() => import('./pages/Budget')); // ADD THIS LINE
+const Budget = lazy(() => import('./pages/Budget')); 
+const Investments = lazy(() => import('./pages/Investments'));
+const NetWorth = lazy(() => import('./pages/NetWorth'));
 const AICoach = lazy(() => import('./pages/AICoach'));
 const Settings = lazy(() => import('./pages/Settings'));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -103,6 +105,22 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Budget />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/investments"
+                element={
+                  <ProtectedRoute>
+                    <Investments />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/net-worth"
+                element={
+                  <ProtectedRoute>
+                    <NetWorth />
                   </ProtectedRoute>
                 }
               />

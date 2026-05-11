@@ -132,7 +132,7 @@ export default function BudgetModal({
 
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Category *</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1.5">Category *</label>
             <select
               value={formData.category}
               onChange={(e) => handleChange('category', e.target.value)}
@@ -148,7 +148,7 @@ export default function BudgetModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Amount *</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1.5">Amount *</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">$</span>
               <input
@@ -165,7 +165,7 @@ export default function BudgetModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-sm font-medium text-gray-600 mb-1.5">
               Alert at {formData.alertThreshold}% of budget
             </label>
             <input
@@ -185,7 +185,7 @@ export default function BudgetModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Notes (optional)</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1.5">Notes (optional)</label>
             <textarea
               value={formData.notes}
               onChange={(e) => handleChange('notes', e.target.value)}
