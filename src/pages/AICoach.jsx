@@ -56,6 +56,21 @@ const INITIAL_MESSAGE = {
   content: "Hi! I'm your AI financial coach. I can help you understand your spending, create budgets, and achieve your financial goals. What would you like to know?",
 };
 
+// Explain why a chat request failed, using the backend's status codes
+function aiErrorMessage(err) {
+  const status = err.response?.status;
+  if (status === 429) {
+    return "You've used all your free AI coach messages for this month. Upgrade to Premium for unlimited coaching.";
+  }
+  if (status === 403) {
+    return err.response?.data?.message || 'The AI coach is not available on your plan.';
+  }
+  if (status === 503) {
+    return 'The AI coach is temporarily unavailable. Please try again in a few minutes.';
+  }
+  return "I'm sorry, I'm having trouble connecting right now. Please try again in a moment.";
+}
+
 export default function AICoach() {
   const [messages, setMessages] = useState([INITIAL_MESSAGE]);
   const [input, setInput] = useState('');
@@ -86,11 +101,12 @@ export default function AICoach() {
       }]);
     } catch (err) {
       console.error('Failed to send message:', err);
-      setError('Failed to get AI response. Please try again.');
-      toast.error('Failed to get AI response');
+      const content = aiErrorMessage(err);
+      setError(content);
+      toast.error(content);
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: "I'm sorry, I'm having trouble connecting right now. Please try again in a moment.",
+        content,
         isError: true
       }]);
     } finally {
@@ -102,7 +118,13 @@ export default function AICoach() {
     setInput(message);
   };
 
-  const clearChat = () => {
+  const clearChat = async () => {
+    try {
+      // The coach remembers the conversation server-side; clear that too
+      await aiCoachAPI.clearSession();
+    } catch (err) {
+      console.error('Failed to clear chat history:', err);
+    }
     setMessages([INITIAL_MESSAGE]);
     setError(null);
     toast.success('Chat cleared');
