@@ -37,11 +37,18 @@ api.interceptors.response.use(
       originalRequest._retryCount = 0;
     }
 
+    // Only retry requests that are safe to repeat. Retrying a POST (checkout, linking a bank,
+    // AI chat) after a timeout or 5xx could run it twice.
+    const isIdempotent = ['get', 'head', 'options', 'put', 'delete']
+      .includes((originalRequest.method || 'get').toLowerCase());
+
     // Don't retry if:
     // 1. Already retried 3 times
     // 2. Request was cancelled
     // 3. Error is 4xx (client error - retrying won't help)
-    const shouldRetry = 
+    // 4. The request isn't safe to repeat
+    const shouldRetry =
+      isIdempotent &&
       originalRequest._retryCount < 3 &&
       error.code !== 'ECONNABORTED' &&
       (!error.response || error.response.status >= 500);
@@ -66,8 +73,10 @@ api.interceptors.response.use(
 
     // Handle specific error cases
     
-    // 401 Unauthorized - redirect to login
-    if (error.response?.status === 401) {
+    // 401 Unauthorized - session missing/expired/revoked: redirect to login.
+    // Auth requests (wrong password, bad reset token) return 401 too; let their pages show the error.
+    const isAuthRequest = (originalRequest.url || '').startsWith('/auth/');
+    if (error.response?.status === 401 && !isAuthRequest) {
       console.log('🔐 Unauthorized - redirecting to login');
       localStorage.removeItem('token');
       window.location.href = '/login';
@@ -164,6 +173,10 @@ export const aiCoachAPI = {
   
   getSavingsRecommendations: (savingsGoal) => 
     api.post('/ai-coach/savings-recommendations', { savingsGoal }),
+
+  // Clears the conversation history the coach remembers (chat uses the "default" session)
+  clearSession: (sessionId = 'default') =>
+    api.delete(`/ai-coach/chat/${sessionId}`),
 };
 
 // Plaid API
