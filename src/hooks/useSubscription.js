@@ -76,10 +76,11 @@ export const useCancelSubscription = () => {
 
   return useMutation({
     mutationFn: () => subscriptionAPI.cancelSubscription(),
-    onSuccess: () => {
+    onSuccess: (response) => {
       // Invalidate and refetch subscription data
       queryClient.invalidateQueries({ queryKey: ['currentSubscription'] });
-      toast.success('Subscription cancelled successfully');
+      // Paid plans stay active until the end of the billing period; the backend says until when
+      toast.success(response.data?.message || 'Subscription cancelled');
     },
     onError: (error) => {
       console.error('Cancel error:', error);
