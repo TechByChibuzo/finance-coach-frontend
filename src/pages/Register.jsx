@@ -29,8 +29,9 @@ export default function Register() {
       toast.error('Passwords do not match');
       return;
     }
-    if (formData.password.length < 6) {
-      toast.error('Password must be at least 6 characters');
+    // Must match the backend rule (UserRegistrationRequest: @Size(min = 8))
+    if (formData.password.length < 8) {
+      toast.error('Password must be at least 8 characters');
       return;
     }
 
@@ -149,7 +150,7 @@ export default function Register() {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="Min. 6 characters"
+                  placeholder="Min. 8 characters"
                   disabled={loading}
                   autoComplete="new-password"
                   required
