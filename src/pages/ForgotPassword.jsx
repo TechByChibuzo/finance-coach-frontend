@@ -163,11 +163,11 @@ export default function ForgotPassword() {
         {/* Security trust badge */}
         <div className="flex items-center justify-center gap-1.5 mt-5 text-xs text-slate-500">
           <ShieldCheck className="w-3.5 h-3.5" />
-          <span>256-bit SSL encrypted · Bank-level security</span>
+          <span>Banks connect through Plaid. We never see your bank password.</span>
         </div>
 
         <p className="text-center mt-3 text-xs text-slate-600">
-          © 2025 Finance Coach. All rights reserved.
+          © {new Date().getFullYear()} Finance Coach
         </p>
       </div>
     </div>
