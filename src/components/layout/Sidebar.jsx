@@ -76,7 +76,7 @@ export default function Sidebar({ isOpen, onClose }) {
       <div className={`
         fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-100 flex flex-col
         transform transition-transform duration-300 ease-in-out
-        lg:translate-x-0 lg:static lg:inset-0
+        lg:translate-x-0 lg:sticky lg:top-16 lg:h-[calc(100dvh-4rem)] lg:self-start lg:z-auto
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         {/* Mobile header */}
