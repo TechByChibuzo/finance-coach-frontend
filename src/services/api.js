@@ -2,6 +2,10 @@ import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8090/api';
 
+// AI replies and a bank's first sync can take well over the default 30s. If the browser
+// gave up first, the server would still finish (and count the AI use) but the user would see an error.
+const SLOW = { timeout: 120000 };
+
 
 // Create axios instance
 const api = axios.create({
@@ -127,13 +131,19 @@ export const authAPI = {
   },
 };
 
+// User API
+export const userAPI = {
+  // Cancels billing, disconnects banks and erases all of the user's data
+  deleteAccount: () => api.delete('/users/me', SLOW),
+};
+
 // Transactions API
 export const transactionsAPI = {
   getAll: () => 
     api.get('/transactions'),
   
   sync: () => 
-    api.post('/transactions/sync'),
+    api.post('/transactions/sync', null, SLOW),
   
   getByDateRange: (startDate, endDate) => 
     api.get('/transactions', { params: { startDate, endDate } }),
@@ -160,19 +170,19 @@ export const analyticsAPI = {
 // AI Coach API
 export const aiCoachAPI = {
   chat: (message) => 
-    api.post('/ai-coach/chat', { message }),
+    api.post('/ai-coach/chat', { message }, SLOW),
   
   getWeeklySummary: () => 
-    api.get('/ai-coach/weekly-summary'),
+    api.get('/ai-coach/weekly-summary', SLOW),
   
   getMonthlyReport: () => 
-    api.get('/ai-coach/monthly-report'),
+    api.get('/ai-coach/monthly-report', SLOW),
   
   analyzeCategory: (category) => 
-    api.get(`/ai-coach/analyze-category/${category}`),
+    api.get(`/ai-coach/analyze-category/${category}`, SLOW),
   
   getSavingsRecommendations: (savingsGoal) => 
-    api.post('/ai-coach/savings-recommendations', { savingsGoal }),
+    api.post('/ai-coach/savings-recommendations', { savingsGoal }, SLOW),
 
   // Clears the conversation history the coach remembers (chat uses the "default" session)
   clearSession: (sessionId = 'default') =>
@@ -185,7 +195,7 @@ export const plaidAPI = {
     api.post('/plaid/create-link-token'),
   
   exchangeToken: (publicToken) => 
-    api.post('/plaid/exchange-token', { publicToken }),
+    api.post('/plaid/exchange-token', { publicToken }, SLOW),
   
   getAccounts: () => 
     api.get('/plaid/accounts'),
@@ -252,7 +262,7 @@ export const subscriptionAPI = {
 
 export const investmentsAPI = {
   // Sync holdings from Plaid
-  syncAllHoldings: () => api.post('/investments/sync'),
+  syncAllHoldings: () => api.post('/investments/sync', null, SLOW),
   
   syncAccountHoldings: (accountId) => 
     api.post(`/investments/sync/${accountId}`),

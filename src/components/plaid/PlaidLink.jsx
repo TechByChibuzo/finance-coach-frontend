@@ -1,25 +1,46 @@
 import { useEffect, useState } from 'react';
 import { usePlaidLink } from 'react-plaid-link';
-import { plaidAPI } from '../../services/api';
+import { Link } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
+import { plaidAPI, transactionsAPI } from '../../services/api';
 import { Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function PlaidLink({ onSuccess }) {
+  const queryClient = useQueryClient();
   const [linkToken, setLinkToken] = useState(null);
   const [loading, setLoading] = useState(false);
+  // Set when the plan's bank connection limit is reached (the backend explains it)
+  const [limitMessage, setLimitMessage] = useState(null);
 
   useEffect(() => {
+    const createLinkToken = async () => {
+      try {
+        const response = await plaidAPI.createLinkToken();
+        setLinkToken(response.data.linkToken);
+      } catch (error) {
+        if (error.response?.status === 403) {
+          setLimitMessage(error.response.data?.message || 'Upgrade your plan to connect more banks.');
+          return;
+        }
+        console.error('Failed to create link token:', error);
+        toast.error('Failed to initialize bank connection');
+      }
+    };
     createLinkToken();
   }, []);
 
-  const createLinkToken = async () => {
+  // Import the new bank's transactions right away, so the dashboard isn't empty
+  const importTransactions = async () => {
+    const importing = toast.loading('Importing your transactions...');
     try {
-      const response = await plaidAPI.createLinkToken();
-      setLinkToken(response.data.linkToken);
-    } catch (error) {
-      console.error('Failed to create link token:', error);
-      toast.error('Failed to initialize bank connection');
+      await transactionsAPI.sync();
+      toast.success('Transactions imported', { id: importing });
+    } catch {
+      // Plaid can take a moment to prepare a new bank's history; the scheduled sync picks it up
+      toast('Your transactions will appear shortly. Use Sync to refresh.', { id: importing });
     }
+    queryClient.invalidateQueries();
   };
 
   const { open, ready } = usePlaidLink({
@@ -30,9 +51,11 @@ export default function PlaidLink({ onSuccess }) {
         await plaidAPI.exchangeToken(publicToken);
         toast.success('Bank account connected successfully!');
         if (onSuccess) onSuccess();
+        await importTransactions();
+        if (onSuccess) onSuccess();
       } catch (error) {
         console.error('Failed to exchange token:', error);
-        toast.error('Failed to connect bank account');
+        toast.error(error.response?.data?.message || 'Failed to connect bank account');
       } finally {
         setLoading(false);
       }
@@ -44,6 +67,17 @@ export default function PlaidLink({ onSuccess }) {
       }
     },
   });
+
+  if (limitMessage) {
+    return (
+      <div className="text-right">
+        <p className="text-xs text-gray-500 max-w-xs">{limitMessage}</p>
+        <Link to="/pricing" className="text-xs font-medium text-primary-600 hover:text-primary-700">
+          View plans
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <button
