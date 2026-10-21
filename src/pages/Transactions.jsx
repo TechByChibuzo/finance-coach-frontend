@@ -1,63 +1,44 @@
-import { useEffect, useState } from 'react';
-import { format, subDays } from 'date-fns';
+import { useEffect, useMemo, useState } from 'react';
+import { addMonths, format, isSameMonth, parseISO, startOfMonth, subDays } from 'date-fns';
+import { ChevronDown, ChevronLeft, ChevronRight, RefreshCw, Search } from 'lucide-react';
+import toast from 'react-hot-toast';
 import Layout from '../components/layout/Layout';
 import CategoryIcon from '../components/common/CategoryIcon';
-import { transactionsAPI } from '../services/api';
-import { Search, SlidersHorizontal, RefreshCw, CreditCard, ChevronDown } from 'lucide-react';
-import { formatCurrency } from '../utils/helpers';
-import toast from 'react-hot-toast';
 import Skeleton from '../components/common/Skeleton';
+import { plaidAPI, transactionsAPI } from '../services/api';
+import { formatCurrency } from '../utils/helpers';
+import { categoryLabel } from '../utils/categories';
 
-const CATEGORY_NAME_MAP = {
-  'FOOD_AND_DRINK':      'Food & Dining',
-  'LOAN_PAYMENTS':       'Loans',
-  'TRANSPORTATION':      'Transportation',
-  'GENERAL_MERCHANDISE': 'Shopping',
-  'ENTERTAINMENT':       'Entertainment',
-  'TRAVEL':              'Travel',
-  'PERSONAL_CARE':       'Personal Care',
-  'RENT_AND_UTILITIES':  'Bills & Utilities',
-  'HEALTHCARE':          'Healthcare',
-  'HOME_IMPROVEMENT':    'Home',
-  'TRANSFER_IN':         'Transfer In',
-  'TRANSFER_OUT':        'Transfer Out',
-  'INCOME':              'Income',
+// Same rule as the backend's totals: moving money between your own accounts
+// (transfers, paying off a credit card) is neither spending nor income.
+const isTransfer = (t) =>
+  t.category === 'TRANSFER_IN' ||
+  t.category === 'TRANSFER_OUT' ||
+  t.subcategory === 'LOAN_PAYMENTS_CREDIT_CARD_PAYMENT';
+
+const todayKey = format(new Date(), 'yyyy-MM-dd');
+const yesterdayKey = format(subDays(new Date(), 1), 'yyyy-MM-dd');
+
+const dayLabel = (key) => {
+  if (key === todayKey) return 'Today';
+  if (key === yesterdayKey) return 'Yesterday';
+  return format(parseISO(key), 'EEEE, MMM d');
 };
-
-const todayStr = format(new Date(), 'yyyy-MM-dd');
-const yesterdayStr = format(subDays(new Date(), 1), 'yyyy-MM-dd');
-
-function formatGroupLabel(dateStr) {
-  if (dateStr === todayStr) return 'Today';
-  if (dateStr === yesterdayStr) return 'Yesterday';
-  return format(new Date(`${dateStr}T12:00:00`), 'MMMM d, yyyy');
-}
 
 function TransactionsSkeleton() {
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="space-y-2">
-          <Skeleton className="h-7 w-40" />
-          <Skeleton className="h-4 w-28" />
-        </div>
-        <Skeleton className="h-9 w-36 rounded-lg" />
-      </div>
-      <div className="card">
-        <div className="flex gap-3">
-          <Skeleton className="h-10 flex-1 rounded-lg" />
-          <Skeleton className="h-10 w-56 rounded-lg" />
-        </div>
-      </div>
-      <div className="card">
+      <Skeleton className="h-9 w-48" />
+      <Skeleton className="h-28 w-full rounded-2xl" />
+      <div className="card space-y-4">
         {[...Array(8)].map((_, i) => (
-          <div key={i} className="flex items-center gap-4 py-4 border-b border-gray-100 last:border-0">
+          <div key={i} className="flex items-center gap-4">
             <Skeleton className="h-10 w-10 rounded-xl shrink-0" />
             <div className="flex-1 space-y-2">
               <Skeleton className="h-4 w-40" />
               <Skeleton className="h-3 w-24" />
             </div>
-            <Skeleton className="h-4 w-20" />
+            <Skeleton className="h-4 w-16" />
           </div>
         ))}
       </div>
@@ -67,231 +48,216 @@ function TransactionsSkeleton() {
 
 export default function Transactions() {
   const [transactions, setTransactions] = useState([]);
-  const [filteredTransactions, setFilteredTransactions] = useState([]);
+  const [accountNames, setAccountNames] = useState({});
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
   const [syncing, setSyncing] = useState(false);
-
-  useEffect(() => {
-    loadTransactions();
-  }, []);
-
-  useEffect(() => {
-    filterTransactions();
-  }, [searchTerm, selectedCategory, transactions]);
+  const [month, setMonth] = useState(() => startOfMonth(new Date()));
+  const [searchTerm, setSearchTerm] = useState('');
+  const [category, setCategory] = useState('all');
 
   const loadTransactions = async () => {
     try {
-      setLoading(true);
-      const response = await transactionsAPI.getAll();
-      setTransactions(response.data);
+      const [txRes, accountsRes] = await Promise.all([
+        transactionsAPI.getAll(),
+        plaidAPI.getAccounts().catch(() => ({ data: [] })),
+      ]);
+      setTransactions(txRes.data);
+      setAccountNames(Object.fromEntries(accountsRes.data.map((a) => [a.id, a.accountName])));
     } catch (error) {
       console.error('Failed to load transactions:', error);
-      toast.error('Failed to load transactions');
+      toast.error("Couldn't load your transactions. Try again in a moment.");
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    loadTransactions();
+  }, []);
+
   const syncTransactions = async () => {
+    setSyncing(true);
+    const id = toast.loading('Syncing your accounts…');
     try {
-      setSyncing(true);
-      toast.loading('Syncing transactions...', { id: 'sync' });
       await transactionsAPI.sync();
       await loadTransactions();
-      toast.success('Transactions synced!', { id: 'sync' });
+      toast.success('Accounts synced', { id });
     } catch (error) {
       console.error('Failed to sync transactions:', error);
-      toast.error('Failed to sync transactions', { id: 'sync' });
+      toast.error("Sync didn't finish. Try again in a moment.", { id });
     } finally {
       setSyncing(false);
     }
   };
 
-  const filterTransactions = () => {
-    let filtered = [...transactions];
-    if (searchTerm) {
-      filtered = filtered.filter(t =>
-        t.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        t.merchantName?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+  const monthTransactions = useMemo(
+    () => transactions.filter((t) => isSameMonth(parseISO(t.date), month)),
+    [transactions, month]
+  );
+
+  const categories = useMemo(
+    () => [...new Set(monthTransactions.map((t) => t.category).filter(Boolean))]
+      .sort((a, b) => categoryLabel(a).localeCompare(categoryLabel(b))),
+    [monthTransactions]
+  );
+
+  const visible = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    return monthTransactions.filter((t) =>
+      (category === 'all' || t.category === category) &&
+      (!term || t.name?.toLowerCase().includes(term) || t.merchantName?.toLowerCase().includes(term))
+    );
+  }, [monthTransactions, searchTerm, category]);
+
+  const totals = useMemo(() => {
+    let spent = 0;
+    let income = 0;
+    for (const t of visible) {
+      if (isTransfer(t)) continue;
+      if (t.amount > 0) spent += t.amount;
+      else income += -t.amount;
     }
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(t => t.category === selectedCategory);
-    }
-    setFilteredTransactions(filtered);
-  };
+    return { spent, income, net: income - spent };
+  }, [visible]);
 
-  const categories = ['all', ...new Set(transactions.map(t => t.category).filter(Boolean))];
-
-  const totalSpent = filteredTransactions
-    .filter(t => t.amount > 0)
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  const totalIncome = filteredTransactions
-    .filter(t => t.amount < 0)
-    .reduce((sum, t) => sum + Math.abs(t.amount), 0);
-
-  const groupedTransactions = filteredTransactions.reduce((acc, t) => {
-    const key = format(new Date(`${t.date}T12:00:00`), 'yyyy-MM-dd');
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(t);
-    return acc;
-  }, {});
-
-  const sortedGroups = Object.entries(groupedTransactions)
-    .sort(([a], [b]) => new Date(b) - new Date(a));
+  const days = useMemo(() => {
+    const groups = {};
+    for (const t of visible) (groups[t.date] ||= []).push(t);
+    return Object.entries(groups).sort(([a], [b]) => b.localeCompare(a));
+  }, [visible]);
 
   if (loading) {
-    return (
-      <Layout>
-        <TransactionsSkeleton />
-      </Layout>
-    );
+    return <Layout><TransactionsSkeleton /></Layout>;
   }
+
+  const isCurrentMonth = isSameMonth(month, new Date());
+  const filtering = searchTerm || category !== 'all';
 
   return (
     <Layout>
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Transactions</h1>
-            <p className="text-sm text-gray-500 mt-1">
-              {filteredTransactions.length} transaction{filteredTransactions.length !== 1 ? 's' : ''}
+        <header className="flex items-end justify-between gap-4">
+          <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Transactions</h1>
+          <button onClick={syncTransactions} disabled={syncing} className="btn-secondary flex items-center gap-2 text-sm" aria-label="Sync accounts">
+            <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} aria-hidden />
+            <span className="hidden sm:inline">{syncing ? 'Syncing…' : 'Sync'}</span>
+          </button>
+        </header>
+
+        <section className="card p-0" aria-label="Month summary">
+          <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-gray-100">
+            <button
+              onClick={() => setMonth((m) => addMonths(m, -1))}
+              className="p-2 -ml-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+              aria-label="Previous month"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <p className="text-base font-bold text-gray-900">{format(month, 'MMMM yyyy')}</p>
+            <button
+              onClick={() => setMonth((m) => addMonths(m, 1))}
+              disabled={isCurrentMonth}
+              className="p-2 -mr-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900 disabled:opacity-30 disabled:hover:bg-transparent"
+              aria-label="Next month"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+          <dl className="grid grid-cols-3 divide-x divide-gray-100">
+            {[
+              ['Spent', formatCurrency(totals.spent), 'text-gray-900'],
+              ['Money in', formatCurrency(totals.income), 'text-green-600'],
+              ['Net', `${totals.net > 0 ? '+' : ''}${formatCurrency(totals.net)}`, totals.net < 0 ? 'text-red-600' : 'text-green-600'],
+            ].map(([label, value, tone]) => (
+              <div key={label} className="px-4 sm:px-6 py-4">
+                <dt className="text-xs font-medium text-gray-500">{label}</dt>
+                <dd className={`mt-1 text-base sm:text-xl font-bold ${tone}`}>{value}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+
+        <div className="flex flex-col sm:flex-row gap-3">
+          <label className="relative flex-1">
+            <span className="sr-only">Search transactions</span>
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" aria-hidden />
+            <input
+              type="search"
+              placeholder="Search by merchant"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white placeholder:text-gray-400 focus:outline-2 focus:outline-primary-600"
+            />
+          </label>
+          <label className="relative sm:w-60">
+            <span className="sr-only">Category</span>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full pl-4 pr-10 py-2.5 border border-gray-200 rounded-xl text-sm bg-white appearance-none focus:outline-2 focus:outline-primary-600"
+            >
+              <option value="all">All categories</option>
+              {categories.map((c) => <option key={c} value={c}>{categoryLabel(c)}</option>)}
+            </select>
+            <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" aria-hidden />
+          </label>
+        </div>
+
+        {days.length === 0 ? (
+          <div className="card text-center py-14">
+            {transactions.length === 0 ? (
+              <>
+                <p className="text-sm text-gray-600 mb-4">Connect a bank in Settings, then sync to bring in your transactions.</p>
+                <button onClick={syncTransactions} disabled={syncing} className="btn-primary text-sm">
+                  {syncing ? 'Syncing…' : 'Sync now'}
+                </button>
+              </>
+            ) : filtering ? (
+              <p className="text-sm text-gray-600">Nothing in {format(month, 'MMMM')} matches that search or category.</p>
+            ) : (
+              <p className="text-sm text-gray-600">No transactions in {format(month, 'MMMM yyyy')}.</p>
+            )}
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {days.map(([day, txns]) => {
+              const daySpent = txns.reduce((sum, t) => (!isTransfer(t) && t.amount > 0 ? sum + t.amount : sum), 0);
+              return (
+                <section key={day} className="card py-2 px-5 sm:px-6" aria-label={dayLabel(day)}>
+                  <div className="flex items-baseline justify-between py-3 border-b border-gray-100">
+                    <h2 className="text-sm font-bold text-gray-900">{dayLabel(day)}</h2>
+                    {daySpent > 0 && <p className="text-xs font-medium text-gray-500">{formatCurrency(daySpent)} spent</p>}
+                  </div>
+                  <ul className="divide-y divide-gray-100">
+                    {txns.map((t) => {
+                      const transfer = isTransfer(t);
+                      const moneyIn = t.amount < 0;
+                      return (
+                        <li key={t.id} className="flex items-center gap-3 sm:gap-4 py-3">
+                          <CategoryIcon category={t.category} size="md" />
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-semibold text-gray-900 truncate">{t.merchantName || t.name}</p>
+                            <p className="text-xs text-gray-500 truncate">
+                              {transfer ? 'Transfer' : categoryLabel(t.category)}
+                              {accountNames[t.accountId] && <span className="hidden sm:inline">, {accountNames[t.accountId]}</span>}
+                              {t.pending && <span className="ml-1.5 font-medium text-amber-600">Pending</span>}
+                            </p>
+                          </div>
+                          <p className={`text-sm font-bold shrink-0 ${transfer ? 'text-gray-400' : moneyIn ? 'text-green-600' : 'text-gray-900'}`}>
+                            {moneyIn ? '+' : ''}{formatCurrency(Math.abs(t.amount))}
+                          </p>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </section>
+              );
+            })}
+            <p className="text-xs text-gray-500 px-1">
+              Transfers between your own accounts and credit card payments are listed but not counted as spending or income.
             </p>
           </div>
-          <button
-            onClick={syncTransactions}
-            disabled={syncing}
-            className="btn-primary flex items-center gap-2 disabled:opacity-50"
-          >
-            <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
-            <span>{syncing ? 'Syncing...' : 'Sync Transactions'}</span>
-          </button>
-        </div>
-
-        {/* Filters */}
-        <div className="card">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-              <input
-                type="text"
-                placeholder="Search transactions..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 bg-white"
-              />
-            </div>
-            <div className="relative sm:w-56">
-              <SlidersHorizontal className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full pl-9 pr-9 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 appearance-none bg-white"
-              >
-                {categories.map(category => (
-                  <option key={category} value={category}>
-                    {category === 'all'
-                      ? 'All Categories'
-                      : CATEGORY_NAME_MAP[category] || category.replace(/_/g, ' ')}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {/* Transactions */}
-        <div className="card">
-          {filteredTransactions.length > 0 ? (
-            <>
-              {/* Summary bar */}
-              <div className="flex items-center gap-6 pb-4 mb-2 border-b border-gray-100">
-                <div>
-                  <p className="text-xs text-gray-400 mb-0.5">Spent</p>
-                  <p className="text-sm font-semibold text-gray-900">{formatCurrency(totalSpent)}</p>
-                </div>
-                <div className="w-px h-8 bg-gray-100" />
-                <div>
-                  <p className="text-xs text-gray-400 mb-0.5">Income</p>
-                  <p className="text-sm font-semibold text-green-600">{formatCurrency(totalIncome)}</p>
-                </div>
-                <div className="w-px h-8 bg-gray-100" />
-                <div>
-                  <p className="text-xs text-gray-400 mb-0.5">Net</p>
-                  <p className={`text-sm font-semibold ${totalIncome - totalSpent >= 0 ? 'text-green-600' : 'text-red-500'}`}>
-                    {totalIncome - totalSpent >= 0 ? '+' : ''}{formatCurrency(Math.abs(totalIncome - totalSpent))}
-                  </p>
-                </div>
-              </div>
-
-              {/* Grouped list */}
-              <div className="space-y-5">
-                {sortedGroups.map(([dateKey, txns]) => (
-                  <div key={dateKey}>
-                    <div className="flex items-center justify-between mb-2">
-                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
-                        {formatGroupLabel(dateKey)}
-                      </p>
-                      <p className="text-xs text-gray-400">
-                        {txns.length} transaction{txns.length !== 1 ? 's' : ''}
-                      </p>
-                    </div>
-                    <div className="divide-y divide-gray-100">
-                      {txns.map((transaction) => (
-                        <div
-                          key={transaction.id}
-                          className="flex items-center gap-4 py-3 hover:bg-gray-50 transition-colors px-2 -mx-2 rounded-lg"
-                        >
-                          <CategoryIcon category={transaction.category} size="md" />
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">
-                              {transaction.merchantName || transaction.name}
-                            </p>
-                            {transaction.category && (
-                              <p className="text-xs text-gray-400 mt-0.5">
-                                {CATEGORY_NAME_MAP[transaction.category] || transaction.category.replace(/_/g, ' ')}
-                              </p>
-                            )}
-                          </div>
-                          <p className={`text-sm font-semibold shrink-0 ${
-                            transaction.amount < 0 ? 'text-green-600' : 'text-gray-900'
-                          }`}>
-                            {transaction.amount < 0 ? '+' : ''}{formatCurrency(Math.abs(transaction.amount))}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </>
-          ) : transactions.length === 0 ? (
-            <div className="text-center py-14">
-              <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <CreditCard className="w-6 h-6 text-gray-400" />
-              </div>
-              <p className="text-gray-500 mb-1">No transactions yet</p>
-              <p className="text-sm text-gray-400 mb-4">Sync your bank accounts to see transactions</p>
-              <button onClick={syncTransactions} disabled={syncing} className="btn-primary inline-flex items-center gap-2">
-                <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
-                <span>{syncing ? 'Syncing...' : 'Sync Now'}</span>
-              </button>
-            </div>
-          ) : (
-            <div className="text-center py-14">
-              <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Search className="w-6 h-6 text-gray-400" />
-              </div>
-              <p className="text-gray-500 mb-1">No transactions found</p>
-              <p className="text-sm text-gray-400">Try adjusting your search or filters</p>
-            </div>
-          )}
-        </div>
+        )}
       </div>
     </Layout>
   );
