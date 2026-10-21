@@ -31,19 +31,13 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 export default function NetWorthChart({ history, selectedPeriod, onPeriodChange }) {
-  if (!history || history.length === 0) {
+  if (!history || history.length < 2) {
     return (
       <div className="card">
-        <h2 className="text-base font-semibold text-gray-900 mb-4">Net Worth Trend</h2>
-        <div className="h-72 flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-              <TrendingUp className="w-6 h-6 text-gray-400" />
-            </div>
-            <p className="text-sm text-gray-500 mb-1">No historical data yet</p>
-            <p className="text-xs text-gray-400">Check back after the first snapshot</p>
-          </div>
-        </div>
+        <h2 className="text-base font-bold text-gray-900">Over time</h2>
+        <p className="mt-2 text-sm text-gray-500">
+          We record your net worth once a day. The trend appears here after the second day.
+        </p>
       </div>
     );
   }

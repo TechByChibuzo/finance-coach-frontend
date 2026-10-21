@@ -16,23 +16,17 @@ export default function LiabilitiesTable({ liabilities, onAdd, onEdit, onDelete 
     <div className="card">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="text-base font-semibold text-gray-900">Liabilities</h2>
+          <h2 className="text-base font-bold text-gray-900">Other debts</h2>
           <p className="text-xs text-gray-400 mt-0.5">Total: {formatCurrency(totalBalance)}</p>
         </div>
         <button onClick={onAdd} className="btn-secondary flex items-center gap-1.5 text-sm">
           <Plus className="w-4 h-4" />
-          <span>Add Liability</span>
+          <span>Add debt</span>
         </button>
       </div>
 
       {liabilities.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <CreditCard className="w-6 h-6 text-gray-400" />
-          </div>
-          <p className="text-sm text-gray-500 mb-1">No liabilities tracked</p>
-          <p className="text-xs text-gray-400">Add loans, mortgages, or other debts</p>
-        </div>
+        <p className="text-sm text-gray-500 py-2">Linked loans and cards are counted automatically. Add any other debts, like a personal loan from family.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full">

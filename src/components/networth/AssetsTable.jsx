@@ -15,23 +15,17 @@ export default function AssetsTable({ assets, onAdd, onEdit, onDelete }) {
     <div className="card">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="text-base font-semibold text-gray-900">Assets</h2>
+          <h2 className="text-base font-bold text-gray-900">Property and other assets</h2>
           <p className="text-xs text-gray-400 mt-0.5">Total: {formatCurrency(totalValue)}</p>
         </div>
-        <button onClick={onAdd} className="btn-primary flex items-center gap-1.5 text-sm">
+        <button onClick={onAdd} className="btn-secondary flex items-center gap-1.5 text-sm">
           <Plus className="w-4 h-4" />
-          <span>Add Asset</span>
+          <span>Add asset</span>
         </button>
       </div>
 
       {assets.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <Home className="w-6 h-6 text-gray-400" />
-          </div>
-          <p className="text-sm text-gray-500 mb-1">No assets yet</p>
-          <p className="text-xs text-gray-400">Add your first asset to track your net worth</p>
-        </div>
+        <p className="text-sm text-gray-500 py-2">Add things your linked accounts don't cover, like a home or a car, to include them in your net worth.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full">
