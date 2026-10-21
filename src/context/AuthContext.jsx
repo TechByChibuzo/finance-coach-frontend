@@ -1,6 +1,7 @@
 // src/context/AuthContext.jsx
 import { createContext, useState, useEffect } from 'react';
 import { authAPI } from '../services/api';
+import { queryClient } from '../lib/queryClient';
 
 // Export the context so useAuth hook can use it
 export const AuthContext = createContext();
@@ -10,38 +11,47 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const checkAuth = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const response = await authAPI.getCurrentUser();
+          setUser(response.data);
+        } catch (error) {
+          // Only an invalid or expired session should log the user out, not a network
+          // blip or a server restart
+          if (error.response?.status === 401) {
+            localStorage.removeItem('token');
+          }
+        }
+      }
+      setLoading(false);
+    };
     checkAuth();
   }, []);
 
-  const checkAuth = async () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const response = await authAPI.getCurrentUser();
-        setUser(response.data);
-      } catch (error) {
-        localStorage.removeItem('token');
-      }
-    }
-    setLoading(false);
+  // Cached API data belongs to whoever was signed in; drop it whenever that changes
+  const startSession = (data) => {
+    queryClient.clear();
+    localStorage.setItem('token', data.token);
+    setUser(data.user);
   };
 
   const login = async (email, password) => {
     const response = await authAPI.login(email, password);
-    localStorage.setItem('token', response.data.token);
-    setUser(response.data.user);
+    startSession(response.data);
     return response.data;
   };
 
   const register = async (email, password, fullName) => {
     const response = await authAPI.register(email, password, fullName);
-    localStorage.setItem('token', response.data.token);
-    setUser(response.data.user);
+    startSession(response.data);
     return response.data;
   };
 
   const logout = () => {
     localStorage.removeItem('token');
+    queryClient.clear();
     setUser(null);
   };
 
