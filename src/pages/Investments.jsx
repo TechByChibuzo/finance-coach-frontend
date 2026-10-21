@@ -122,16 +122,17 @@ export default function Investments() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Investments</h1>
-              <p className="text-sm text-gray-500 mt-1">Track your portfolio performance</p>
+              <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Investments</h1>
+              
             </div>
             <button
               onClick={handleSync}
               disabled={syncMutation.isPending}
-              className="btn-primary flex items-center gap-2 disabled:opacity-50"
+              className="btn-secondary flex items-center gap-2 text-sm"
+              aria-label="Sync holdings"
             >
-              <RefreshCw className={`w-4 h-4 ${syncMutation.isPending ? 'animate-spin' : ''}`} />
-              <span>{syncMutation.isPending ? 'Syncing...' : 'Sync Holdings'}</span>
+              <RefreshCw className={`w-4 h-4 ${syncMutation.isPending ? 'animate-spin' : ''}`} aria-hidden />
+              <span className="hidden sm:inline">{syncMutation.isPending ? 'Syncing…' : 'Sync'}</span>
             </button>
           </div>
 
@@ -160,7 +161,7 @@ export default function Investments() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Investments</h1>
+            <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Investments</h1>
             <p className="text-sm text-gray-500 mt-1">
               {portfolio.holdings?.length || 0} holding{portfolio.holdings?.length !== 1 ? 's' : ''}
             </p>
@@ -168,10 +169,11 @@ export default function Investments() {
           <button
             onClick={handleSync}
             disabled={syncMutation.isPending}
-            className="btn-primary flex items-center gap-2 disabled:opacity-50"
+            className="btn-secondary flex items-center gap-2 text-sm"
+            aria-label="Sync holdings"
           >
-            <RefreshCw className={`w-4 h-4 ${syncMutation.isPending ? 'animate-spin' : ''}`} />
-            <span>{syncMutation.isPending ? 'Syncing...' : 'Sync Holdings'}</span>
+            <RefreshCw className={`w-4 h-4 ${syncMutation.isPending ? 'animate-spin' : ''}`} aria-hidden />
+            <span className="hidden sm:inline">{syncMutation.isPending ? 'Syncing…' : 'Sync'}</span>
           </button>
         </div>
 

@@ -22,21 +22,13 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 export default function PerformanceChart({ history, selectedPeriod, onPeriodChange }) {
-  if (!history || history.length === 0) {
+  if (!history || history.length < 2) {
     return (
       <div className="card">
-        <div className="mb-5">
-          <h2 className="text-base font-semibold text-gray-900">Performance</h2>
-        </div>
-        <div className="h-56 flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-              <TrendingUp className="w-6 h-6 text-gray-400" />
-            </div>
-            <p className="text-sm text-gray-400">No performance data yet</p>
-            <p className="text-xs text-gray-400 mt-0.5">Check back after the first snapshot</p>
-          </div>
-        </div>
+        <h2 className="text-base font-bold text-gray-900">Performance</h2>
+        <p className="mt-2 text-sm text-gray-500">
+          We record your portfolio value once a day. Performance appears here after the second day.
+        </p>
       </div>
     );
   }

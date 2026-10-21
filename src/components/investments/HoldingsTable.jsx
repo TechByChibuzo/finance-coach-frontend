@@ -69,7 +69,7 @@ export default function HoldingsTable({ holdings }) {
                 <tr key={holding.id} className="hover:bg-gray-50 transition-colors">
                   <td className="py-3.5 pr-4 whitespace-nowrap">
                     <span className="text-sm font-semibold text-gray-900">
-                      {holding.symbol || 'N/A'}
+                      {holding.symbol || '—'}
                     </span>
                   </td>
                   <td className="py-3.5 pr-4">

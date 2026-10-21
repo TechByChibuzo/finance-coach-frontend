@@ -3,13 +3,13 @@ import { formatCurrency, formatPercentage } from '../../utils/helpers';
 import { PieChart as PieChartIcon } from 'lucide-react';
 
 const COLORS = {
-  stock:       '#0284c7',
-  etf:         '#10b981',
-  bond:        '#f59e0b',
-  cash:        '#6b7280',
-  crypto:      '#8b5cf6',
-  mutual_fund: '#ec4899',
-  other:       '#64748b',
+  stock:       'var(--color-chart-1)',
+  etf:         'var(--color-chart-6)',
+  bond:        'var(--color-chart-3)',
+  cash:        'var(--color-gray-400)',
+  crypto:      'var(--color-chart-5)',
+  mutual_fund: 'var(--color-chart-2)',
+  other:       'var(--color-chart-7)',
 };
 
 const TYPE_LABELS = {
