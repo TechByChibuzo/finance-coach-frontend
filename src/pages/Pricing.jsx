@@ -20,6 +20,22 @@ function PricingCardSkeleton() {
   );
 }
 
+// What each plan includes, matching the limits the backend enforces (SubscriptionService#getFeatureLimit)
+const PLAN_COPY = {
+  FREE: {
+    description: 'Track spending and try the coach.',
+    features: ['1 linked bank', '3 budgets a month', '5 coach questions a month', 'Spending insights and net worth'],
+  },
+  PREMIUM: {
+    description: 'Everything most people need, without limits on budgets or coaching.',
+    features: ['Up to 5 linked banks', 'Unlimited budgets', 'Unlimited coach questions', 'Export transactions to CSV'],
+  },
+  PRO: {
+    description: 'For households with accounts at many banks.',
+    features: ['Unlimited linked banks', 'Everything in Premium'],
+  },
+};
+
 export default function Pricing() {
   const [billingCycle, setBillingCycle] = useState('MONTHLY');
 
@@ -51,11 +67,11 @@ export default function Pricing() {
     <Layout>
       <div className="max-w-6xl mx-auto space-y-12 py-8">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">
-            Choose Your Plan
+          <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 mb-3">
+            Plans
           </h1>
           <p className="text-base text-gray-500 mb-8">
-            Unlock powerful features to take control of your finances
+            Start free. Upgrade when you want more banks, budgets or coaching.
           </p>
 
           <div className="inline-flex items-center bg-gray-100 rounded-full p-1">
@@ -94,12 +110,12 @@ export default function Pricing() {
                 <PricingCard
                   name="Free"
                   displayName={freePlan.displayName}
-                  description={freePlan.description}
+                  description={PLAN_COPY.FREE.description}
                   price={0}
                   icon={Sparkles}
                   iconColor="text-gray-600"
                   iconBg="bg-gray-100"
-                  features={parseFeatures(freePlan.features)}
+                  features={PLAN_COPY.FREE.features}
                   limits={parseLimits(freePlan.limits)}
                   isCurrentPlan={currentPlanName === 'FREE'}
                   onSelect={() => {}}
@@ -111,13 +127,13 @@ export default function Pricing() {
                 <PricingCard
                   name="Premium"
                   displayName={premiumPlan.displayName}
-                  description={premiumPlan.description}
+                  description={PLAN_COPY.PREMIUM.description}
                   price={isYearly ? premiumPlan.priceYearly : premiumPlan.priceMonthly}
                   billingCycle={isYearly ? 'year' : 'month'}
                   icon={Zap}
                   iconColor="text-primary-600"
                   iconBg="bg-primary-100"
-                  features={parseFeatures(premiumPlan.features)}
+                  features={PLAN_COPY.PREMIUM.features}
                   limits={parseLimits(premiumPlan.limits)}
                   isCurrentPlan={currentPlanName === 'PREMIUM'}
                   isPopular={true}
@@ -134,13 +150,13 @@ export default function Pricing() {
                 <PricingCard
                   name="Pro"
                   displayName={proPlan.displayName}
-                  description={proPlan.description}
+                  description={PLAN_COPY.PRO.description}
                   price={isYearly ? proPlan.priceYearly : proPlan.priceMonthly}
                   billingCycle={isYearly ? 'year' : 'month'}
                   icon={Crown}
                   iconColor="text-purple-600"
                   iconBg="bg-purple-100"
-                  features={parseFeatures(proPlan.features)}
+                  features={PLAN_COPY.PRO.features}
                   limits={parseLimits(proPlan.limits)}
                   isCurrentPlan={currentPlanName === 'PRO'}
                   onSelect={() => handleUpgrade(proPlan.id)}
@@ -154,11 +170,11 @@ export default function Pricing() {
         </div>
 
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">Frequently Asked Questions</h2>
+          <h2 className="text-2xl font-extrabold tracking-tight text-gray-900 text-center mb-8">Questions</h2>
           <div className="space-y-3">
             <FAQItem
               question="Can I cancel anytime?"
-              answer="Yes! You can cancel your subscription at any time from your settings. Your access continues until the end of your billing period."
+              answer="Yes, from Settings > Billing. You keep your plan's features until the end of the billing period, and you won't be charged again."
             />
             <FAQItem
               question="What payment methods do you accept?"
@@ -166,11 +182,11 @@ export default function Pricing() {
             />
             <FAQItem
               question="Can I switch plans?"
-              answer="Absolutely! You can upgrade or downgrade your plan at any time. Changes take effect immediately."
+              answer="Yes. Upgrading takes effect as soon as payment goes through, and your previous plan is cancelled. To go back to Free, cancel your plan; you keep its features until the end of the billing period."
             />
             <FAQItem
               question="Is my data secure?"
-              answer="Yes. We use bank-level encryption and never store your bank credentials. All data is encrypted in transit and at rest."
+              answer="Banks connect through Plaid, so Finance Coach never sees your bank password. Bank access tokens are encrypted, data is encrypted in transit and at rest, and you can delete your account and all of its data from Settings at any time."
             />
           </div>
         </div>
@@ -190,7 +206,6 @@ function PricingCard({
   iconBg,
   features,
   limits,
-  isCurrentPlan,
   isPopular,
   onSelect,
   ctaText,
@@ -249,7 +264,6 @@ function PricingCard({
       </button>
 
       <div className="space-y-2.5">
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Features</p>
         {features.map((feature, index) => (
           <div key={index} className="flex items-start gap-2">
             <Check className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
@@ -267,14 +281,6 @@ function PricingCard({
         </div>
       )}
 
-      {isCurrentPlan && (
-        <div className="mt-4 text-center">
-          <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-medium">
-            <Check className="w-3.5 h-3.5" />
-            Current Plan
-          </span>
-        </div>
-      )}
     </div>
   );
 }
@@ -298,16 +304,6 @@ function FAQItem({ question, answer }) {
       )}
     </div>
   );
-}
-
-function parseFeatures(featuresJson) {
-  if (Array.isArray(featuresJson)) return featuresJson;
-  try {
-    const features = JSON.parse(featuresJson);
-    return Array.isArray(features) ? features : [];
-  } catch {
-    return [];
-  }
 }
 
 function parseLimits(limitsJson) {
