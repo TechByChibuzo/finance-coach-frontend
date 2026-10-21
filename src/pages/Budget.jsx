@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, RefreshCw, Copy } from 'lucide-react';
+import { Plus, Copy } from 'lucide-react';
 import { startOfMonth } from 'date-fns';
 import { toast } from 'react-hot-toast';
 
@@ -18,7 +18,6 @@ import {
   useCreateBudget,
   useUpdateBudget,
   useDeleteBudget,
-  useRefreshBudgetSpending,
   useCopyPreviousBudgets,
 } from '../hooks/useBudgets';
 
@@ -34,7 +33,6 @@ export default function Budget() {
   const createBudget = useCreateBudget();
   const updateBudget = useUpdateBudget();
   const deleteBudget = useDeleteBudget();
-  const refreshSpending = useRefreshBudgetSpending();
   const copyPrevious = useCopyPreviousBudgets();
 
   const handleCreateBudget = () => {
@@ -53,42 +51,33 @@ export default function Budget() {
     try {
       if (editingBudget) {
         await updateBudget.mutateAsync(budgetFormData);
-        toast.success('Budget updated successfully!');
+        toast.success('Budget updated');
       } else {
         await createBudget.mutateAsync(budgetFormData);
-        toast.success('Budget created successfully!');
+        toast.success('Budget created');
       }
       setIsModalOpen(false);
       setEditingBudget(null);
       setRecommendationData(null);
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Failed to save budget');
+      toast.error(error.response?.data?.message || error.response?.data?.error || "Couldn't save the budget. Try again.");
     }
   };
 
   const handleDeleteBudget = async (budgetId) => {
-    if (!confirm('Are you sure you want to delete this budget?')) return;
+    if (!confirm('Delete this budget? Your transactions stay as they are.')) return;
     try {
       await deleteBudget.mutateAsync(budgetId);
-      toast.success('Budget deleted successfully!');
-    } catch (error) {
-      toast.error('Failed to delete budget');
-    }
-  };
-
-  const handleRefreshSpending = async () => {
-    try {
-      await refreshSpending.mutateAsync(selectedMonth);
-      toast.success('Budget spending refreshed!');
-    } catch (error) {
-      toast.error('Failed to refresh spending');
+      toast.success('Budget deleted');
+    } catch {
+      toast.error("Couldn't delete the budget. Try again.");
     }
   };
 
   const handleCopyPrevious = async () => {
     try {
       await copyPrevious.mutateAsync();
-      toast.success('Budgets copied from previous month!');
+      toast.success("Copied last month's budgets");
     } catch (error) {
       toast.error(error.response?.data?.error || 'Failed to copy budgets');
     }
@@ -125,47 +114,28 @@ export default function Budget() {
   return (
     <Layout>
       <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Budgets</h1>
-              <p className="text-sm text-gray-500 mt-1">Track your spending by category</p>
-            </div>
-            <MonthSelector currentMonth={selectedMonth} onMonthChange={setSelectedMonth} />
-          </div>
-
-          <div className="flex flex-wrap gap-2">
+        <header className="flex items-end justify-between gap-4">
+          <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Budgets</h1>
+          <div className="flex gap-2">
             {hasBudgets && (
-              <>
-                <button
-                  onClick={handleRefreshSpending}
-                  disabled={refreshSpending.isPending}
-                  className="btn-secondary flex items-center gap-2 disabled:opacity-50"
-                >
-                  <RefreshCw className={`w-4 h-4 ${refreshSpending.isPending ? 'animate-spin' : ''}`} />
-                  <span className="hidden sm:inline">Refresh</span>
-                </button>
-
-                <button
-                  onClick={handleCopyPrevious}
-                  disabled={copyPrevious.isPending}
-                  className="btn-secondary flex items-center gap-2 disabled:opacity-50"
-                >
-                  <Copy className="w-4 h-4" />
-                  <span className="hidden sm:inline">Copy Previous</span>
-                </button>
-              </>
+              <button
+                onClick={handleCopyPrevious}
+                disabled={copyPrevious.isPending}
+                className="btn-secondary flex items-center gap-2 text-sm"
+                title="Copy last month's budgets into this month"
+              >
+                <Copy className="w-4 h-4" aria-hidden />
+                <span className="hidden sm:inline">Copy last month</span>
+              </button>
             )}
-
-            <button
-              onClick={handleCreateBudget}
-              className="btn-primary flex items-center gap-2"
-            >
-              <Plus className="w-5 h-5" />
-              <span>Create Budget</span>
+            <button onClick={handleCreateBudget} className="btn-primary flex items-center gap-2 text-sm">
+              <Plus className="w-4 h-4" aria-hidden />
+              <span>New budget</span>
             </button>
           </div>
-        </div>
+        </header>
+
+        <MonthSelector currentMonth={selectedMonth} onMonthChange={setSelectedMonth} />
 
         {!hasBudgets ? (
           <div>
@@ -194,7 +164,10 @@ export default function Budget() {
               ))}
             </div>
 
-            <BudgetRecommendations onCreateFromRecommendation={handleCreateFromRecommendation} />
+            <BudgetRecommendations
+              onCreateFromRecommendation={handleCreateFromRecommendation}
+              budgetedCategories={budgetData.budgets.map((b) => b.category)}
+            />
           </>
         )}
 

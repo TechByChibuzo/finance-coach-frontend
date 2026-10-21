@@ -11,10 +11,8 @@ export default function BudgetCard({ budget, onEdit, onDelete }) {
   const isExceeded = budget.isExceeded;
   const isWarning = budget.shouldAlert && !isExceeded;
 
-  const borderColor = isExceeded ? 'border-red-200' : isWarning ? 'border-amber-200' : 'border-emerald-200';
-
   return (
-    <div className={`card relative border-l-4 ${borderColor}`}>
+    <div className="card relative">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3 min-w-0">
           <CategoryIconSimple category={budget.category} size="lg" />
@@ -30,6 +28,7 @@ export default function BudgetCard({ budget, onEdit, onDelete }) {
           <button
             onClick={() => setShowMenu(!showMenu)}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label={`Options for ${budget.category}`}
           >
             <MoreVertical className="w-4 h-4 text-gray-400" />
           </button>
@@ -43,14 +42,14 @@ export default function BudgetCard({ budget, onEdit, onDelete }) {
                   className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 rounded-t-xl"
                 >
                   <Edit2 className="w-4 h-4" />
-                  Edit Budget
+                  Edit
                 </button>
                 <button
                   onClick={() => { onDelete(budget.id); setShowMenu(false); }}
                   className="w-full px-4 py-2.5 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 rounded-b-xl"
                 >
                   <Trash2 className="w-4 h-4" />
-                  Delete Budget
+                  Delete
                 </button>
               </div>
             </>
@@ -60,14 +59,14 @@ export default function BudgetCard({ budget, onEdit, onDelete }) {
 
       <div className="mb-4">
         <div className="flex items-baseline gap-1.5">
-          <span className="text-2xl font-bold text-gray-900">{formatCurrency(budget.spent)}</span>
-          <span className="text-sm text-gray-400">/ {formatCurrency(budget.amount)}</span>
+          <span className="text-2xl font-extrabold tracking-tight text-gray-900">{formatCurrency(budget.spent, false)}</span>
+          <span className="text-sm text-gray-500">of {formatCurrency(budget.amount, false)}</span>
         </div>
       </div>
 
       <div className="mb-4">
         <BudgetProgress percentage={budget.percentageSpent} size="md" />
-        <p className="text-xs text-gray-400 mt-1.5">{formatPercentage(budget.percentageSpent)} spent</p>
+        <p className="text-xs text-gray-500 mt-1.5">{formatPercentage(budget.percentageSpent, 0)} spent</p>
       </div>
 
       <div className="flex items-center justify-between pt-3 border-t border-gray-100">
@@ -76,21 +75,21 @@ export default function BudgetCard({ budget, onEdit, onDelete }) {
             <>
               <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
               <span className="text-xs font-medium text-red-600">
-                {formatCurrency(Math.abs(remaining))} over budget
+                {formatCurrency(Math.abs(remaining), false)} over
               </span>
             </>
           ) : isWarning ? (
             <>
               <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
               <span className="text-xs font-medium text-amber-600">
-                {formatCurrency(remaining)} remaining
+                {formatCurrency(remaining, false)} left
               </span>
             </>
           ) : (
             <>
               <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
               <span className="text-xs font-medium text-emerald-600">
-                {formatCurrency(remaining)} remaining
+                {formatCurrency(remaining, false)} left
               </span>
             </>
           )}
