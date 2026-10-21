@@ -184,6 +184,10 @@ export const aiCoachAPI = {
   getSavingsRecommendations: (savingsGoal) => 
     api.post('/ai-coach/savings-recommendations', { savingsGoal }, SLOW),
 
+  // Earlier messages of the conversation, oldest first
+  getConversation: (sessionId = 'default') =>
+    api.get(`/ai-coach/chat/${sessionId}`),
+
   // Clears the conversation history the coach remembers (chat uses the "default" session)
   clearSession: (sessionId = 'default') =>
     api.delete(`/ai-coach/chat/${sessionId}`),
