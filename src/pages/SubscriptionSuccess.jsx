@@ -1,23 +1,43 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { CheckCircle, Loader, Crown, Sparkles } from 'lucide-react';
 import Layout from '../components/layout/Layout';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
+import { subscriptionAPI } from '../services/api';
+
+const MAX_CHECKS = 15; // ~30 seconds at one check every 2 seconds
 
 export default function SubscriptionSuccess() {
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [countdown, setCountdown] = useState(5);
 
-  const sessionId = searchParams.get('session_id');
+  // Stripe confirms the payment to the backend by webhook, which can arrive a few seconds
+  // after this page loads: keep checking until the new plan shows up
+  const { data: subscription } = useQuery({
+    queryKey: ['currentSubscription'],
+    queryFn: async () => (await subscriptionAPI.getCurrentSubscription()).data,
+    staleTime: 0,
+    refetchInterval: (query) =>
+      (query.state.data?.planName ?? 'FREE') === 'FREE' && query.state.dataUpdateCount < MAX_CHECKS
+        ? 2000
+        : false,
+  });
+
+  const planName = subscription?.planName;
+  const activated = planName && planName !== 'FREE';
+  const [gaveUp, setGaveUp] = useState(false);
+  const planLabel = activated ? planName.charAt(0) + planName.slice(1).toLowerCase() : 'Premium';
 
   useEffect(() => {
-    // Invalidate subscription queries to refresh data
-    queryClient.invalidateQueries({ queryKey: ['currentSubscription'] });
-    queryClient.invalidateQueries({ queryKey: ['subscriptionPlans'] });
+    if (activated) return;
+    const timeout = setTimeout(() => setGaveUp(true), MAX_CHECKS * 2000);
+    return () => clearTimeout(timeout);
+  }, [activated]);
 
-    // Countdown timer
+  useEffect(() => {
+    if (!activated) return;
+
+    // Countdown timer, once the plan is active
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
@@ -30,7 +50,7 @@ export default function SubscriptionSuccess() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [navigate, queryClient]);
+  }, [activated, navigate]);
 
   return (
     <Layout>
@@ -44,10 +64,14 @@ export default function SubscriptionSuccess() {
             </div>
 
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Welcome to Premium!
+              {activated ? `Welcome to ${planLabel}!` : 'Payment received'}
             </h1>
             <p className="text-sm text-gray-500 mb-6">
-              Your subscription has been activated successfully
+              {activated
+                ? 'Your subscription has been activated successfully'
+                : gaveUp
+                  ? 'Your plan is still being activated. It will update within a few minutes; you can continue in the meantime.'
+                  : 'Activating your subscription...'}
             </p>
 
             {/* Features Unlocked */}
@@ -55,7 +79,7 @@ export default function SubscriptionSuccess() {
               <div className="flex items-center gap-2 mb-4">
                 <Crown className="w-5 h-5 text-primary-600" />
                 <h3 className="font-semibold text-gray-900">
-                  Premium Features Unlocked:
+                  {planLabel} Features Unlocked:
                 </h3>
               </div>
               <div className="space-y-2 text-left">
@@ -79,12 +103,14 @@ export default function SubscriptionSuccess() {
             </div>
 
             {/* Redirect Message */}
-            <div className="flex items-center justify-center gap-2 text-gray-600 mb-4">
-              <Loader className="w-4 h-4 animate-spin" />
-              <p className="text-sm">
-                Redirecting to dashboard in {countdown} seconds...
-              </p>
-            </div>
+            {(activated || !gaveUp) && (
+              <div className="flex items-center justify-center gap-2 text-gray-600 mb-4">
+                <Loader className="w-4 h-4 animate-spin" />
+                <p className="text-sm">
+                  {activated ? `Redirecting to dashboard in ${countdown} seconds...` : 'Confirming your payment...'}
+                </p>
+              </div>
+            )}
 
             {/* Manual Navigation */}
             <button
