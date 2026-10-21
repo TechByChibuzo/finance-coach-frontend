@@ -102,12 +102,11 @@ export default function Navbar({ onMenuClick }) {
               >
                 {/* User info - hidden on small screens */}
                 <div className="hidden md:block text-right">
-                  <p className="text-sm font-medium text-gray-900">{user?.fullName}</p>
-                  <p className="text-xs text-gray-500">{user?.email}</p>
+                  <p className="text-sm font-semibold text-gray-900">{user?.fullName}</p>
                 </div>
                 
                 {/* User Avatar */}
-                <div className="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center text-white font-semibold text-sm shadow-sm ring-2 ring-white">
+                <div className="w-9 h-9 bg-primary-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
                   {getUserInitials()}
                 </div>
 

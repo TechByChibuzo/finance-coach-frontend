@@ -27,7 +27,7 @@ const secondaryNav = [
 
 const Logo = () => (
   <div className="flex items-center gap-2.5">
-    <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center shadow-sm shadow-primary-200">
+    <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
       <svg width="18" height="18" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path
           d="M15 2L4 6.8V14.5C4 21.2 8.8 27.4 15 29C21.2 27.4 26 21.2 26 14.5V6.8L15 2Z"
@@ -50,11 +50,11 @@ const NavItem = ({ item, isActive, onClose }) => (
     onClick={onClose}
     className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
       isActive
-        ? 'bg-primary-600 text-white shadow-sm shadow-primary-200'
+        ? 'bg-primary-50 text-primary-700 font-semibold'
         : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
     }`}
   >
-    <item.icon className={`h-5 w-5 shrink-0 ${isActive ? 'text-white' : 'text-gray-400'}`} />
+    <item.icon className={`h-5 w-5 shrink-0 ${isActive ? 'text-primary-600' : 'text-gray-400'}`} />
     {item.name}
   </Link>
 );

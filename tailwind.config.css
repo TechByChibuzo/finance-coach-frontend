@@ -1,14 +1,56 @@
 @import "tailwindcss";
 
+/*
+ * Finance Coach design tokens.
+ * Overriding Tailwind's palettes restyles every page that uses the stock classes
+ * (bg-primary-600, text-gray-500, ...), so pages stay consistent without per-file edits.
+ */
 @theme {
-  --color-primary-50: #f0f9ff;
-  --color-primary-100: #e0f2fe;
-  --color-primary-200: #bae6fd;
-  --color-primary-300: #7dd3fc;
-  --color-primary-400: #38bdf8;
-  --color-primary-500: #0ea5e9;
-  --color-primary-600: #0284c7;
-  --color-primary-700: #0369a1;
-  --color-primary-800: #075985;
-  --color-primary-900: #0c4a6e;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Evergreen: calm, money-coloured primary */
+  --color-primary-50: #eef7f5;
+  --color-primary-100: #d6ede8;
+  --color-primary-200: #aedcd2;
+  --color-primary-300: #7cc3b5;
+  --color-primary-400: #44a392;
+  --color-primary-500: #1f8775;
+  --color-primary-600: #0e6b5c;
+  --color-primary-700: #0b574b;
+  --color-primary-800: #0a463d;
+  --color-primary-900: #083a33;
+
+  /* Slate-tinted neutrals (ink #17212b, muted #5e6a75, canvas #f3f5f4) */
+  --color-gray-50: #f3f5f4;
+  --color-gray-100: #e9edeb;
+  --color-gray-200: #dce2df;
+  --color-gray-300: #c3cbc8;
+  --color-gray-400: #8d979f;
+  --color-gray-500: #5e6a75;
+  --color-gray-600: #46515b;
+  --color-gray-700: #333d46;
+  --color-gray-800: #222b34;
+  --color-gray-900: #17212b;
+
+  /* Money in / money out / caution, tuned to sit with the palette */
+  --color-green-50: #ecf7f1;
+  --color-green-500: #2a9d68;
+  --color-green-600: #1e8a57;
+  --color-green-700: #176c44;
+  --color-emerald-600: #1e8a57;
+  --color-red-50: #fbefee;
+  --color-red-500: #d4574e;
+  --color-red-600: #c8443b;
+  --color-red-700: #a5352e;
+  --color-amber-500: #c98a2b;
+  --color-amber-600: #b7791f;
+
+  /* Category palette for charts: distinct but muted, readable on white */
+  --color-chart-1: #0e6b5c;
+  --color-chart-2: #3f7cbf;
+  --color-chart-3: #c98a2b;
+  --color-chart-4: #b5577a;
+  --color-chart-5: #6b6fc2;
+  --color-chart-6: #4f9a8f;
+  --color-chart-7: #9a8f6b;
 }
