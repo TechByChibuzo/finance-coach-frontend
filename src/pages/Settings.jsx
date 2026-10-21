@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import Layout from '../components/layout/Layout';
 import PlaidLink from '../components/plaid/PlaidLink';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, Landmark, CreditCard, Home, TrendingUp, Wallet, Building2 } from 'lucide-react';
-import { plaidAPI } from '../services/api';
+import toast from 'react-hot-toast';
+import { plaidAPI, userAPI } from '../services/api';
 import { formatCurrency } from '../utils/helpers';
 import Skeleton from '../components/common/Skeleton';
 
@@ -28,6 +29,22 @@ export default function Settings() {
   const [activeTab, setActiveTab] = useState('profile');
   const [accounts, setAccounts] = useState([]);
   const [loadingAccounts, setLoadingAccounts] = useState(false);
+  const navigate = useNavigate();
+  const [deleteConfirm, setDeleteConfirm] = useState('');
+  const [deleting, setDeleting] = useState(false);
+
+  const deleteAccount = async () => {
+    setDeleting(true);
+    try {
+      await userAPI.deleteAccount();
+      logout();
+      toast.success('Your account and data have been deleted');
+      navigate('/login');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Could not delete your account. Please try again.');
+      setDeleting(false);
+    }
+  };
 
   const loadAccounts = async () => {
     setLoadingAccounts(true);
@@ -192,9 +209,32 @@ export default function Settings() {
           )}
 
           {activeTab === 'security' && (
-            <div>
-              <h2 className="text-base font-semibold text-gray-900 mb-2">Security</h2>
-              <p className="text-sm text-gray-400">Coming soon...</p>
+            <div className="space-y-4">
+              <h2 className="text-base font-semibold text-gray-900">Security</h2>
+              <div className="border border-red-200 rounded-xl p-5 space-y-3">
+                <h3 className="text-sm font-semibold text-red-700">Delete account</h3>
+                <p className="text-sm text-gray-600">
+                  This permanently deletes your account: any subscription is cancelled, your banks are
+                  disconnected, and all of your transactions, budgets and AI coach history are erased.
+                  This can't be undone.
+                </p>
+                <label className="block text-sm text-gray-600">
+                  Type <span className="font-semibold">DELETE</span> to confirm
+                  <input
+                    type="text"
+                    value={deleteConfirm}
+                    onChange={(e) => setDeleteConfirm(e.target.value)}
+                    className="mt-1.5 w-full max-w-xs px-4 py-2 border border-gray-200 rounded-lg text-sm"
+                  />
+                </label>
+                <button
+                  onClick={deleteAccount}
+                  disabled={deleteConfirm !== 'DELETE' || deleting}
+                  className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {deleting ? 'Deleting...' : 'Delete my account'}
+                </button>
+              </div>
             </div>
           )}
         </div>
