@@ -18,9 +18,8 @@ const ACCOUNT_ICONS = {
 
 const TABS = [
   { id: 'profile',       name: 'Profile' },
-  { id: 'banks',         name: 'Bank Accounts' },
+  { id: 'banks',         name: 'Bank accounts' },
   { id: 'billing',       name: 'Billing' },
-  { id: 'notifications', name: 'Notifications' },
   { id: 'security',      name: 'Security' },
 ];
 
@@ -62,12 +61,11 @@ export default function Settings() {
     <Layout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Manage your account and preferences</p>
+          <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Settings</h1>
         </div>
 
         <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8">
+          <nav className="-mb-px flex gap-6 sm:gap-8 overflow-x-auto" aria-label="Settings sections">
             {TABS.map((tab) => (
               <button
                 key={tab.id}
@@ -75,7 +73,8 @@ export default function Settings() {
                   setActiveTab(tab.id);
                   if (tab.id === 'banks') loadAccounts();
                 }}
-                className={`py-3.5 px-1 border-b-2 text-sm font-medium transition-colors ${
+                aria-current={activeTab === tab.id ? 'page' : undefined}
+                className={`py-3.5 px-1 border-b-2 text-sm font-semibold whitespace-nowrap transition-colors ${
                   activeTab === tab.id
                     ? 'border-primary-600 text-primary-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -198,13 +197,6 @@ export default function Settings() {
                 <span>Manage Billing</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
-            </div>
-          )}
-
-          {activeTab === 'notifications' && (
-            <div>
-              <h2 className="text-base font-semibold text-gray-900 mb-2">Notifications</h2>
-              <p className="text-sm text-gray-400">Coming soon...</p>
             </div>
           )}
 
