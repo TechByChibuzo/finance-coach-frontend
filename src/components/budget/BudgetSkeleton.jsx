@@ -71,7 +71,7 @@ export default function BudgetSkeleton() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {[1, 2, 3].map(i => (
-            <div key={i} className="bg-white rounded-xl p-4 border border-blue-100 space-y-3">
+            <div key={i} className="bg-surface rounded-xl p-4 border border-blue-100 space-y-3">
               <div className="flex items-start justify-between">
                 <div className="space-y-1.5">
                   <Skeleton className="h-3 w-20" />

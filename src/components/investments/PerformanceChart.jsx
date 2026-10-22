@@ -14,7 +14,7 @@ const PERIODS = [
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-white rounded-lg shadow-xl ring-1 ring-gray-900/5 p-3">
+    <div className="bg-surface rounded-lg shadow-xl ring-1 ring-gray-900/5 p-3">
       <p className="text-xs text-gray-500 mb-0.5">{format(new Date(label), 'MMMM d, yyyy')}</p>
       <p className="text-sm font-semibold text-gray-900">{formatCurrency(payload[0].value)}</p>
     </div>
@@ -68,7 +68,7 @@ export default function PerformanceChart({ history, selectedPeriod, onPeriodChan
               onClick={() => onPeriodChange(period.value)}
               className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors ${
                 selectedPeriod === period.value
-                  ? 'bg-white text-primary-600 shadow-sm'
+                  ? 'bg-surface text-primary-600 shadow-sm'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -88,19 +88,19 @@ export default function PerformanceChart({ history, selectedPeriod, onPeriodChan
               </linearGradient>
             </defs>
 
-            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-gray-100)" vertical={false} />
 
             <XAxis
               dataKey="date"
               tickFormatter={(date) => format(new Date(date), 'MMM d')}
-              tick={{ fontSize: 11, fill: '#94a3b8' }}
+              tick={{ fontSize: 11, fill: 'var(--color-gray-400)' }}
               axisLine={false}
               tickLine={false}
             />
 
             <YAxis
               tickFormatter={(v) => formatCurrencyCompact(v)}
-              tick={{ fontSize: 11, fill: '#94a3b8' }}
+              tick={{ fontSize: 11, fill: 'var(--color-gray-400)' }}
               axisLine={false}
               tickLine={false}
               width={55}

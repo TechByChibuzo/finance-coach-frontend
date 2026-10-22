@@ -14,9 +14,9 @@ export const LogoMark = ({ className = 'w-9 h-9' }) => (
 function PacePreview() {
   return (
     <div className="rounded-2xl bg-white/[0.06] ring-1 ring-white/10 p-6 max-w-sm">
-      <p className="text-sm text-primary-100/80">Spent so far this month</p>
+      <p className="text-sm text-white/70">Spent so far this month</p>
       <p className="mt-1 text-4xl font-extrabold tracking-tight text-white">$1,284</p>
-      <p className="mt-2 text-sm text-primary-200">$410 less than this point last month.</p>
+      <p className="mt-2 text-sm text-[#aedcd2]">$410 less than this point last month.</p>
       <svg viewBox="0 0 300 80" className="mt-5 w-full h-20" aria-hidden>
         <path d="M0 74 C40 70 70 66 100 58 S160 44 190 40 S250 30 300 18" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2" strokeDasharray="5 5" />
         <path d="M0 76 C40 73 70 70 100 64 S150 56 180 52" fill="none" stroke="#7cc3b5" strokeWidth="3" strokeLinecap="round" />
@@ -27,8 +27,8 @@ function PacePreview() {
 
 export default function AuthShell({ title, subtitle, children, footer }) {
   return (
-    <div className="min-h-screen bg-white lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
-      <aside className="hidden lg:flex flex-col justify-between bg-primary-900 px-12 py-10">
+    <div className="min-h-screen bg-surface lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+      <aside className="hidden lg:flex flex-col justify-between bg-[#083a33] px-12 py-10">
         <Link to="/" className="flex items-center gap-2.5 w-fit">
           <LogoMark />
           <span className="font-bold text-white">Finance Coach</span>
@@ -37,12 +37,12 @@ export default function AuthShell({ title, subtitle, children, footer }) {
           <p className="text-4xl font-extrabold leading-tight tracking-tight text-white max-w-md">
             Know where your money goes, and what to do about it.
           </p>
-          <p className="mt-4 text-base text-primary-100/80 max-w-md">
+          <p className="mt-4 text-base text-white/70 max-w-md">
             Link your accounts, set budgets, and ask a coach that answers with your real numbers.
           </p>
           <div className="mt-10"><PacePreview /></div>
         </div>
-        <p className="text-xs text-primary-100/60">© {new Date().getFullYear()} Finance Coach</p>
+        <p className="text-xs text-white/50">© {new Date().getFullYear()} Finance Coach</p>
       </aside>
 
       <main className="flex min-h-screen lg:min-h-0 flex-col justify-center px-4 py-10 sm:px-10">
@@ -66,4 +66,4 @@ export default function AuthShell({ title, subtitle, children, footer }) {
 
 // Shared field styling for the auth forms
 export const inputClass =
-  'w-full px-4 py-3 text-sm border border-gray-200 rounded-xl bg-white text-gray-900 placeholder:text-gray-400 hover:border-gray-300 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 disabled:opacity-60';
+  'w-full px-4 py-3 text-sm border border-gray-200 rounded-xl bg-surface text-gray-900 placeholder:text-gray-400 hover:border-gray-300 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 disabled:opacity-60';

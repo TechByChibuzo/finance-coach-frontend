@@ -148,7 +148,7 @@ export default function AICoach() {
                   <button
                     key={s}
                     onClick={() => send(s)}
-                    className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-left text-sm font-medium text-gray-700 hover:border-primary-300 hover:bg-primary-50/40 focus-visible:outline-2 focus-visible:outline-primary-600"
+                    className="rounded-xl border border-gray-200 bg-surface px-4 py-3 text-left text-sm font-medium text-gray-700 hover:border-primary-300 hover:bg-primary-50/40 focus-visible:outline-2 focus-visible:outline-primary-600"
                   >
                     {s}
                   </button>
@@ -180,7 +180,7 @@ export default function AICoach() {
 
         <form
           onSubmit={(e) => { e.preventDefault(); send(input); }}
-          className="mt-3 flex items-end gap-2 rounded-2xl border border-gray-200 bg-white p-2 focus-within:border-primary-400"
+          className="mt-3 flex items-end gap-2 rounded-2xl border border-gray-200 bg-surface p-2 focus-within:border-primary-400"
         >
           <label htmlFor="coach-input" className="sr-only">Message the coach</label>
           <textarea

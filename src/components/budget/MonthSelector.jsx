@@ -42,7 +42,7 @@ export default function MonthSelector({ currentMonth, onMonthChange }) {
         </button>
 
         {isOpen && (
-          <div className="absolute top-full left-0 mt-2 w-52 bg-white rounded-xl shadow-xl ring-1 ring-gray-900/5 py-2 z-50">
+          <div className="absolute top-full left-0 mt-2 w-52 bg-surface rounded-xl shadow-xl ring-1 ring-gray-900/5 py-2 z-50">
             <button
               onClick={() => { onMonthChange(new Date()); setIsOpen(false); }}
               className="w-full px-4 py-2 text-left text-sm font-medium text-primary-600 hover:bg-gray-50 transition-colors"

@@ -7,7 +7,7 @@ import ErrorMessage from '../components/common/ErrorMessage';
 
 function PricingCardSkeleton() {
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-8 space-y-4">
+    <div className="bg-surface rounded-2xl shadow-xl p-8 space-y-4">
       <Skeleton className="h-12 w-12 rounded-xl" />
       <Skeleton className="h-7 w-32" />
       <Skeleton className="h-4 w-48" />
@@ -78,7 +78,7 @@ export default function Pricing() {
             <button
               onClick={() => setBillingCycle('MONTHLY')}
               className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
-                !isYearly ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                !isYearly ? 'bg-surface text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               Monthly
@@ -86,7 +86,7 @@ export default function Pricing() {
             <button
               onClick={() => setBillingCycle('YEARLY')}
               className={`px-6 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
-                isYearly ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                isYearly ? 'bg-surface text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               Yearly
@@ -213,7 +213,7 @@ function PricingCard({
   loading,
 }) {
   return (
-    <div className={`relative bg-white rounded-2xl shadow-xl p-8 transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl ${
+    <div className={`relative bg-surface rounded-2xl shadow-xl p-8 transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl ${
       isPopular ? 'ring-2 ring-primary-600 scale-105' : ''
     }`}>
       {isPopular && (
@@ -289,7 +289,7 @@ function FAQItem({ question, answer }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+    <div className="bg-surface rounded-xl border border-gray-100 shadow-sm overflow-hidden">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"

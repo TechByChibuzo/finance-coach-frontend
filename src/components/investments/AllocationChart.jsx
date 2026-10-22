@@ -26,7 +26,7 @@ const CustomTooltip = ({ active, payload }) => {
   if (!active || !payload?.length) return null;
   const data = payload[0].payload;
   return (
-    <div className="bg-white rounded-lg shadow-xl ring-1 ring-gray-900/5 p-3">
+    <div className="bg-surface rounded-lg shadow-xl ring-1 ring-gray-900/5 p-3">
       <p className="text-xs font-semibold text-gray-900 mb-0.5">{data.name}</p>
       <p className="text-xs text-gray-500">
         {formatCurrency(data.value)} · {formatPercentage(data.percentage, 1)}

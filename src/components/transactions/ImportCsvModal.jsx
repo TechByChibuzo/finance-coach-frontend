@@ -9,7 +9,7 @@ const CHUNK_SIZE = 300;
 const MAX_ROWS = 5000;
 
 const selectClass =
-  'w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20';
+  'w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-surface focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20';
 
 // Identical rows must land in the same request, so the server numbers them consistently
 // and importing the same file again is recognised as duplicates
@@ -180,7 +180,7 @@ export default function ImportCsvModal({ onClose, onImported }) {
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-gray-900/50 p-0 sm:p-4" role="presentation">
       <div role="dialog" aria-modal="true" aria-labelledby="import-title"
-        className="w-full sm:max-w-2xl max-h-[92dvh] overflow-y-auto rounded-t-2xl sm:rounded-2xl bg-white shadow-xl">
+        className="w-full sm:max-w-2xl max-h-[92dvh] overflow-y-auto rounded-t-2xl sm:rounded-2xl bg-surface shadow-xl">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <h2 id="import-title" className="text-lg font-bold text-gray-900">Import transactions</h2>
           {step !== 'importing' && (

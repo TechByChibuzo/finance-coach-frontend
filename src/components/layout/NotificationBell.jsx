@@ -79,7 +79,7 @@ export default function NotificationBell() {
         <div
           role="dialog"
           aria-label="Notifications"
-          className="fixed sm:absolute inset-x-3 sm:inset-x-auto top-16 sm:top-auto sm:right-0 sm:mt-2 sm:w-96 max-h-[70dvh] overflow-y-auto rounded-2xl border border-gray-200 bg-white shadow-xl z-50"
+          className="fixed sm:absolute inset-x-3 sm:inset-x-auto top-16 sm:top-auto sm:right-0 sm:mt-2 sm:w-96 max-h-[70dvh] overflow-y-auto rounded-2xl border border-gray-200 bg-surface shadow-xl z-50"
         >
           <div className="px-5 py-4 border-b border-gray-100">
             <p className="text-base font-bold text-gray-900">Notifications</p>

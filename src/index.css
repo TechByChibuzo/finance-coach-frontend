@@ -30,7 +30,7 @@ body {
   }
 
   .btn-secondary {
-    background-color: white;
+    background-color: var(--color-surface);
     color: var(--color-gray-800);
     padding: 0.5rem 1rem;
     border-radius: 0.625rem;
@@ -46,7 +46,7 @@ body {
 
   /* Surfaces: a hairline border carries the edge; no floating shadows */
   .card {
-    background-color: white;
+    background-color: var(--color-surface);
     border-radius: 1rem;
     border: 1px solid var(--color-gray-200);
     padding: 1.5rem;
@@ -229,7 +229,7 @@ a:hover {
 }
 
 .transaction-item:hover {
-  background-color: #f9fafb;
+  background-color: var(--color-gray-50);
   transform: translateX(4px);
 }
 

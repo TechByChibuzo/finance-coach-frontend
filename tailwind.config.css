@@ -20,6 +20,9 @@
   --color-primary-800: #0a463d;
   --color-primary-900: #083a33;
 
+  /* Card and panel background (white in light mode); kept separate from text-white */
+  --color-surface: #ffffff;
+
   /* Slate-tinted neutrals (ink #17212b, muted #5e6a75, canvas #f3f5f4) */
   --color-gray-50: #f3f5f4;
   --color-gray-100: #e9edeb;
@@ -53,4 +56,95 @@
   --color-chart-5: #6b6fc2;
   --color-chart-6: #4f9a8f;
   --color-chart-7: #9a8f6b;
+}
+
+/*
+ * Dark theme: the same token names with dark values, so every page switches without
+ * per-component classes. Follows the system setting unless the user picked one
+ * (data-theme on <html>, set from Settings).
+ */
+@layer theme {
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --color-surface: #172027;
+
+    --color-gray-50: #0e1418;
+    --color-gray-100: #1c252c;
+    --color-gray-200: #29333b;
+    --color-gray-300: #3a454e;
+    --color-gray-400: #6e7a85;
+    --color-gray-500: #9aa5af;
+    --color-gray-600: #b5bec6;
+    --color-gray-700: #ced5db;
+    --color-gray-800: #e3e8ec;
+    --color-gray-900: #f2f5f7;
+
+    --color-primary-50: #10302a;
+    --color-primary-100: #143f37;
+    --color-primary-200: #1b574b;
+    --color-primary-300: #277664;
+    --color-primary-400: #359680;
+    --color-primary-500: #45ae97;
+    --color-primary-600: #23937d;
+    --color-primary-700: #6ccab4;
+    --color-primary-800: #8cd7c5;
+    --color-primary-900: #aae3d5;
+
+    --color-green-500: #3fbf83;
+    --color-green-600: #52c990;
+    --color-green-700: #74d6a7;
+    --color-emerald-500: #3fbf83;
+    --color-emerald-600: #52c990;
+    --color-emerald-700: #74d6a7;
+    --color-red-500: #e06b62;
+    --color-red-600: #ef7f76;
+    --color-red-700: #f59c94;
+    --color-amber-500: #d9a24a;
+    --color-amber-600: #e6b35f;
+    --color-blue-600: #6aa6e8;
+    --color-blue-700: #8cbaf0;
+    --color-blue-800: #a9cbf4;
+    --color-blue-900: #c4dbf7;
+    --color-purple-600: #b48cf0;
+    --color-purple-900: #d9c6f8;
+    --color-yellow-600: #e2c25a;
+    --color-yellow-700: #ead07a;
+    --color-yellow-800: #f0dc9a;
+    --color-blue-50: color-mix(in oklab, var(--color-blue-500) 14%, transparent);
+    --color-blue-100: color-mix(in oklab, var(--color-blue-500) 20%, transparent);
+    --color-blue-200: color-mix(in oklab, var(--color-blue-500) 32%, transparent);
+    --color-purple-50: color-mix(in oklab, var(--color-purple-500) 14%, transparent);
+    --color-purple-100: color-mix(in oklab, var(--color-purple-500) 20%, transparent);
+    --color-purple-200: color-mix(in oklab, var(--color-purple-500) 32%, transparent);
+    --color-yellow-50: color-mix(in oklab, var(--color-yellow-500) 14%, transparent);
+    --color-yellow-100: color-mix(in oklab, var(--color-yellow-500) 20%, transparent);
+    --color-yellow-200: color-mix(in oklab, var(--color-yellow-500) 32%, transparent);
+    --color-emerald-50: color-mix(in oklab, var(--color-emerald-500) 14%, transparent);
+    --color-emerald-100: color-mix(in oklab, var(--color-emerald-500) 20%, transparent);
+    --color-emerald-200: color-mix(in oklab, var(--color-emerald-500) 32%, transparent);
+    --color-sky-50: color-mix(in oklab, var(--color-sky-500) 14%, transparent);
+    --color-sky-100: color-mix(in oklab, var(--color-sky-500) 20%, transparent);
+    --color-sky-200: color-mix(in oklab, var(--color-sky-500) 32%, transparent);
+    --color-pink-50: color-mix(in oklab, var(--color-pink-500) 14%, transparent);
+    --color-pink-100: color-mix(in oklab, var(--color-pink-500) 20%, transparent);
+    --color-pink-200: color-mix(in oklab, var(--color-pink-500) 32%, transparent);
+    --color-orange-50: color-mix(in oklab, var(--color-orange-500) 14%, transparent);
+    --color-orange-100: color-mix(in oklab, var(--color-orange-500) 20%, transparent);
+    --color-orange-200: color-mix(in oklab, var(--color-orange-500) 32%, transparent);
+    --color-indigo-50: color-mix(in oklab, var(--color-indigo-500) 14%, transparent);
+    --color-indigo-100: color-mix(in oklab, var(--color-indigo-500) 20%, transparent);
+    --color-indigo-200: color-mix(in oklab, var(--color-indigo-500) 32%, transparent);
+    --color-slate-50: color-mix(in oklab, var(--color-slate-500) 14%, transparent);
+    --color-slate-100: color-mix(in oklab, var(--color-slate-500) 20%, transparent);
+    --color-slate-200: color-mix(in oklab, var(--color-slate-500) 32%, transparent);
+    --color-red-50: color-mix(in oklab, var(--color-red-500) 14%, transparent);
+    --color-red-100: color-mix(in oklab, var(--color-red-500) 20%, transparent);
+    --color-red-200: color-mix(in oklab, var(--color-red-500) 32%, transparent);
+    --color-green-50: color-mix(in oklab, var(--color-green-500) 14%, transparent);
+    --color-green-100: color-mix(in oklab, var(--color-green-500) 20%, transparent);
+    --color-green-200: color-mix(in oklab, var(--color-green-500) 32%, transparent);
+    --color-amber-50: color-mix(in oklab, var(--color-amber-500) 14%, transparent);
+    --color-amber-100: color-mix(in oklab, var(--color-amber-500) 20%, transparent);
+    --color-amber-200: color-mix(in oklab, var(--color-amber-500) 32%, transparent);
+  }
 }

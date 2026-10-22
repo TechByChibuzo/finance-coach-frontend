@@ -96,7 +96,7 @@ export default function MonthPulse({ summary, series, today, lastMonthName }) {
                   cursor={{ stroke: 'var(--color-gray-300)' }}
                   content={({ active, payload, label }) =>
                     active && payload?.length ? (
-                      <div className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs shadow-sm">
+                      <div className="rounded-lg border border-gray-200 bg-surface px-3 py-2 text-xs shadow-sm">
                         <p className="font-semibold text-gray-900 mb-1">Day {label}</p>
                         {payload.map((p) => p.value != null && (
                           <p key={p.dataKey} className="text-gray-600">

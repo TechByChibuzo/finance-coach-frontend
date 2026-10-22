@@ -36,7 +36,7 @@ export default function BudgetCard({ budget, onEdit, onDelete }) {
           {showMenu && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)} />
-              <div className="absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-xl ring-1 ring-gray-900/5 z-20">
+              <div className="absolute right-0 mt-2 w-44 bg-surface rounded-xl shadow-xl ring-1 ring-gray-900/5 z-20">
                 <button
                   onClick={() => { onEdit(budget); setShowMenu(false); }}
                   className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 rounded-t-xl"

@@ -21,7 +21,7 @@ export default function MerchantIcon({ logoUrl, category, size = 'md' }) {
       loading="lazy"
       referrerPolicy="no-referrer"
       onError={() => setFailed(true)}
-      className={`${SIZES[size] || SIZES.md} shrink-0 rounded-full bg-white object-cover ring-1 ring-gray-200`}
+      className={`${SIZES[size] || SIZES.md} shrink-0 rounded-full bg-surface object-cover ring-1 ring-gray-200`}
     />
   );
 }

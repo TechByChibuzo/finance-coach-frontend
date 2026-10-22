@@ -10,7 +10,7 @@ export default function SubscriptionCancel() {
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="max-w-md w-full">
           {/* Cancel Card */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+          <div className="bg-surface rounded-2xl shadow-xl p-8 text-center">
             {/* Cancel Icon */}
             <div className="inline-flex items-center justify-center w-16 h-16 bg-amber-100 rounded-2xl mb-6">
               <XCircle className="w-9 h-9 text-amber-600" />

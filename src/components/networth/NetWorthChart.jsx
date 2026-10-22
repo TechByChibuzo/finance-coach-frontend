@@ -14,7 +14,7 @@ const PERIODS = [
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-white rounded-lg shadow-xl ring-1 ring-gray-900/5 p-3 min-w-44">
+    <div className="bg-surface rounded-lg shadow-xl ring-1 ring-gray-900/5 p-3 min-w-44">
       <p className="text-xs text-gray-500 mb-2">{format(new Date(label), 'MMMM d, yyyy')}</p>
       <div className="space-y-1 text-xs">
         {payload.map((entry) => (
@@ -77,7 +77,7 @@ export default function NetWorthChart({ history, selectedPeriod, onPeriodChange 
               onClick={() => onPeriodChange(period.value)}
               className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors ${
                 selectedPeriod === period.value
-                  ? 'bg-white text-primary-600 shadow-sm'
+                  ? 'bg-surface text-primary-600 shadow-sm'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -90,30 +90,30 @@ export default function NetWorthChart({ history, selectedPeriod, onPeriodChange 
       <div className="h-72">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-gray-100)" vertical={false} />
             <XAxis
               dataKey="date"
               tickFormatter={(date) => format(new Date(date), 'MMM d')}
-              tick={{ fontSize: 11, fill: '#94a3b8' }}
+              tick={{ fontSize: 11, fill: 'var(--color-gray-400)' }}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
               tickFormatter={(v) => formatCurrencyCompact(v)}
-              tick={{ fontSize: 11, fill: '#94a3b8' }}
+              tick={{ fontSize: 11, fill: 'var(--color-gray-400)' }}
               axisLine={false}
               tickLine={false}
               width={55}
             />
-            <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#94a3b8', strokeWidth: 1, strokeDasharray: '4 4' }} />
+            <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'var(--color-gray-400)', strokeWidth: 1, strokeDasharray: '4 4' }} />
             <Line
               type="monotone"
               dataKey="netWorth"
-              stroke="#0284c7"
+              stroke="var(--color-primary-600)"
               strokeWidth={2.5}
               name="Net Worth"
               dot={false}
-              activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff', fill: '#0284c7' }}
+              activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff', fill: 'var(--color-primary-600)' }}
             />
             <Line
               type="monotone"

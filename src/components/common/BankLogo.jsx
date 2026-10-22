@@ -13,7 +13,7 @@ export default function BankLogo({ logo, color, name, fallback }) {
         src={logo}
         alt=""
         onError={() => setFailed(true)}
-        className="w-10 h-10 shrink-0 rounded-xl bg-white object-contain p-1 ring-1 ring-gray-200"
+        className="w-10 h-10 shrink-0 rounded-xl bg-surface object-contain p-1 ring-1 ring-gray-200"
       />
     );
   }

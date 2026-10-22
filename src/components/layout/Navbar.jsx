@@ -35,7 +35,7 @@ export default function Navbar({ onMenuClick }) {
   };
 
   return (
-    <nav className="bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm fixed w-full z-30 top-0">
+    <nav className="bg-surface/95 backdrop-blur-sm border-b border-gray-100 shadow-sm fixed w-full z-30 top-0">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Left side */}
@@ -114,7 +114,7 @@ export default function Navbar({ onMenuClick }) {
 
               {/* Dropdown Menu */}
               {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl ring-1 ring-gray-900/5 py-1 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="absolute right-0 mt-2 w-64 bg-surface rounded-xl shadow-xl ring-1 ring-gray-900/5 py-1 animate-in fade-in slide-in-from-top-2 duration-200">
                   {/* User header */}
                   <div className="px-4 py-3 border-b border-gray-100">
                     <div className="flex items-center gap-3">

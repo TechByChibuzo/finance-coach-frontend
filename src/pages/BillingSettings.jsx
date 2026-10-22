@@ -195,7 +195,7 @@ function CancelSubscriptionModal({ planName, onCancel, onClose, loading }) {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6"
+        className="bg-surface rounded-2xl shadow-2xl max-w-md w-full p-6"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="text-center">
