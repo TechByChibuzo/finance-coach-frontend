@@ -2,21 +2,40 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Bell } from 'lucide-react';
-import { anomaliesAPI, budgetAPI } from '../../services/api';
+import { differenceInCalendarDays, format, parseISO } from 'date-fns';
+import { anomaliesAPI, budgetAPI, recurringAPI } from '../../services/api';
 import { formatCurrency } from '../../utils/helpers';
 import { categoryLabel } from '../../utils/categories';
 
-// Budgets near or over their limit, and unusual spending the user hasn't dismissed
+const BILL_DAYS_AHEAD = 3;
+
+const dueLabel = (date) => {
+  const days = differenceInCalendarDays(parseISO(date), new Date());
+  if (days <= 0) return 'today';
+  if (days === 1) return 'tomorrow';
+  return `on ${format(parseISO(date), 'EEEE')}`;
+};
+
+// Budgets near or over their limit, unusual spending the user hasn't dismissed, and bills due soon
 async function fetchNotifications() {
   // Detection also runs on a schedule; checking here keeps it current for this visit
   await anomaliesAPI.detect().catch(() => null);
-  const [alerts, anomalies] = await Promise.all([
+  const [alerts, anomalies, recurring] = await Promise.all([
     budgetAPI.getBudgetAlerts().then((r) => r.data).catch(() => []),
     anomaliesAPI.getUnreviewed().then((r) => r.data).catch(() => []),
+    recurringAPI.list().then((r) => r.data).catch(() => []),
   ]);
+  const bills = recurring
+    .filter((r) => {
+      if (!r.nextDate) return false;
+      const days = differenceInCalendarDays(parseISO(r.nextDate), new Date());
+      return days >= 0 && days <= BILL_DAYS_AHEAD;
+    })
+    .sort((a, b) => a.nextDate.localeCompare(b.nextDate));
   return {
     budgets: [...alerts].sort((a, b) => Number(b.percentageSpent) - Number(a.percentageSpent)),
     anomalies,
+    bills,
   };
 }
 
@@ -46,7 +65,8 @@ export default function NotificationBell() {
 
   const budgets = data?.budgets ?? [];
   const anomalies = data?.anomalies ?? [];
-  const count = budgets.length + anomalies.length;
+  const bills = data?.bills ?? [];
+  const count = budgets.length + anomalies.length + bills.length;
 
   const dismiss = async (id) => {
     queryClient.setQueryData(['notifications'], (old) =>
@@ -87,11 +107,28 @@ export default function NotificationBell() {
 
           {count === 0 ? (
             <p className="px-5 py-6 text-sm text-gray-500 leading-relaxed">
-              You're all caught up. We'll tell you here when a budget gets close to its limit or spending
-              in a category is unusually high.
+              You're all caught up. We'll tell you here when a bill is due, a budget gets close to its
+              limit, or spending in a category is unusually high.
             </p>
           ) : (
             <div className="divide-y divide-gray-100">
+              {bills.length > 0 && (
+                <section className="px-5 py-4">
+                  <h3 className="text-xs font-semibold text-gray-500 mb-3">Bills due soon</h3>
+                  <ul className="space-y-3">
+                    {bills.map((r) => (
+                      <li key={r.merchant}>
+                        <Link to="/recurring" onClick={() => setOpen(false)} className="block rounded-lg -mx-2 px-2 py-1.5 hover:bg-gray-50">
+                          <p className="text-sm text-gray-900">
+                            <span className="font-semibold">{r.merchant}</span> is due {dueLabel(r.nextDate)}
+                          </p>
+                          <p className="text-xs text-gray-500 mt-0.5">About {formatCurrency(r.amount)}</p>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
               {budgets.length > 0 && (
                 <section className="px-5 py-4">
                   <h3 className="text-xs font-semibold text-gray-500 mb-3">Budgets</h3>

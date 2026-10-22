@@ -11,6 +11,7 @@ import { formatCurrency } from '../utils/helpers';
 import Skeleton from '../components/common/Skeleton';
 import BankLogo from '../components/common/BankLogo';
 import CategoryRules from '../components/settings/CategoryRules';
+import WeeklyEmailToggle from '../components/settings/WeeklyEmailToggle';
 import { getThemePreference, setThemePreference } from '../utils/theme';
 
 const ACCOUNT_ICONS = {
@@ -166,6 +167,10 @@ export default function Settings() {
                     </label>
                   ))}
                 </div>
+              </fieldset>
+              <fieldset className="pt-2">
+                <legend className="text-sm font-medium text-gray-600 mb-1.5">Email</legend>
+                <WeeklyEmailToggle />
               </fieldset>
               <button onClick={logout} className="btn-secondary mt-2">
                 Sign out

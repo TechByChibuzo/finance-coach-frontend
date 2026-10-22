@@ -142,6 +142,9 @@ export const exportAPI = {
 
 // User API
 export const userAPI = {
+  me: () => api.get('/users/me'),
+  // { weeklySummaryEmails: boolean }
+  updatePreferences: (preferences) => api.patch('/users/me/preferences', preferences),
   // Cancels billing, disconnects banks and erases all of the user's data
   deleteAccount: () => api.delete('/users/me', SLOW),
 };
