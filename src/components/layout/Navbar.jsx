@@ -130,12 +130,12 @@ export default function Navbar({ onMenuClick }) {
 
                   <div className="py-1">
                     <Link
-                      to="/settings/profile"
+                      to="/settings?tab=profile"
                       onClick={() => setShowUserMenu(false)}
                       className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2.5 transition-colors"
                     >
                       <UserCircle className="w-4 h-4 text-gray-400" />
-                      <span>Profile Settings</span>
+                      <span>Profile</span>
                     </Link>
 
                     <Link

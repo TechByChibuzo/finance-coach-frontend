@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import Layout from '../components/layout/Layout';
 import PlaidLink from '../components/plaid/PlaidLink';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowRight, Landmark, CreditCard, Home, TrendingUp, Wallet, Building2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { authAPI, plaidAPI, userAPI } from '../services/api';
@@ -25,7 +25,10 @@ const TABS = [
 
 export default function Settings() {
   const { user, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState('profile');
+  // The tab lives in the URL (/settings?tab=banks) so links can open it and refresh keeps it
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = TABS.some((t) => t.id === searchParams.get('tab')) ? searchParams.get('tab') : 'profile';
+  const setActiveTab = (id) => setSearchParams(id === 'profile' ? {} : { tab: id }, { replace: true });
   const [accounts, setAccounts] = useState([]);
   const [loadingAccounts, setLoadingAccounts] = useState(false);
   const navigate = useNavigate();
@@ -72,6 +75,10 @@ export default function Settings() {
       setLoadingAccounts(false);
     }
   };
+  useEffect(() => {
+    if (activeTab === 'banks') loadAccounts();
+  }, [activeTab]);
+
 
   return (
     <Layout>
@@ -87,7 +94,6 @@ export default function Settings() {
                 key={tab.id}
                 onClick={() => {
                   setActiveTab(tab.id);
-                  if (tab.id === 'banks') loadAccounts();
                 }}
                 aria-current={activeTab === tab.id ? 'page' : undefined}
                 className={`py-3.5 px-1 border-b-2 text-sm font-semibold whitespace-nowrap transition-colors ${
