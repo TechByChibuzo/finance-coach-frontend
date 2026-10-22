@@ -9,6 +9,8 @@ import { authAPI, plaidAPI, userAPI } from '../services/api';
 import { formatCurrency } from '../utils/helpers';
 import Skeleton from '../components/common/Skeleton';
 import BankLogo from '../components/common/BankLogo';
+import CategoryRules from '../components/settings/CategoryRules';
+import { getThemePreference, setThemePreference } from '../utils/theme';
 
 const ACCOUNT_ICONS = {
   depository: { Icon: Landmark,   bg: 'bg-blue-50',    color: 'text-blue-600' },
@@ -20,6 +22,7 @@ const ACCOUNT_ICONS = {
 const TABS = [
   { id: 'profile',       name: 'Profile' },
   { id: 'banks',         name: 'Bank accounts' },
+  { id: 'categories',    name: 'Categories' },
   { id: 'billing',       name: 'Billing' },
   { id: 'security',      name: 'Security' },
 ];
@@ -36,6 +39,7 @@ export default function Settings() {
   const [deleteConfirm, setDeleteConfirm] = useState('');
   const [deleting, setDeleting] = useState(false);
   const [resetLinkState, setResetLinkState] = useState('idle'); // idle | sending | sent
+  const [theme, setTheme] = useState(getThemePreference);
 
   // Changing the password goes through the emailed reset link: it proves access to the
   // account's email, and the backend signs out every other session once it's used
@@ -62,6 +66,22 @@ export default function Settings() {
     } catch (error) {
       toast.error(error.response?.data?.message || 'Could not delete your account. Please try again.');
       setDeleting(false);
+    }
+  };
+
+  const disconnect = async (account) => {
+    const sameBank = accounts.filter((a) => a.institutionName === account.institutionName).length;
+    const ok = window.confirm(
+      `Disconnect ${account.accountName}${account.institutionName ? ` (${account.institutionName})` : ''}?\n\n`
+      + "It stops syncing. Transactions already imported stay in Finance Coach."
+      + (sameBank <= 1 ? ' This is the last account from this bank, so the bank connection is removed too.' : ''));
+    if (!ok) return;
+    try {
+      await plaidAPI.disconnect(account.id);
+      toast.success(`${account.accountName} disconnected`);
+      loadAccounts();
+    } catch {
+      toast.error("Couldn't disconnect the account. Try again.");
     }
   };
 
@@ -133,8 +153,21 @@ export default function Settings() {
                   />
                 </div>
               </div>
+              <fieldset className="pt-2">
+                <legend className="text-sm font-medium text-gray-600 mb-1.5">Appearance</legend>
+                <div className="inline-flex rounded-xl border border-gray-200 p-1">
+                  {[['system', 'System'], ['light', 'Light'], ['dark', 'Dark']].map(([value, label]) => (
+                    <label key={value}
+                      className={`cursor-pointer rounded-lg px-3.5 py-1.5 text-sm font-semibold ${theme === value ? 'bg-primary-50 text-primary-700' : 'text-gray-500 hover:text-gray-800'}`}>
+                      <input type="radio" name="theme" value={value} checked={theme === value} className="sr-only"
+                        onChange={() => { setTheme(value); setThemePreference(value); }} />
+                      {label}
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
               <button onClick={logout} className="btn-secondary mt-2">
-                Sign Out
+                Sign out
               </button>
             </div>
           )}
@@ -186,13 +219,23 @@ export default function Settings() {
                           <div>
                             <p className="text-sm font-semibold text-gray-900">{account.accountName}</p>
                             <p className="text-xs text-gray-400">{account.institutionName}</p>
-                            <p className="text-xs text-gray-400 capitalize">{account.accountType}</p>
+                            <p className="text-xs text-gray-400">
+                              <span className="capitalize">{account.accountType}</span>
+                              {account.mask && <span className="tabular-nums"> ••{account.mask}</span>}
+                            </p>
                           </div>
                         </div>
                         <div className="text-right">
                           <p className="text-sm font-semibold text-gray-900">
                             {formatCurrency(account.currentBalance)}
                           </p>
+                          <button
+                            onClick={() => disconnect(account)}
+                            className="mt-1 text-xs font-semibold text-gray-500 hover:text-red-600"
+                            aria-label={`Disconnect ${account.accountName}`}
+                          >
+                            Disconnect
+                          </button>
                           {account.availableBalance !== null && (
                             <p className="text-xs text-gray-400">
                               Avail: {formatCurrency(account.availableBalance)}
@@ -216,6 +259,8 @@ export default function Settings() {
               )}
             </div>
           )}
+
+          {activeTab === 'categories' && <CategoryRules />}
 
           {activeTab === 'billing' && (
             <div className="space-y-4">
