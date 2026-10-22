@@ -35,7 +35,7 @@ export default function Navbar({ onMenuClick }) {
   };
 
   return (
-    <nav className="bg-surface/95 backdrop-blur-sm border-b border-gray-100 shadow-sm fixed w-full z-30 top-0">
+    <nav className="bg-surface/90 backdrop-blur-md border-b border-gray-100 fixed w-full z-30 top-0">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Left side */}
@@ -48,7 +48,7 @@ export default function Navbar({ onMenuClick }) {
             </button>
             
             <Link to="/dashboard" className="flex items-center ml-2 space-x-3">
-              <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center shadow-sm shadow-primary-200">
+              <div className="w-9 h-9 bg-primary-600 rounded-xl flex items-center justify-center">
                 <svg width="22" height="22" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
                     d="M15 2L4 6.8V14.5C4 21.2 8.8 27.4 15 29C21.2 27.4 26 21.2 26 14.5V6.8L15 2Z"
@@ -71,40 +71,34 @@ export default function Navbar({ onMenuClick }) {
             {planName === 'FREE' ? (
               <Link
                 to="/pricing"
-                className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm hover:shadow-md"
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-primary-700 ring-1 ring-primary-200 hover:bg-primary-50 transition-colors"
               >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Upgrade to Pro</span>
+                <Sparkles className="w-3.5 h-3.5" aria-hidden />
+                <span>Upgrade</span>
               </Link>
             ) : (
               <Link
                 to="/settings/billing"
-                className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-linear-to-r from-yellow-400 to-yellow-500 text-gray-900 rounded-lg text-sm font-bold hover:from-yellow-500 hover:to-yellow-600 transition-all shadow-sm hover:shadow-md"
+                className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold text-primary-700 bg-primary-50 hover:bg-primary-100 transition-colors"
               >
-                <Crown className="w-3.5 h-3.5" />
-                <span>{planName}</span>
+                <Crown className="w-3.5 h-3.5" aria-hidden />
+                <span>{planName.charAt(0) + planName.slice(1).toLowerCase()}</span>
               </Link>
             )}
 
             {/* Notifications */}
             <NotificationBell />
 
-            {/* Divider */}
-            <div className="hidden md:block h-8 w-px bg-gray-200"></div>
-
             {/* User Menu */}
             <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center space-x-2 sm:space-x-3 hover:bg-gray-50 rounded-lg px-2 sm:px-3 py-2 transition-colors"
+                className="flex items-center gap-1.5 rounded-full p-0.5 sm:pr-2 hover:bg-gray-100 transition-colors"
+                aria-label="Account menu"
+                aria-expanded={showUserMenu}
               >
-                {/* User info - hidden on small screens */}
-                <div className="hidden md:block text-right">
-                  <p className="text-sm font-semibold text-gray-900">{user?.fullName}</p>
-                </div>
-                
                 {/* User Avatar */}
-                <div className="w-9 h-9 bg-primary-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center text-white font-semibold text-xs">
                   {getUserInitials()}
                 </div>
 
@@ -144,7 +138,7 @@ export default function Navbar({ onMenuClick }) {
                       className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2.5 transition-colors"
                     >
                       <Crown className="w-4 h-4 text-gray-400" />
-                      <span>Billing & Subscription</span>
+                      <span>Billing</span>
                     </Link>
 
                     <Link
