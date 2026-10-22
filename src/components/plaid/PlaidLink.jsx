@@ -24,7 +24,7 @@ export default function PlaidLink({ onSuccess }) {
           return;
         }
         console.error('Failed to create link token:', error);
-        toast.error('Failed to initialize bank connection');
+        toast.error("Couldn't start connecting a bank. Try again.");
       }
     };
     createLinkToken();
@@ -32,7 +32,7 @@ export default function PlaidLink({ onSuccess }) {
 
   // Import the new bank's transactions right away, so the dashboard isn't empty
   const importTransactions = async () => {
-    const importing = toast.loading('Importing your transactions...');
+    const importing = toast.loading('Bringing in your transactions…');
     try {
       await transactionsAPI.sync();
       toast.success('Transactions imported', { id: importing });
@@ -49,13 +49,13 @@ export default function PlaidLink({ onSuccess }) {
       setLoading(true);
       try {
         await plaidAPI.exchangeToken(publicToken);
-        toast.success('Bank account connected successfully!');
+        toast.success('Bank connected');
         if (onSuccess) onSuccess();
         await importTransactions();
         if (onSuccess) onSuccess();
       } catch (error) {
         console.error('Failed to exchange token:', error);
-        toast.error(error.response?.data?.message || 'Failed to connect bank account');
+        toast.error(error.response?.data?.message || "Couldn't connect the bank. Try again.");
       } finally {
         setLoading(false);
       }
@@ -86,7 +86,7 @@ export default function PlaidLink({ onSuccess }) {
       className="btn-primary flex items-center gap-1.5 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <Plus className="w-4 h-4" />
-      <span>{loading ? 'Connecting...' : 'Connect Bank'}</span>
+      <span>{loading ? 'Connecting…' : 'Connect a bank'}</span>
     </button>
   );
 }
