@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import { authAPI, plaidAPI, userAPI } from '../services/api';
 import { formatCurrency } from '../utils/helpers';
 import Skeleton from '../components/common/Skeleton';
+import BankLogo from '../components/common/BankLogo';
 
 const ACCOUNT_ICONS = {
   depository: { Icon: Landmark,   bg: 'bg-blue-50',    color: 'text-blue-600' },
@@ -172,9 +173,16 @@ export default function Settings() {
                         className="flex items-center justify-between p-4 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors"
                       >
                         <div className="flex items-center gap-4">
-                          <div className={`w-10 h-10 ${iconConfig.bg} rounded-xl flex items-center justify-center shrink-0`}>
-                            <Icon className={`w-5 h-5 ${iconConfig.color}`} />
-                          </div>
+                          <BankLogo
+                            logo={account.institutionLogo}
+                            color={account.institutionColor}
+                            name={account.institutionName}
+                            fallback={(
+                              <div className={`w-10 h-10 ${iconConfig.bg} rounded-xl flex items-center justify-center shrink-0`}>
+                                <Icon className={`w-5 h-5 ${iconConfig.color}`} />
+                              </div>
+                            )}
+                          />
                           <div>
                             <p className="text-sm font-semibold text-gray-900">{account.accountName}</p>
                             <p className="text-xs text-gray-400">{account.institutionName}</p>
