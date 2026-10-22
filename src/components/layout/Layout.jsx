@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
+import MobileTabBar from './MobileTabBar';
 
 export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -15,12 +16,13 @@ export default function Layout({ children }) {
           onClose={() => setSidebarOpen(false)} 
         />
         
-        <main className="flex-1 min-w-0 px-4 py-6 sm:p-6 lg:p-8">
+        <main className="flex-1 min-w-0 px-4 pt-6 pb-28 sm:px-6 sm:pt-6 lg:p-8">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>
         </main>
       </div>
+      <MobileTabBar onMore={() => setSidebarOpen(true)} />
     </div>
   );
 }

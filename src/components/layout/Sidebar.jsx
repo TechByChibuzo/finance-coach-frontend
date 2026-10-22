@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -6,6 +7,7 @@ import {
   TrendingUp,
   Landmark,
   Bot,
+  Repeat,
   Crown,
   Settings,
   X,
@@ -15,6 +17,7 @@ const mainNav = [
   { name: 'Dashboard',    href: '/dashboard',    icon: LayoutDashboard },
   { name: 'Transactions', href: '/transactions',  icon: CreditCard },
   { name: 'Budgets',      href: '/budget',        icon: PiggyBank },
+  { name: 'Recurring',    href: '/recurring',     icon: Repeat },
   { name: 'Investments',  href: '/investments',   icon: TrendingUp },
   { name: 'Net Worth',    href: '/net-worth',     icon: Landmark },
   { name: 'AI Coach',     href: '/ai-coach',      icon: Bot },
@@ -62,6 +65,14 @@ const NavItem = ({ item, isActive, onClose }) => (
 export default function Sidebar({ isOpen, onClose }) {
   const location = useLocation();
 
+  // Escape closes the mobile menu, like any other overlay
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const onKeyDown = (e) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [isOpen, onClose]);
+
   return (
     <>
       {/* Mobile backdrop */}
@@ -74,7 +85,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
       {/* Sidebar */}
       <div className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-100 flex flex-col
+        fixed inset-y-0 left-0 z-50 w-64 bg-surface border-r border-gray-100 flex flex-col
         transform transition-transform duration-300 ease-in-out
         lg:translate-x-0 lg:sticky lg:top-16 lg:h-[calc(100dvh-4rem)] lg:self-start lg:z-auto
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
