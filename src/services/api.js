@@ -204,6 +204,14 @@ export const aiCoachAPI = {
     api.delete(`/ai-coach/chat/${sessionId}`),
 };
 
+// Unusual spending (anomaly detection)
+export const anomaliesAPI = {
+  // Re-checks this month against the user's history; existing anomalies are updated, not duplicated
+  detect: () => api.post('/anomalies/detect'),
+  getUnreviewed: () => api.get('/anomalies/unreviewed'),
+  markReviewed: (id) => api.put(`/anomalies/${id}/review`),
+};
+
 // Plaid API
 export const plaidAPI = {
   createLinkToken: () => 

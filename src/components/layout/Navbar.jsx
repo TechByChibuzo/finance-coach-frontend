@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { Crown, Sparkles, ChevronDown, Menu, Bell, UserCircle, LogOut, Settings } from 'lucide-react';
+import { Crown, Sparkles, ChevronDown, Menu, UserCircle, LogOut, Settings } from 'lucide-react';
+import NotificationBell from './NotificationBell';
 import { useAuth } from '../../hooks/useAuth';
 import { useCurrentSubscription } from '../../hooks/useSubscription';
 import { useState, useRef, useEffect } from 'react';
@@ -86,10 +87,7 @@ export default function Navbar({ onMenuClick }) {
             )}
 
             {/* Notifications */}
-            <button className="relative p-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100 rounded-lg transition-colors">
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-1.5 right-1.5 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-            </button>
+            <NotificationBell />
 
             {/* Divider */}
             <div className="hidden md:block h-8 w-px bg-gray-200"></div>
