@@ -1,10 +1,8 @@
 // src/context/AuthContext.jsx
-import { createContext, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { authAPI } from '../services/api';
 import { queryClient } from '../lib/queryClient';
-
-// Export the context so useAuth hook can use it
-export const AuthContext = createContext();
+import { AuthContext } from './authContextValue';
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);

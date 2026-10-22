@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { networthAPI } from '../../services/api';
 import { X } from 'lucide-react';
@@ -18,27 +18,24 @@ export default function AddLiabilityModal({ liability, onClose }) {
   const queryClient = useQueryClient();
   const isEditing = !!liability;
 
-  const [formData, setFormData] = useState({
-    name: '',
-    type: 'mortgage',
-    balance: '',
-    interestRate: '',
-    monthlyPayment: '',
-    notes: '',
-  });
-
-  useEffect(() => {
-    if (liability) {
-      setFormData({
+  // Mounted only while open, so the form starts from the item being edited (or empty)
+  const [formData, setFormData] = useState(() => (liability
+    ? {
         name: liability.name,
         type: liability.type,
         balance: liability.balance.toString(),
         interestRate: liability.interestRate ? liability.interestRate.toString() : '',
         monthlyPayment: liability.monthlyPayment ? liability.monthlyPayment.toString() : '',
         notes: liability.notes || '',
-      });
-    }
-  }, [liability]);
+      }
+    : {
+        name: '',
+        type: 'mortgage',
+        balance: '',
+        interestRate: '',
+        monthlyPayment: '',
+        notes: '',
+      }));
 
   const mutation = useMutation({
     mutationFn: (data) =>
@@ -74,10 +71,10 @@ export default function AddLiabilityModal({ liability, onClose }) {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto"
+        className="bg-surface rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-6 border-b border-gray-100 sticky top-0 bg-white z-10">
+        <div className="flex items-center justify-between p-6 border-b border-gray-100 sticky top-0 bg-surface z-10">
           <h2 className="text-base font-semibold text-gray-900">
             {isEditing ? 'Edit Liability' : 'Add Liability'}
           </h2>

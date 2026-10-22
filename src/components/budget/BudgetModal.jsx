@@ -1,5 +1,5 @@
 import { X, Lightbulb } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { format } from 'date-fns';
 import { formatCurrency } from '../../utils/helpers';
 
@@ -33,44 +33,27 @@ export default function BudgetModal({
     ? format(currentMonth, 'yyyy-MM-dd')
     : format(new Date(), 'yyyy-MM-dd');
 
-  const [formData, setFormData] = useState({
-    category: '',
-    amount: '',
-    notes: '',
-    alertThreshold: 80,
-    month: defaultMonth,
-  });
-
-  const [errors, setErrors] = useState({});
-
-  useEffect(() => {
+  // Mounted fresh each time it opens (see Budget.jsx), so the form starts from its props
+  const [formData, setFormData] = useState(() => {
     if (editBudget) {
-      setFormData({
+      return {
         category: editBudget.category,
         amount: editBudget.amount.toString(),
         notes: editBudget.notes || '',
         alertThreshold: editBudget.alertThreshold,
         month: editBudget.month,
-      });
-    } else if (recommendationData) {
-      setFormData({
-        category: recommendationData.category,
-        amount: recommendationData.amount.toString(),
-        notes: '',
-        alertThreshold: 80,
-        month: defaultMonth,
-      });
-    } else if (currentMonth) {
-      setFormData(prev => ({ ...prev, month: defaultMonth }));
+      };
     }
-  }, [editBudget, recommendationData, currentMonth]);
+    return {
+      category: recommendationData?.category ?? '',
+      amount: recommendationData ? recommendationData.amount.toString() : '',
+      notes: '',
+      alertThreshold: 80,
+      month: defaultMonth,
+    };
+  });
 
-  useEffect(() => {
-    if (!isOpen) {
-      setFormData({ category: '', amount: '', notes: '', alertThreshold: 80, month: defaultMonth });
-      setErrors({});
-    }
-  }, [isOpen, currentMonth]);
+  const [errors, setErrors] = useState({});
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -107,10 +90,10 @@ export default function BudgetModal({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto"
+        className="bg-surface rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-6 border-b border-gray-100 sticky top-0 bg-white z-10">
+        <div className="flex items-center justify-between p-6 border-b border-gray-100 sticky top-0 bg-surface z-10">
           <h2 className="text-base font-semibold text-gray-900">{title}</h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
             <X className="w-4 h-4 text-gray-500" />

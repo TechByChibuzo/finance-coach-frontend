@@ -1,5 +1,4 @@
 import { Component } from 'react';
-import { motion } from 'framer-motion';
 
 export class ErrorBoundary extends Component {
   constructor(props) {

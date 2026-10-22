@@ -165,18 +165,20 @@ export default function Budget() {
           </>
         )}
 
-        <BudgetModal
-          isOpen={isModalOpen}
-          onClose={() => {
-            setIsModalOpen(false);
-            setEditingBudget(null);
-            setRecommendationData(null);
-          }}
-          onSubmit={handleSubmitBudget}
-          editBudget={editingBudget}
-          recommendationData={recommendationData}
-          currentMonth={selectedMonth}
-        />
+        {isModalOpen && (
+          <BudgetModal
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false);
+              setEditingBudget(null);
+              setRecommendationData(null);
+            }}
+            onSubmit={handleSubmitBudget}
+            editBudget={editingBudget}
+            recommendationData={recommendationData}
+            currentMonth={selectedMonth}
+          />
+        )}
       </div>
     </Layout>
   );

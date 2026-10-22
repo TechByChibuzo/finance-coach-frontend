@@ -2,7 +2,6 @@ import { Crown, Sparkles, Zap, ArrowRight, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCurrentSubscription } from '../../hooks/useSubscription';
 import Skeleton from '../common/Skeleton';
-import { formatCurrency } from '../../utils/helpers';
 import { format } from 'date-fns';
 
 export default function SubscriptionStatusWidget() {
@@ -72,7 +71,7 @@ export default function SubscriptionStatusWidget() {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-lg ${config.iconColor} bg-white`}>
+          <div className={`p-2 rounded-lg ${config.iconColor} bg-surface`}>
             <Icon className="w-6 h-6" />
           </div>
           <div>
@@ -138,7 +137,7 @@ export default function SubscriptionStatusWidget() {
       ) : planName === 'PREMIUM' ? (
         <Link
           to="/pricing"
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-purple-200 text-purple-600 rounded-lg hover:bg-purple-50 transition-colors text-sm font-semibold"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-surface border border-purple-200 text-purple-600 rounded-lg hover:bg-purple-50 transition-colors text-sm font-semibold"
         >
           <Crown className="w-4 h-4" />
           <span>Upgrade to Pro</span>
@@ -146,7 +145,7 @@ export default function SubscriptionStatusWidget() {
       ) : (
         <Link
           to="/settings/billing"
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-surface border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
         >
           <span>Manage Subscription</span>
           <ArrowRight className="w-4 h-4" />
