@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import MobileTabBar from './MobileTabBar';
+import ReconnectBanner from './ReconnectBanner';
 
 export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -18,6 +19,7 @@ export default function Layout({ children }) {
         
         <main className="flex-1 min-w-0 px-4 pt-6 pb-28 sm:px-6 sm:pt-6 lg:p-8">
           <div className="max-w-7xl mx-auto">
+            <ReconnectBanner />
             {children}
           </div>
         </main>

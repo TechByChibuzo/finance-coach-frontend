@@ -254,6 +254,13 @@ export const plaidAPI = {
   // Stops syncing the account; removes the bank connection when it was the last account
   disconnect: (accountId) =>
     api.delete(`/plaid/accounts/${accountId}`),
+
+  // Reopens Plaid Link on an existing connection so the user can sign in to the bank again
+  updateLinkToken: (itemId) =>
+    api.post(`/plaid/items/${itemId}/update-link-token`),
+
+  reconnected: (itemId) =>
+    api.post(`/plaid/items/${itemId}/reconnected`),
 };
 
 // Budget API 

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import Layout from '../components/layout/Layout';
 import PlaidLink from '../components/plaid/PlaidLink';
+import ReconnectBank from '../components/plaid/ReconnectBank';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowRight, Landmark, CreditCard, Home, TrendingUp, Wallet, Building2 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -223,6 +224,17 @@ export default function Settings() {
                               <span className="capitalize">{account.accountType}</span>
                               {account.mask && <span className="tabular-nums"> ••{account.mask}</span>}
                             </p>
+                            {account.needsReconnect && (
+                              <div className="mt-2 flex items-center gap-3">
+                                <span className="text-xs font-semibold text-amber-600">Sign-in needed</span>
+                                <ReconnectBank
+                                  itemId={account.itemId}
+                                  institutionName={account.institutionName}
+                                  onDone={loadAccounts}
+                                  className="text-xs font-semibold text-primary-600 hover:text-primary-700"
+                                />
+                              </div>
+                            )}
                           </div>
                         </div>
                         <div className="text-right">
