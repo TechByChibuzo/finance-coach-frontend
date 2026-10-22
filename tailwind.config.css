@@ -49,6 +49,9 @@
   --color-amber-600: #b7791f;
 
   /* Category palette for charts: distinct but muted, readable on white */
+  /* Money in / out on reports: validated as a pair (chroma, CVD, contrast) on both surfaces */
+  --color-chart-income: #109a7e;
+  --color-chart-spending: #3f7cbf;
   --color-chart-1: #0e6b5c;
   --color-chart-2: #3f7cbf;
   --color-chart-3: #c98a2b;
