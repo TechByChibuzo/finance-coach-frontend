@@ -126,6 +126,10 @@ export const authAPI = {
     return api.post('/auth/forgot-password', { email });
   },
 
+  // 200 if the reset link's token is still usable, 400 if invalid or expired
+  validateResetToken: (token) =>
+    api.get(`/auth/validate-reset-token/${encodeURIComponent(token)}`),
+
   resetPassword: async (token, newPassword) => {
     return api.post('/auth/reset-password', { token, newPassword });
   },
