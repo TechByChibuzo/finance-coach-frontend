@@ -2,7 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { format, isToday, parseISO } from 'date-fns';
 import { ArrowUp, Sparkles } from 'lucide-react';
 import Layout from '../components/layout/Layout';
-import { aiCoachAPI } from '../services/api';
+import { useQuery } from '@tanstack/react-query';
+import { aiCoachAPI, analyticsAPI } from '../services/api';
+import { useAuth } from '../hooks/useAuth';
+import { categoryLabel } from '../utils/categories';
+import { formatCurrency } from '../utils/helpers';
 import { Markdown } from '../utils/markdown';
 
 const SUGGESTIONS = [
@@ -124,6 +128,22 @@ export default function AICoach() {
 
   const empty = !loadingHistory && messages.length === 0;
 
+  // A glance at the month before the first question, and suggestions that use it
+  const { user } = useAuth();
+  const { data: month } = useQuery({
+    queryKey: ['coach-glance'],
+    queryFn: () => analyticsAPI.getMonthlySummary().then((r) => r.data),
+    enabled: empty,
+    staleTime: 5 * 60 * 1000,
+  });
+  const topCategory = Object.entries(month?.categoryBreakdown || {})
+    .sort(([, a], [, b]) => Number(b) - Number(a))[0]?.[0];
+  const spentSoFar = Number(month?.totalSpending || 0);
+  const suggestions = topCategory
+    ? [SUGGESTIONS[0], `How could I spend less on ${categoryLabel(topCategory).toLowerCase()}?`, SUGGESTIONS[2], SUGGESTIONS[3]]
+    : SUGGESTIONS;
+  const firstName = user?.fullName?.split(' ')[0];
+
   return (
     <Layout>
       <div className="mx-auto flex max-w-3xl flex-col h-[calc(100dvh-8.5rem)] lg:h-[calc(100dvh-9.5rem)]">
@@ -139,12 +159,24 @@ export default function AICoach() {
             <p className="py-8 text-sm text-gray-500">Loading your conversation…</p>
           ) : empty ? (
             <div className="flex h-full flex-col justify-center py-8">
-              <p className="text-xl font-bold text-gray-900">Ask about your money</p>
-              <p className="mt-2 text-sm text-gray-500 max-w-md">
-                The coach reads your synced transactions and budgets, so it can answer with your real numbers.
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary-600 shadow-sm" aria-hidden>
+                <Sparkles className="h-5 w-5 text-white" />
+              </div>
+              <p className="mt-5 text-2xl font-extrabold tracking-tight text-gray-900">
+                {firstName ? `Hi ${firstName}, what would you like to know?` : 'What would you like to know?'}
               </p>
+              <p className="mt-2 text-sm text-gray-500 max-w-md">
+                The coach reads your transactions and budgets, so it answers with your real numbers.
+              </p>
+              {spentSoFar > 0 && (
+                <p className="mt-5 rounded-xl bg-primary-50 px-4 py-3 text-sm text-gray-700">
+                  So far this month you've spent{' '}
+                  <span className="font-semibold text-gray-900 tabular-nums">{formatCurrency(spentSoFar, false)}</span>
+                  {topCategory && <>, most of it on <span className="font-semibold text-gray-900">{categoryLabel(topCategory).toLowerCase()}</span></>}.
+                </p>
+              )}
               <div className="mt-6 grid gap-2 sm:grid-cols-2">
-                {SUGGESTIONS.map((s) => (
+                {suggestions.map((s) => (
                   <button
                     key={s}
                     onClick={() => send(s)}

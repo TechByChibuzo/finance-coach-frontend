@@ -5,7 +5,7 @@ import { X } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const ASSET_TYPES = [
-  { value: 'real_estate', label: 'Real Estate' },
+  { value: 'real_estate', label: 'Real estate' },
   { value: 'vehicle', label: 'Vehicle' },
   { value: 'jewelry', label: 'Jewelry' },
   { value: 'other', label: 'Other' },
@@ -38,18 +38,18 @@ export default function AddAssetModal({ asset, onClose }) {
     onSuccess: () => {
       queryClient.invalidateQueries(['assets']);
       queryClient.invalidateQueries(['networth-current']);
-      toast.success(isEditing ? 'Asset updated!' : 'Asset added!');
+      toast.success(isEditing ? 'Asset saved' : 'Asset added');
       onClose();
     },
     onError: (error) => {
-      toast.error(error.response?.data?.message || 'Failed to save asset');
+      toast.error(error.response?.data?.message || "Couldn't save the asset. Try again.");
     },
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.name.trim()) return toast.error('Please enter asset name');
-    if (!formData.value || parseFloat(formData.value) <= 0) return toast.error('Please enter a valid value');
+    if (!formData.name.trim()) return toast.error('Give the asset a name');
+    if (!formData.value || parseFloat(formData.value) <= 0) return toast.error('Enter what the asset is worth');
     mutation.mutate({
       name: formData.name.trim(),
       type: formData.type,
@@ -69,7 +69,7 @@ export default function AddAssetModal({ asset, onClose }) {
       >
         <div className="flex items-center justify-between p-6 border-b border-gray-100 sticky top-0 bg-surface z-10">
           <h2 className="text-base font-semibold text-gray-900">
-            {isEditing ? 'Edit Asset' : 'Add Asset'}
+            {isEditing ? 'Edit asset' : 'Add an asset'}
           </h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
             <X className="w-4 h-4 text-gray-500" />
@@ -133,7 +133,7 @@ export default function AddAssetModal({ asset, onClose }) {
               Cancel
             </button>
             <button type="submit" disabled={mutation.isPending} className="flex-1 btn-primary disabled:opacity-50 disabled:cursor-not-allowed">
-              {mutation.isPending ? 'Saving...' : isEditing ? 'Update Asset' : 'Add Asset'}
+              {mutation.isPending ? 'Saving…' : isEditing ? 'Save' : 'Add asset'}
             </button>
           </div>
         </form>

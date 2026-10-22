@@ -2,7 +2,7 @@ import { Plus, Pencil, Trash2, Home } from 'lucide-react';
 import { formatCurrency } from '../../utils/helpers';
 
 const ASSET_TYPES = {
-  real_estate: 'Real Estate',
+  real_estate: 'Real estate',
   vehicle: 'Vehicle',
   jewelry: 'Jewelry',
   other: 'Other',
@@ -31,10 +31,10 @@ export default function AssetsTable({ assets, onAdd, onEdit, onDelete }) {
           <table className="min-w-full">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="pb-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wide">Name</th>
-                <th className="pb-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wide">Type</th>
-                <th className="pb-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wide">Value</th>
-                <th className="pb-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wide">Actions</th>
+                <th className="pb-3 text-left text-xs font-medium text-gray-500">Name</th>
+                <th className="pb-3 text-left text-xs font-medium text-gray-500">Type</th>
+                <th className="pb-3 text-right text-xs font-medium text-gray-500">Value</th>
+                <th className="pb-3 text-right text-xs font-medium text-gray-500">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">

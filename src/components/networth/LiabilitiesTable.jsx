@@ -3,9 +3,9 @@ import { formatCurrency } from '../../utils/helpers';
 
 const LIABILITY_TYPES = {
   mortgage: 'Mortgage',
-  auto_loan: 'Auto Loan',
-  student_loan: 'Student Loan',
-  personal_loan: 'Personal Loan',
+  auto_loan: 'Auto loan',
+  student_loan: 'Student loan',
+  personal_loan: 'Personal loan',
   other: 'Other',
 };
 
@@ -32,12 +32,12 @@ export default function LiabilitiesTable({ liabilities, onAdd, onEdit, onDelete 
           <table className="min-w-full">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="pb-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wide">Name</th>
-                <th className="pb-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wide">Type</th>
-                <th className="pb-3 pr-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wide">Balance</th>
-                <th className="pb-3 pr-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wide">Rate</th>
-                <th className="pb-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wide">Monthly</th>
-                <th className="pb-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wide">Actions</th>
+                <th className="pb-3 text-left text-xs font-medium text-gray-500">Name</th>
+                <th className="pb-3 text-left text-xs font-medium text-gray-500">Type</th>
+                <th className="pb-3 pr-4 text-right text-xs font-medium text-gray-500">Balance</th>
+                <th className="pb-3 pr-4 text-right text-xs font-medium text-gray-500">Rate</th>
+                <th className="pb-3 text-right text-xs font-medium text-gray-500">Monthly</th>
+                <th className="pb-3 text-right text-xs font-medium text-gray-500">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -50,7 +50,7 @@ export default function LiabilitiesTable({ liabilities, onAdd, onEdit, onDelete 
                     )}
                   </td>
                   <td className="py-3.5 pr-4 whitespace-nowrap">
-                    <span className="px-2 py-0.5 text-xs font-medium rounded-md bg-red-50 text-red-700">
+                    <span className="px-2 py-0.5 text-xs font-medium rounded-md bg-gray-100 text-gray-600">
                       {LIABILITY_TYPES[liability.type] || liability.type}
                     </span>
                   </td>

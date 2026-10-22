@@ -6,9 +6,9 @@ import toast from 'react-hot-toast';
 
 const LIABILITY_TYPES = [
   { value: 'mortgage', label: 'Mortgage' },
-  { value: 'auto_loan', label: 'Auto Loan' },
-  { value: 'student_loan', label: 'Student Loan' },
-  { value: 'personal_loan', label: 'Personal Loan' },
+  { value: 'auto_loan', label: 'Auto loan' },
+  { value: 'student_loan', label: 'Student loan' },
+  { value: 'personal_loan', label: 'Personal loan' },
   { value: 'other', label: 'Other' },
 ];
 
@@ -43,18 +43,18 @@ export default function AddLiabilityModal({ liability, onClose }) {
     onSuccess: () => {
       queryClient.invalidateQueries(['liabilities']);
       queryClient.invalidateQueries(['networth-current']);
-      toast.success(isEditing ? 'Liability updated!' : 'Liability added!');
+      toast.success(isEditing ? 'Debt saved' : 'Debt added');
       onClose();
     },
     onError: (error) => {
-      toast.error(error.response?.data?.message || 'Failed to save liability');
+      toast.error(error.response?.data?.message || "Couldn't save the debt. Try again.");
     },
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.name.trim()) return toast.error('Please enter liability name');
-    if (!formData.balance || parseFloat(formData.balance) <= 0) return toast.error('Please enter a valid balance');
+    if (!formData.name.trim()) return toast.error('Give the debt a name');
+    if (!formData.balance || parseFloat(formData.balance) <= 0) return toast.error('Enter how much is owed');
     mutation.mutate({
       name: formData.name.trim(),
       type: formData.type,
@@ -76,7 +76,7 @@ export default function AddLiabilityModal({ liability, onClose }) {
       >
         <div className="flex items-center justify-between p-6 border-b border-gray-100 sticky top-0 bg-surface z-10">
           <h2 className="text-base font-semibold text-gray-900">
-            {isEditing ? 'Edit Liability' : 'Add Liability'}
+            {isEditing ? 'Edit debt' : 'Add a debt'}
           </h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
             <X className="w-4 h-4 text-gray-500" />
@@ -173,7 +173,7 @@ export default function AddLiabilityModal({ liability, onClose }) {
               Cancel
             </button>
             <button type="submit" disabled={mutation.isPending} className="flex-1 btn-primary disabled:opacity-50 disabled:cursor-not-allowed">
-              {mutation.isPending ? 'Saving...' : isEditing ? 'Update Liability' : 'Add Liability'}
+              {mutation.isPending ? 'Saving…' : isEditing ? 'Save' : 'Add debt'}
             </button>
           </div>
         </form>

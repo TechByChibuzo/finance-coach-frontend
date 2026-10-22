@@ -51,10 +51,10 @@ export default function NetWorth() {
     onSuccess: () => {
       queryClient.invalidateQueries(['assets']);
       queryClient.invalidateQueries(['networth-current']);
-      toast.success('Asset deleted successfully');
+      toast.success('Asset deleted');
     },
     onError: () => {
-      toast.error('Failed to delete asset');
+      toast.error("Couldn't delete the asset. Try again.");
     },
   });
 
@@ -63,10 +63,10 @@ export default function NetWorth() {
     onSuccess: () => {
       queryClient.invalidateQueries(['liabilities']);
       queryClient.invalidateQueries(['networth-current']);
-      toast.success('Liability deleted successfully');
+      toast.success('Debt deleted');
     },
     onError: () => {
-      toast.error('Failed to delete liability');
+      toast.error("Couldn't delete the debt. Try again.");
     },
   });
 

@@ -61,7 +61,14 @@ export default function Reports() {
     }))),
   });
 
-  const months = useMemo(() => report || [], [report]);
+  // Start at the first month with any activity (keeping at least three), so a short
+  // history doesn't leave most of the chart empty
+  const months = useMemo(() => {
+    const all = report || [];
+    const first = all.findIndex((m) => m.income > 0 || m.spending > 0);
+    if (first < 0) return all;
+    return all.slice(Math.max(0, Math.min(first, all.length - 3)));
+  }, [report]);
   const hasData = months.some((m) => m.income > 0 || m.spending > 0);
 
   // Averages leave out this month, which isn't over yet (unless it's all there is)
@@ -155,8 +162,8 @@ export default function Reports() {
                     <YAxis tickFormatter={formatCurrencyCompact} tickLine={false} axisLine={false} width={56}
                       tick={{ fontSize: 12, fill: 'var(--color-gray-500)' }} />
                     <Tooltip content={<MonthTooltip />} cursor={{ fill: 'var(--color-gray-100)' }} />
-                    <Bar dataKey="income" name="Money in" fill={INCOME} radius={[4, 4, 0, 0]} maxBarSize={28} isAnimationActive={false} className="cursor-pointer" />
-                    <Bar dataKey="spending" name="Spending" fill={SPENDING} radius={[4, 4, 0, 0]} maxBarSize={28} isAnimationActive={false} className="cursor-pointer" />
+                    <Bar dataKey="income" name="Money in" fill={INCOME} radius={[4, 4, 0, 0]} maxBarSize={months.length <= 6 ? 48 : 28} isAnimationActive={false} className="cursor-pointer" />
+                    <Bar dataKey="spending" name="Spending" fill={SPENDING} radius={[4, 4, 0, 0]} maxBarSize={months.length <= 6 ? 48 : 28} isAnimationActive={false} className="cursor-pointer" />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

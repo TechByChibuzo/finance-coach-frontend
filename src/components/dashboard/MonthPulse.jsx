@@ -1,5 +1,9 @@
 import { Area, ComposedChart, CartesianGrid, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { formatCurrency, formatCurrencyCompact } from '../../utils/helpers';
+import useCountUp from '../../hooks/useCountUp';
+
+const prefersReducedMotion = typeof window !== 'undefined'
+  && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
 /**
  * The dashboard's lead: this month's spending so far, and how it is running against last
@@ -9,6 +13,7 @@ export default function MonthPulse({ summary, series, today, lastMonthName }) {
   const spent = Number(summary?.totalSpending || 0);
   const income = Number(summary?.totalIncome || 0);
   const net = Number(summary?.netCashFlow || 0);
+  const shownSpent = useCountUp(spent);
 
   const todayPoint = series.find((p) => p.day === today);
   const lastAtToday = todayPoint?.lastMonth;
@@ -46,8 +51,9 @@ export default function MonthPulse({ summary, series, today, lastMonthName }) {
         <div className="p-6 sm:p-8 flex flex-col justify-between gap-8">
           <div>
             <p className="text-sm font-medium text-gray-500">Spent so far</p>
-            <p className="mt-2 text-5xl sm:text-6xl font-extrabold tracking-tight text-gray-900">
-              {formatCurrency(spent, false)}
+            <p className="mt-2 text-5xl sm:text-6xl font-extrabold tracking-tight text-gray-900 tabular-nums"
+              aria-label={formatCurrency(spent, false)}>
+              {formatCurrency(Math.round(shownSpent), false)}
             </p>
             <p className="mt-3 text-sm font-medium leading-relaxed">{verdict}</p>
             {projection != null && (
@@ -140,6 +146,9 @@ export default function MonthPulse({ summary, series, today, lastMonthName }) {
                   dot={false}
                   activeDot={{ r: 4 }}
                   connectNulls={false}
+                  isAnimationActive={!prefersReducedMotion}
+                  animationDuration={900}
+                  animationEasing="ease-out"
                 />
               </ComposedChart>
             </ResponsiveContainer>
