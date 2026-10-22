@@ -23,6 +23,7 @@ const Budget = lazy(() => import('./pages/Budget'));
 const Investments = lazy(() => import('./pages/Investments'));
 const NetWorth = lazy(() => import('./pages/NetWorth'));
 const AICoach = lazy(() => import('./pages/AICoach'));
+const Recurring = lazy(() => import('./pages/Recurring'));
 const Settings = lazy(() => import('./pages/Settings'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const Pricing = lazy(() => import('./pages/Pricing'));
@@ -129,6 +130,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <AICoach />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/recurring"
+                element={
+                  <ProtectedRoute>
+                    <Recurring />
                   </ProtectedRoute>
                 }
               />

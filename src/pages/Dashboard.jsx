@@ -4,10 +4,11 @@ import { RefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Layout from '../components/layout/Layout';
 import MonthPulse from '../components/dashboard/MonthPulse';
-import { BudgetProgress, CategoryBars, MerchantList, RecentTransactions } from '../components/dashboard/DashboardLists';
+import { BudgetProgress, CategoryBars, ComingUp, MerchantList, NetWorthCard, RecentTransactions } from '../components/dashboard/DashboardLists';
 import { DashboardSkeleton } from '../components/common/Skeleton';
 import ErrorMessage from '../components/common/ErrorMessage';
-import { analyticsAPI, budgetAPI, transactionsAPI } from '../services/api';
+import { aiCoachAPI, analyticsAPI, budgetAPI, networthAPI, recurringAPI, transactionsAPI } from '../services/api';
+import SetupChecklist from '../components/dashboard/SetupChecklist';
 import { useAuth } from '../hooks/useAuth';
 
 const ymd = (d) => format(d, 'yyyy-MM-dd');
@@ -40,12 +41,15 @@ export default function Dashboard() {
     try {
       setError(null);
       // Everything on this page covers the same period: the current calendar month
-      const [summaryRes, thisTrendRes, lastTrendRes, budgetsRes, transactionsRes] = await Promise.all([
+      const [summaryRes, thisTrendRes, lastTrendRes, budgetsRes, transactionsRes, netWorthRes, conversationRes, recurringRes] = await Promise.all([
         analyticsAPI.getMonthlySummary(),
         analyticsAPI.getSpendingTrend(ymd(thisMonthStart), ymd(now)).catch(() => ({ data: {} })),
         analyticsAPI.getSpendingTrend(ymd(lastMonthStart), ymd(endOfMonth(lastMonthStart))).catch(() => ({ data: {} })),
         budgetAPI.getCurrentMonthBudgets().catch(() => ({ data: null })),
-        transactionsAPI.getAll(),
+        transactionsAPI.recent(6),
+        networthAPI.getCurrent().catch(() => ({ data: null })),
+        aiCoachAPI.getConversation().catch(() => ({ data: [] })),
+        recurringAPI.list().catch(() => ({ data: [] })),
       ]);
 
       const days = getDaysInMonth(now);
@@ -56,10 +60,14 @@ export default function Dashboard() {
         summary: summaryRes.data,
         series: thisMonth.map((value, i) => ({ day: i + 1, thisMonth: value, lastMonth: lastMonth[i] })),
         budgets: budgetsRes.data,
-        // Newest first: the API doesn't promise an order (imported files arrive oldest first)
-        recentTransactions: [...transactionsRes.data]
-          .sort((a, b) => b.date.localeCompare(a.date))
-          .slice(0, 6),
+        netWorth: netWorthRes.data,
+        recurring: recurringRes.data,
+        setup: {
+          hasTransactions: transactionsRes.data.length > 0,
+          hasBudgets: (budgetsRes.data?.budgets?.length ?? 0) > 0,
+          hasAskedCoach: (conversationRes.data?.length ?? 0) > 0,
+        },
+        recentTransactions: transactionsRes.data,
       });
     } catch (err) {
       console.error('Failed to load dashboard:', err);
@@ -117,6 +125,8 @@ export default function Dashboard() {
           </button>
         </header>
 
+        <SetupChecklist {...data.setup} />
+
         <MonthPulse
           summary={data.summary}
           series={data.series}
@@ -130,7 +140,15 @@ export default function Dashboard() {
           <MerchantList merchants={data.summary?.topMerchants} />
         </div>
 
-        <RecentTransactions transactions={data.recentTransactions} onSync={handleSync} syncing={syncing} />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <RecentTransactions transactions={data.recentTransactions} onSync={handleSync} syncing={syncing} />
+          </div>
+          <div className="space-y-6">
+            <NetWorthCard netWorth={data.netWorth} />
+            <ComingUp recurring={data.recurring} />
+          </div>
+        </div>
       </div>
     </Layout>
   );

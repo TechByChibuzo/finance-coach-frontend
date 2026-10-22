@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
-import { format, parseISO } from 'date-fns';
+import { differenceInCalendarDays, format, parseISO } from 'date-fns';
 import CategoryIcon from '../common/CategoryIcon';
 import MerchantIcon from '../common/MerchantIcon';
 import { formatCurrency } from '../../utils/helpers';
 import { categoryLabel } from '../../utils/categories';
+import { dueLabel } from '../../utils/recurring';
 
 const Panel = ({ title, action, children, className = '' }) => (
   <section className={`card ${className}`}>
@@ -168,6 +169,56 @@ export function RecentTransactions({ transactions, onSync, syncing }) {
               </li>
             );
           })}
+        </ul>
+      )}
+    </Panel>
+  );
+}
+
+export function NetWorthCard({ netWorth }) {
+  if (!netWorth) return null;
+  const value = Number(netWorth.netWorth ?? 0);
+  return (
+    <Panel title="Net worth" action={<PanelLink to="/net-worth">Details</PanelLink>}>
+      <p className={`text-3xl font-extrabold tracking-tight ${value < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+        {formatCurrency(value, false)}
+      </p>
+      <dl className="mt-5 space-y-3 text-sm">
+        <div className="flex justify-between">
+          <dt className="text-gray-500">What you own</dt>
+          <dd className="font-semibold text-gray-900">{formatCurrency(netWorth.totalAssets, false)}</dd>
+        </div>
+        <div className="flex justify-between">
+          <dt className="text-gray-500">What you owe</dt>
+          <dd className="font-semibold text-gray-900">{formatCurrency(netWorth.totalLiabilities, false)}</dd>
+        </div>
+      </dl>
+    </Panel>
+  );
+}
+
+export function ComingUp({ recurring }) {
+  const today = new Date();
+  const upcoming = (recurring || [])
+    .filter((r) => differenceInCalendarDays(parseISO(r.nextDate), today) <= 14)
+    .slice(0, 5);
+  if (!recurring?.length) return null;
+  return (
+    <Panel title="Coming up" action={<PanelLink to="/recurring">See all</PanelLink>}>
+      {upcoming.length === 0 ? (
+        <Empty>No bills or subscriptions due in the next two weeks.</Empty>
+      ) : (
+        <ul className="divide-y divide-gray-100">
+          {upcoming.map((r) => (
+            <li key={r.merchant} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+              <MerchantIcon logoUrl={r.logoUrl} category={r.category} size="sm" />
+              <span className="min-w-0 flex-1 text-sm font-medium text-gray-800 truncate">{r.merchant}</span>
+              <span className="text-right shrink-0">
+                <span className="block text-sm font-semibold text-gray-900">{formatCurrency(r.amount)}</span>
+                <span className="block text-xs text-gray-500">{dueLabel(r.nextDate)}</span>
+              </span>
+            </li>
+          ))}
         </ul>
       )}
     </Panel>
