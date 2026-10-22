@@ -162,6 +162,21 @@ export const transactionsAPI = {
   updateCategory: (id, category, remember) =>
     api.patch(`/transactions/${id}/category`, { category, remember }, SLOW),
 
+  // A note, or hidden: true to leave it out of totals (either may be omitted)
+  update: (id, changes) =>
+    api.patch(`/transactions/${id}`, changes),
+
+  // The parts a transaction was split into
+  getSplit: (id) =>
+    api.get(`/transactions/${id}/split`),
+
+  // parts: [{ category, amount }] adding up to the transaction's amount
+  split: (id, parts) =>
+    api.put(`/transactions/${id}/split`, { parts }),
+
+  unsplit: (id) =>
+    api.delete(`/transactions/${id}/split`),
+
   undoImport: (batchId) =>
     api.delete(`/transactions/imports/${batchId}`),
 
@@ -179,6 +194,10 @@ export const transactionsAPI = {
 
 // Analytics API
 export const analyticsAPI = {
+  // Income, spending and spending by category per month, oldest first
+  monthlyReport: (months = 12) =>
+    api.get('/analytics/monthly-report', { params: { months } }),
+
   getSpendingByCategory: (startDate, endDate) => 
     api.get('/analytics/spending-by-category', { params: { startDate, endDate } }),
   

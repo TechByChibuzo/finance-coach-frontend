@@ -7,6 +7,7 @@ import MonthPulse from '../components/dashboard/MonthPulse';
 import { BudgetProgress, CategoryBars, ComingUp, MerchantList, NetWorthCard, RecentTransactions } from '../components/dashboard/DashboardLists';
 import { DashboardSkeleton } from '../components/common/Skeleton';
 import ErrorMessage from '../components/common/ErrorMessage';
+import { withoutSplitOriginals } from '../utils/transactions';
 import { aiCoachAPI, analyticsAPI, budgetAPI, networthAPI, recurringAPI, transactionsAPI } from '../services/api';
 import SetupChecklist from '../components/dashboard/SetupChecklist';
 import { useAuth } from '../hooks/useAuth';
@@ -67,7 +68,7 @@ export default function Dashboard() {
           hasBudgets: (budgetsRes.data?.budgets?.length ?? 0) > 0,
           hasAskedCoach: (conversationRes.data?.length ?? 0) > 0,
         },
-        recentTransactions: transactionsRes.data,
+        recentTransactions: withoutSplitOriginals(transactionsRes.data),
       });
     } catch (err) {
       console.error('Failed to load dashboard:', err);

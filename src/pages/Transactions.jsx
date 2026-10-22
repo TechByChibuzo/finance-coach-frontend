@@ -6,17 +6,11 @@ import Layout from '../components/layout/Layout';
 import MerchantIcon from '../components/common/MerchantIcon';
 import Skeleton from '../components/common/Skeleton';
 import ImportCsvModal from '../components/transactions/ImportCsvModal';
-import CategoryEditor from '../components/transactions/CategoryEditor';
+import TransactionEditor from '../components/transactions/TransactionEditor';
 import { exportAPI, plaidAPI, transactionsAPI } from '../services/api';
 import { formatCurrency } from '../utils/helpers';
 import { categoryLabel } from '../utils/categories';
-
-// Same rule as the backend's totals: moving money between your own accounts
-// (transfers, paying off a credit card) is neither spending nor income.
-const isTransfer = (t) =>
-  t.category === 'TRANSFER_IN' ||
-  t.category === 'TRANSFER_OUT' ||
-  t.subcategory === 'LOAN_PAYMENTS_CREDIT_CARD_PAYMENT';
+import { countsInTotals, isTransfer, withoutSplitOriginals } from '../utils/transactions';
 
 const todayKey = format(new Date(), 'yyyy-MM-dd');
 const yesterdayKey = format(subDays(new Date(), 1), 'yyyy-MM-dd');
@@ -62,6 +56,8 @@ export default function Transactions() {
   const [category, setCategory] = useState('all');
   const [importing, setImporting] = useState(false);
   const [editing, setEditing] = useState(null);
+  // Bumped after an edit so open search results are fetched again
+  const [searchVersion, setSearchVersion] = useState(0);
   const [exporting, setExporting] = useState(false);
 
   const exportCsv = async () => {
@@ -123,7 +119,7 @@ export default function Transactions() {
       }
     }, 300);
     return () => { cancelled = true; clearTimeout(timer); };
-  }, [searchText]);
+  }, [searchText, searchVersion]);
 
   const loadTransactions = async () => {
     await loadMonth(month);
@@ -147,8 +143,8 @@ export default function Transactions() {
 
   // In search mode the list is the server's matches (once they're for the current text)
   const baseList = useMemo(() => {
-    if (!searchActive) return transactions;
-    return searchResults?.text === searchText ? searchResults.items : [];
+    if (!searchActive) return withoutSplitOriginals(transactions);
+    return searchResults?.text === searchText ? withoutSplitOriginals(searchResults.items) : [];
   }, [searchActive, searchResults, searchText, transactions]);
 
   const categories = useMemo(
@@ -166,7 +162,7 @@ export default function Transactions() {
     let spent = 0;
     let income = 0;
     for (const t of visible) {
-      if (isTransfer(t)) continue;
+      if (!countsInTotals(t)) continue;
       if (t.amount > 0) spent += t.amount;
       else income += -t.amount;
     }
@@ -302,7 +298,7 @@ export default function Transactions() {
         ) : (
           <div className="space-y-4">
             {days.map(([day, txns]) => {
-              const daySpent = txns.reduce((sum, t) => (!isTransfer(t) && t.amount > 0 ? sum + t.amount : sum), 0);
+              const daySpent = txns.reduce((sum, t) => (countsInTotals(t) && t.amount > 0 ? sum + t.amount : sum), 0);
               return (
                 <section key={day} className="card py-2 px-5 sm:px-6" aria-label={dayLabel(day)}>
                   <div className="flex items-baseline justify-between py-3 border-b border-gray-100">
@@ -312,6 +308,7 @@ export default function Transactions() {
                   <ul className="divide-y divide-gray-100">
                     {txns.map((t) => {
                       const transfer = isTransfer(t);
+                      const muted = transfer || t.hidden;
                       const moneyIn = t.amount < 0;
                       return (
                         <li key={t.id}>
@@ -319,7 +316,7 @@ export default function Transactions() {
                             type="button"
                             onClick={() => setEditing(t)}
                             className="w-full flex items-center gap-3 sm:gap-4 py-3 text-left rounded-lg -mx-2 px-2 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-primary-600"
-                            aria-label={`${t.merchantName || t.name}: change category`}
+                            aria-label={`Edit ${t.merchantName || t.name}`}
                           >
                           <MerchantIcon logoUrl={t.logoUrl} category={t.category} size="md" />
                           <div className="min-w-0 flex-1">
@@ -330,9 +327,12 @@ export default function Transactions() {
                                 <span className="hidden sm:inline">, {accountNames[t.accountId] || t.importAccountName}</span>
                               )}
                               {t.pending && <span className="ml-1.5 font-medium text-amber-600">Pending</span>}
+                              {t.splitFromId && <span className="ml-1.5 font-medium text-gray-600">Split</span>}
+                              {t.hidden && <span className="ml-1.5 font-medium text-gray-600">Hidden</span>}
                             </p>
+                            {t.notes && <p className="text-xs text-gray-500 italic truncate">{t.notes}</p>}
                           </div>
-                          <p className={`text-sm font-bold shrink-0 ${transfer ? 'text-gray-400' : moneyIn ? 'text-green-600' : 'text-gray-900'}`}>
+                          <p className={`text-sm font-bold shrink-0 ${muted ? `text-gray-400${t.hidden ? ' line-through' : ''}` : moneyIn ? 'text-green-600' : 'text-gray-900'}`}>
                             {moneyIn ? '+' : ''}{formatCurrency(Math.abs(t.amount))}
                           </p>
                           </button>
@@ -344,25 +344,19 @@ export default function Transactions() {
               );
             })}
             <p className="text-xs text-gray-500 px-1">
-              Transfers between your own accounts and credit card payments are listed but not counted as spending or income.
+              Transfers between your own accounts, credit card payments, and hidden transactions are listed but not counted as spending or income.
             </p>
           </div>
         )}
       </div>
       {importing && <ImportCsvModal onClose={() => setImporting(false)} onImported={loadTransactions} />}
       {editing && (
-        <CategoryEditor
+        <TransactionEditor
           transaction={editing}
           onClose={() => setEditing(null)}
-          onSaved={(updated, remember) => {
-            // With remember, every transaction from the same merchant changed on the server too
-            const key = (t) => (t.merchantName || t.name || '').trim().toLowerCase();
-            const apply = (list) => list.map((t) =>
-              t.id === updated.id || (remember && key(t) === key(updated))
-                ? { ...t, category: updated.category, subcategory: updated.subcategory }
-                : t);
-            setTransactions(apply);
-            setSearchResults((r) => (r ? { ...r, items: apply(r.items) } : r));
+          onChanged={() => {
+            loadMonth(month);
+            setSearchVersion((v) => v + 1);
           }}
         />
       )}
