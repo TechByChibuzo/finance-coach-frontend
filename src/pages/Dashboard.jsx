@@ -56,7 +56,10 @@ export default function Dashboard() {
         summary: summaryRes.data,
         series: thisMonth.map((value, i) => ({ day: i + 1, thisMonth: value, lastMonth: lastMonth[i] })),
         budgets: budgetsRes.data,
-        recentTransactions: transactionsRes.data.slice(0, 6),
+        // Newest first: the API doesn't promise an order (imported files arrive oldest first)
+        recentTransactions: [...transactionsRes.data]
+          .sort((a, b) => b.date.localeCompare(a.date))
+          .slice(0, 6),
       });
     } catch (err) {
       console.error('Failed to load dashboard:', err);
