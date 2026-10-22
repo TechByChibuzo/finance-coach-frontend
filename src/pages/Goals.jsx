@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { format, parseISO } from 'date-fns';
-import { CheckCircle2, Plus, Target } from 'lucide-react';
+import { CheckCircle2, Plus } from 'lucide-react';
 import Layout from '../components/layout/Layout';
 import Skeleton from '../components/common/Skeleton';
 import GoalModal from '../components/goals/GoalModal';
 import AddMoneyModal from '../components/goals/AddMoneyModal';
 import { goalsAPI, plaidAPI } from '../services/api';
 import { formatCurrency } from '../utils/helpers';
+import Illustration from '../components/common/Illustration';
 
 // Accounts whose balance can count as savings
 const SAVINGS_TYPES = ['depository', 'investment'];
@@ -93,10 +94,8 @@ export default function Goals() {
           <div className="card text-sm text-gray-600">Couldn't load your goals. Try again in a moment.</div>
         ) : goals.length === 0 ? (
           <div className="card flex flex-col items-center py-12 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-50">
-              <Target className="h-6 w-6 text-primary-600" aria-hidden />
-            </div>
-            <p className="mt-3 text-base font-semibold text-gray-900">Save for something</p>
+            <Illustration name="goals" />
+            <p className="mt-4 text-base font-semibold text-gray-900">Save for something</p>
             <p className="mt-1 max-w-sm text-sm text-gray-500">
               An emergency fund, a trip, a down payment. Set an amount and a date, and see how much to put aside each month.
             </p>

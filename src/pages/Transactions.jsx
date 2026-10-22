@@ -12,6 +12,7 @@ import { formatCurrency } from '../utils/helpers';
 import { categoryLabel } from '../utils/categories';
 import { countsInTotals, isTransfer, withoutSplitOriginals } from '../utils/transactions';
 import { merchantOf } from '../utils/merchant';
+import Illustration from '../components/common/Illustration';
 
 const todayKey = format(new Date(), 'yyyy-MM-dd');
 const yesterdayKey = format(subDays(new Date(), 1), 'yyyy-MM-dd');
@@ -276,7 +277,9 @@ export default function Transactions() {
           <div className="card text-center py-14">
             {!hasAny ? (
               <>
-                <p className="text-sm text-gray-600 mb-4 max-w-md mx-auto">
+                <Illustration name="transactions" className="mx-auto mb-4 h-28 w-40" />
+                <p className="text-base font-semibold text-gray-900 mb-1">No transactions yet</p>
+                <p className="text-sm text-gray-600 mb-5 max-w-md mx-auto">
                   Connect a bank in Settings and sync, or import a CSV file of transactions downloaded from your bank.
                 </p>
                 <div className="flex justify-center gap-2">

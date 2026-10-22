@@ -13,6 +13,7 @@ import BankLogo from '../components/common/BankLogo';
 import CategoryRules from '../components/settings/CategoryRules';
 import WeeklyEmailToggle from '../components/settings/WeeklyEmailToggle';
 import { getThemePreference, setThemePreference } from '../utils/theme';
+import Illustration from '../components/common/Illustration';
 
 const ACCOUNT_ICONS = {
   depository: { Icon: Landmark,   bg: 'bg-blue-50',    color: 'text-blue-600' },
@@ -254,12 +255,10 @@ export default function Settings() {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <Building2 className="w-6 h-6 text-gray-400" />
-                  </div>
-                  <p className="text-sm text-gray-500 mb-1">No bank accounts connected yet</p>
-                  <p className="text-xs text-gray-400">
-                    Connect your bank account to start tracking your finances
+                  <Illustration name="banks" className="mx-auto mb-4 h-28 w-40" />
+                  <p className="text-base font-semibold text-gray-900 mb-1">No banks connected yet</p>
+                  <p className="text-sm text-gray-500 max-w-sm mx-auto">
+                    Connect a bank and your accounts and transactions come in on their own.
                   </p>
                 </div>
               )}

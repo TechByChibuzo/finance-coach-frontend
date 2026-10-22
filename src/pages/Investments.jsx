@@ -10,6 +10,7 @@ import ErrorMessage from '../components/common/ErrorMessage';
 import Skeleton from '../components/common/Skeleton';
 import { RefreshCw, TrendingUp, CreditCard } from 'lucide-react';
 import toast from 'react-hot-toast';
+import Illustration from '../components/common/Illustration';
 
 function InvestmentsSkeleton() {
   return (
@@ -137,9 +138,7 @@ export default function Investments() {
           </div>
 
           <div className="card text-center py-14">
-            <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <TrendingUp className="w-6 h-6 text-primary-600" />
-            </div>
+            <Illustration name="investments" className="mx-auto mb-4 h-28 w-40" />
             <p className="text-base font-semibold text-gray-900 mb-1">No investment accounts yet</p>
             <p className="text-sm text-gray-500 mb-5 max-w-sm mx-auto">
               Connect a brokerage or retirement account in Settings, and your holdings and performance show up here.

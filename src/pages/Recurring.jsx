@@ -7,6 +7,7 @@ import { recurringAPI } from '../services/api';
 import { formatCurrency } from '../utils/helpers';
 import { dueLabel, frequencyLabel, monthlyCost } from '../utils/recurring';
 import { cleanMerchant } from '../utils/merchant';
+import Illustration from '../components/common/Illustration';
 
 function ChargeRow({ r }) {
   return (
@@ -57,12 +58,15 @@ export default function Recurring() {
         ) : items === null ? (
           <div className="space-y-4"><Skeleton className="h-28 w-full rounded-2xl" /><Skeleton className="h-64 w-full rounded-2xl" /></div>
         ) : items.length === 0 ? (
-          <div className="card">
+          <div className="card sm:flex sm:items-center sm:gap-8">
+            <Illustration name="recurring" className="mb-4 h-28 w-40 shrink-0 sm:order-2 sm:mb-0 sm:ml-auto" />
+            <div>
             <p className="text-base font-bold text-gray-900">No bills or subscriptions found yet</p>
             <p className="mt-2 text-sm text-gray-600 max-w-lg">
               We look for the same merchant charging you every month, quarter or year. Once a few months of
               transactions are in, your subscriptions and bills show up here with when they're due.
             </p>
+            </div>
           </div>
         ) : (
           <>
