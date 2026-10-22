@@ -90,7 +90,7 @@ export default function Pricing() {
               }`}
             >
               Yearly
-              <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">
+              <span className="text-xs bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full font-medium">
                 Save 17%
               </span>
             </button>
@@ -119,7 +119,7 @@ export default function Pricing() {
                   limits={parseLimits(freePlan.limits)}
                   isCurrentPlan={currentPlanName === 'FREE'}
                   onSelect={() => {}}
-                  ctaText="Current Plan"
+                  ctaText="Current plan"
                   ctaDisabled={true}
                 />
               )}
@@ -139,7 +139,7 @@ export default function Pricing() {
                   isPopular={true}
                   onSelect={() => handleUpgrade(premiumPlan.id)}
                   ctaText={
-                    currentPlanName === 'PREMIUM' ? 'Current Plan' :
+                    currentPlanName === 'PREMIUM' ? 'Current plan' :
                     currentPlanName === 'PRO' ? 'Downgrade to Premium' :
                     'Upgrade to Premium'
                   }
@@ -154,13 +154,13 @@ export default function Pricing() {
                   price={isYearly ? proPlan.priceYearly : proPlan.priceMonthly}
                   billingCycle={isYearly ? 'year' : 'month'}
                   icon={Crown}
-                  iconColor="text-purple-600"
-                  iconBg="bg-purple-100"
+                  iconColor="text-amber-600"
+                  iconBg="bg-amber-50"
                   features={PLAN_COPY.PRO.features}
                   limits={parseLimits(proPlan.limits)}
                   isCurrentPlan={currentPlanName === 'PRO'}
                   onSelect={() => handleUpgrade(proPlan.id)}
-                  ctaText={currentPlanName === 'PRO' ? 'Current Plan' : 'Upgrade to Pro'}
+                  ctaText={currentPlanName === 'PRO' ? 'Current plan' : 'Upgrade to Pro'}
                   ctaDisabled={currentPlanName === 'PRO'}
                   loading={createCheckout.isPending}
                 />
@@ -213,14 +213,14 @@ function PricingCard({
   loading,
 }) {
   return (
-    <div className={`relative bg-surface rounded-2xl shadow-xl p-8 transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl ${
-      isPopular ? 'ring-2 ring-primary-600 scale-105' : ''
+    <div className={`relative bg-surface rounded-2xl p-8 ${
+      isPopular ? 'ring-2 ring-primary-600 shadow-lg' : 'border border-gray-200'
     }`}>
       {isPopular && (
         <div className="absolute -top-4 left-1/2 -translate-x-1/2">
           <span className="bg-primary-600 text-white px-4 py-1 rounded-full text-xs font-semibold shadow-lg flex items-center gap-1">
             <Star className="w-3 h-3 fill-white" />
-            Most Popular
+            Most popular
           </span>
         </div>
       )}
@@ -229,12 +229,12 @@ function PricingCard({
         <Icon className={`w-6 h-6 ${iconColor}`} />
       </div>
 
-      <h3 className="text-xl font-bold text-gray-900 mb-1">{displayName}</h3>
+      <h3 className="text-xl font-bold text-gray-900 mb-1">{displayName.replace(/\s+plan$/i, '')}</h3>
       <p className="text-sm text-gray-500 mb-6">{description}</p>
 
       <div className="mb-6">
         <div className="flex items-baseline gap-1">
-          <span className="text-4xl font-bold text-gray-900">${price}</span>
+          <span className="text-4xl font-extrabold tracking-tight text-gray-900 tabular-nums">${price}</span>
           {billingCycle && (
             <span className="text-sm text-gray-400">/{billingCycle}</span>
           )}
@@ -249,14 +249,14 @@ function PricingCard({
         disabled={ctaDisabled || loading}
         className={`w-full py-2.5 px-6 rounded-xl text-sm font-semibold transition-colors mb-6 ${
           isPopular
-            ? 'bg-primary-600 text-white hover:bg-primary-700 disabled:bg-gray-300'
-            : 'bg-gray-900 text-white hover:bg-gray-800 disabled:bg-gray-300'
+            ? 'bg-primary-600 text-white hover:bg-primary-700'
+            : 'bg-surface text-gray-900 ring-1 ring-gray-300 hover:bg-gray-50'
         } disabled:cursor-not-allowed disabled:opacity-50`}
       >
         {loading ? (
           <span className="flex items-center justify-center gap-2">
             <Loader className="w-4 h-4 animate-spin" />
-            Processing...
+            Opening checkout…
           </span>
         ) : (
           ctaText
@@ -266,7 +266,7 @@ function PricingCard({
       <div className="space-y-2.5">
         {features.map((feature, index) => (
           <div key={index} className="flex items-start gap-2">
-            <Check className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+            <Check className="w-4 h-4 text-primary-500 shrink-0 mt-0.5" />
             <span className="text-sm text-gray-600">{feature}</span>
           </div>
         ))}

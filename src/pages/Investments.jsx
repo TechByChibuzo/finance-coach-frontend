@@ -137,18 +137,20 @@ export default function Investments() {
           </div>
 
           <div className="card text-center py-14">
-            <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <TrendingUp className="w-6 h-6 text-gray-400" />
+            <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <TrendingUp className="w-6 h-6 text-primary-600" />
             </div>
-            <p className="text-gray-500 mb-1">No investment accounts connected</p>
-            <p className="text-sm text-gray-400 mb-4">Connect an investment account to start tracking your portfolio</p>
+            <p className="text-base font-semibold text-gray-900 mb-1">No investment accounts yet</p>
+            <p className="text-sm text-gray-500 mb-5 max-w-sm mx-auto">
+              Connect a brokerage or retirement account in Settings, and your holdings and performance show up here.
+            </p>
             <button
               onClick={handleSync}
               disabled={syncMutation.isPending}
               className="btn-primary inline-flex items-center gap-2"
             >
               <RefreshCw className={`w-4 h-4 ${syncMutation.isPending ? 'animate-spin' : ''}`} />
-              <span>{syncMutation.isPending ? 'Syncing...' : 'Sync Investment Accounts'}</span>
+              <span>{syncMutation.isPending ? 'Syncing…' : 'Check for investments'}</span>
             </button>
           </div>
         </div>

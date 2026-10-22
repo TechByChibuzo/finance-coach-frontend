@@ -5,9 +5,9 @@ import BudgetProgress from './BudgetProgress';
 const statusConfig = {
   on_track: {
     icon: TrendingUp,
-    bgColor: 'bg-emerald-50',
-    textColor: 'text-emerald-700',
-    iconColor: 'text-emerald-500',
+    bgColor: 'bg-primary-50',
+    textColor: 'text-primary-700',
+    iconColor: 'text-primary-500',
     label: 'On track',
   },
   warning: {
@@ -15,7 +15,7 @@ const statusConfig = {
     bgColor: 'bg-amber-50',
     textColor: 'text-amber-700',
     iconColor: 'text-amber-500',
-    label: 'Warning',
+    label: 'Near limit',
   },
   exceeded: {
     icon: TrendingDown,
@@ -39,14 +39,14 @@ export default function BudgetOverview({ summary }) {
       ? `${exceededCount} ${exceededCount === 1 ? 'category' : 'categories'} over budget`
       : status === 'warning'
       ? `${alertCount} ${alertCount === 1 ? 'category' : 'categories'} near limit`
-      : 'Great job! You\'re on track this month';
+      : 'Every category is within its budget';
 
   return (
     <div className="card">
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h2 className="text-base font-semibold text-gray-900">Budget Overview</h2>
-          <p className="text-xs text-gray-400 mt-0.5">{statusMessage}</p>
+          <h2 className="text-base font-bold text-gray-900">This month</h2>
+          <p className="text-sm text-gray-500 mt-0.5">{statusMessage}</p>
         </div>
         <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium ${current.bgColor} ${current.textColor}`}>
           <StatusIcon className={`w-3.5 h-3.5 ${current.iconColor}`} />
@@ -56,23 +56,17 @@ export default function BudgetOverview({ summary }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-5">
         <div>
-          <p className="text-xs text-gray-400 mb-1">Budgeted</p>
-          <p className="text-2xl font-bold text-gray-900">{formatCurrency(totalBudget)}</p>
+          <p className="text-sm text-gray-500 mb-1">Spent</p>
+          <p className="text-3xl font-extrabold tracking-tight text-gray-900 tabular-nums">{formatCurrency(totalSpent, false)}</p>
         </div>
         <div>
-          <p className="text-xs text-gray-400 mb-1">Spent</p>
-          <p className={`text-2xl font-bold ${
-            percentageSpent > 100 ? 'text-red-600' :
-            percentageSpent > 80 ? 'text-amber-600' :
-            'text-emerald-600'
-          }`}>
-            {formatCurrency(totalSpent)}
-          </p>
+          <p className="text-sm text-gray-500 mb-1">Budgeted</p>
+          <p className="text-3xl font-extrabold tracking-tight text-gray-900 tabular-nums">{formatCurrency(totalBudget, false)}</p>
         </div>
         <div>
-          <p className="text-xs text-gray-400 mb-1">Remaining</p>
-          <p className={`text-2xl font-bold ${totalRemaining < 0 ? 'text-red-600' : 'text-gray-900'}`}>
-            {totalRemaining < 0 ? '-' : ''}{formatCurrency(Math.abs(totalRemaining))}
+          <p className="text-sm text-gray-500 mb-1">{totalRemaining < 0 ? 'Over' : 'Left to spend'}</p>
+          <p className={`text-3xl font-extrabold tracking-tight tabular-nums ${totalRemaining < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+            {formatCurrency(Math.abs(totalRemaining), false)}
           </p>
         </div>
       </div>

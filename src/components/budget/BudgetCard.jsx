@@ -1,7 +1,7 @@
 import { MoreVertical, Edit2, Trash2, AlertCircle, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
 import { formatCurrency, formatPercentage } from '../../utils/helpers';
-import { CategoryIconSimple } from '../common/CategoryIcon';
+import CategoryIcon from '../common/CategoryIcon';
 import BudgetProgress from './BudgetProgress';
 
 export default function BudgetCard({ budget, onEdit, onDelete }) {
@@ -18,9 +18,9 @@ export default function BudgetCard({ budget, onEdit, onDelete }) {
     <div className="card relative">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3 min-w-0">
-          <CategoryIconSimple category={budget.category} size="lg" />
+          <CategoryIcon category={budget.category} size="md" />
           <div className="min-w-0">
-            <h3 className="text-base font-semibold text-gray-900 truncate">{budget.category}</h3>
+            <h3 className="text-base font-bold text-gray-900 truncate">{budget.category}</h3>
             {budget.notes && (
               <p className="text-xs text-gray-400 mt-0.5 truncate">{budget.notes}</p>
             )}
@@ -96,8 +96,8 @@ export default function BudgetCard({ budget, onEdit, onDelete }) {
             </>
           ) : (
             <>
-              <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-              <span className="text-xs font-medium text-emerald-600">
+              <CheckCircle2 className="w-4 h-4 text-primary-500 shrink-0" />
+              <span className="text-xs font-medium text-primary-600">
                 {formatCurrency(remaining, false)} left
               </span>
             </>

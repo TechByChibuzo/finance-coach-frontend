@@ -59,8 +59,8 @@ export default function SubscriptionSuccess() {
           {/* Success Card */}
           <div className="bg-surface rounded-2xl shadow-xl p-8 text-center">
             {/* Success Icon */}
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 rounded-2xl mb-6">
-              <CheckCircle className="w-9 h-9 text-emerald-600" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-2xl mb-6">
+              <CheckCircle className="w-9 h-9 text-primary-600" />
             </div>
 
             <h1 className="text-2xl font-bold text-gray-900 mb-2">

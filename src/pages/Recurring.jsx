@@ -6,13 +6,14 @@ import Skeleton from '../components/common/Skeleton';
 import { recurringAPI } from '../services/api';
 import { formatCurrency } from '../utils/helpers';
 import { dueLabel, frequencyLabel, monthlyCost } from '../utils/recurring';
+import { cleanMerchant } from '../utils/merchant';
 
 function ChargeRow({ r }) {
   return (
     <li className="flex items-center gap-3 sm:gap-4 py-3">
       <MerchantIcon logoUrl={r.logoUrl} category={r.category} size="md" />
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-semibold text-gray-900 truncate">{r.merchant}</p>
+        <p className="text-sm font-semibold text-gray-900 truncate">{cleanMerchant(r.merchant)}</p>
         <p className="text-xs text-gray-500">
           {frequencyLabel(r.frequency)}
           {r.type === 'bill' && <span>, amount varies</span>}
@@ -84,7 +85,7 @@ export default function Recurring() {
                     const up = Number(r.amount) > Number(r.previousAmount);
                     return (
                       <li key={r.merchant} className="flex items-center justify-between gap-3 py-3 text-sm">
-                        <span className="font-semibold text-gray-900 truncate">{r.merchant}</span>
+                        <span className="font-semibold text-gray-900 truncate">{cleanMerchant(r.merchant)}</span>
                         <span className={`shrink-0 font-semibold ${up ? 'text-red-600' : 'text-green-600'}`}>
                           {formatCurrency(r.previousAmount)} to {formatCurrency(r.amount)}
                         </span>

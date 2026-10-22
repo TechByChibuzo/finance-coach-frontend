@@ -61,10 +61,10 @@ export default function NetWorthChart({ history, selectedPeriod, onPeriodChange 
         <div>
           <h2 className="text-base font-semibold text-gray-900">Net Worth Trend</h2>
           <div className="flex items-baseline gap-1.5 mt-1">
-            <span className={`text-2xl font-bold ${isPositive ? 'text-emerald-600' : 'text-red-600'}`}>
+            <span className={`text-2xl font-bold ${isPositive ? 'text-primary-600' : 'text-red-600'}`}>
               {isPositive ? '+' : ''}{formatCurrency(Math.abs(growth))}
             </span>
-            <span className={`text-xs font-medium ${isPositive ? 'text-emerald-500' : 'text-red-500'}`}>
+            <span className={`text-xs font-medium ${isPositive ? 'text-primary-500' : 'text-red-500'}`}>
               ({isPositive ? '+' : ''}{growthPercent.toFixed(2)}%)
             </span>
           </div>
@@ -118,7 +118,7 @@ export default function NetWorthChart({ history, selectedPeriod, onPeriodChange 
             <Line
               type="monotone"
               dataKey="assets"
-              stroke="#10b981"
+              stroke="var(--color-primary-500)"
               strokeWidth={1.5}
               name="Assets"
               dot={false}
@@ -144,7 +144,7 @@ export default function NetWorthChart({ history, selectedPeriod, onPeriodChange 
             <span>Net Worth</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-4 h-0.5 bg-emerald-500 rounded" style={{ borderTop: '1.5px dashed #10b981', height: 0 }} />
+            <div className="w-4 h-0.5 bg-primary-500 rounded" style={{ borderTop: '1.5px dashed var(--color-primary-500)', height: 0 }} />
             <span>Assets</span>
           </div>
           <div className="flex items-center gap-1.5">

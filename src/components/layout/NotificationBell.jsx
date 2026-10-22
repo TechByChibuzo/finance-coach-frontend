@@ -6,6 +6,7 @@ import { differenceInCalendarDays, format, parseISO } from 'date-fns';
 import { anomaliesAPI, budgetAPI, recurringAPI } from '../../services/api';
 import { formatCurrency } from '../../utils/helpers';
 import { categoryLabel } from '../../utils/categories';
+import { cleanMerchant } from '../../utils/merchant';
 
 const BILL_DAYS_AHEAD = 3;
 
@@ -120,7 +121,7 @@ export default function NotificationBell() {
                       <li key={r.merchant}>
                         <Link to="/recurring" onClick={() => setOpen(false)} className="block rounded-lg -mx-2 px-2 py-1.5 hover:bg-gray-50">
                           <p className="text-sm text-gray-900">
-                            <span className="font-semibold">{r.merchant}</span> is due {dueLabel(r.nextDate)}
+                            <span className="font-semibold">{cleanMerchant(r.merchant)}</span> is due {dueLabel(r.nextDate)}
                           </p>
                           <p className="text-xs text-gray-500 mt-0.5">About {formatCurrency(r.amount)}</p>
                         </Link>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { categoryRulesAPI } from '../../services/api';
 import { categoryLabel } from '../../utils/categories';
+import { cleanMerchant } from '../../utils/merchant';
 
 export default function CategoryRules() {
   const [rules, setRules] = useState(null);
@@ -43,7 +44,7 @@ export default function CategoryRules() {
           {rules.map((r) => (
             <li key={r.id} className="flex items-center justify-between gap-3 py-3">
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-gray-900 truncate">{r.merchant}</p>
+                <p className="text-sm font-semibold text-gray-900 truncate">{cleanMerchant(r.merchant)}</p>
                 <p className="text-xs text-gray-500">
                   {categoryLabel(r.category)}
                 </p>

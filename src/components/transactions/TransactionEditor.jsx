@@ -5,13 +5,14 @@ import { transactionsAPI } from '../../services/api';
 import { CATEGORY_OPTIONS, editableCategory } from '../../utils/categories';
 import { formatCurrency } from '../../utils/helpers';
 import SplitEditor from './SplitEditor';
+import { merchantOf } from '../../utils/merchant';
 
 /**
  * Category, note, hiding from totals, and splitting for one transaction. onChanged runs after
  * anything was saved, so the list can reload.
  */
 export default function TransactionEditor({ transaction, onClose, onChanged }) {
-  const merchant = transaction.merchantName || transaction.name;
+  const merchant = merchantOf(transaction);
   const isPart = Boolean(transaction.splitFromId);
   const initialCategory = editableCategory(transaction);
   const [view, setView] = useState('details');

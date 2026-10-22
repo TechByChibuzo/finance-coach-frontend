@@ -57,7 +57,7 @@ export default function BillingSettings() {
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-base font-semibold text-gray-900">Current Plan</h2>
             {status === 'ACTIVE' && (
-              <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-medium">
+              <span className="px-2.5 py-1 bg-primary-50 text-primary-700 rounded-full text-xs font-medium">
                 Active
               </span>
             )}

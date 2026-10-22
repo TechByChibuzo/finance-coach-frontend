@@ -14,6 +14,13 @@ export default function MonthPulse({ summary, series, today, lastMonthName }) {
   const lastAtToday = todayPoint?.lastMonth;
   const difference = lastAtToday == null ? null : spent - lastAtToday;
 
+  // Where the month is heading: this month so far, plus what last month spent from today on.
+  // Following last month's shape keeps early bills like rent from inflating the estimate.
+  const lastMonthTotal = Math.max(0, ...series.map((p) => p.lastMonth ?? 0));
+  const projection = lastAtToday != null && lastMonthTotal > 0 && today < series.length
+    ? spent + Math.max(0, lastMonthTotal - lastAtToday)
+    : null;
+
   let verdict;
   if (difference == null || lastAtToday === 0) {
     verdict = <span className="text-gray-500">No spending from {lastMonthName} to compare with yet.</span>;
@@ -43,6 +50,13 @@ export default function MonthPulse({ summary, series, today, lastMonthName }) {
               {formatCurrency(spent, false)}
             </p>
             <p className="mt-3 text-sm font-medium leading-relaxed">{verdict}</p>
+            {projection != null && (
+              <p className="mt-5 text-sm text-gray-600">
+                Heading for about{' '}
+                <span className="font-semibold text-gray-900 tabular-nums">{formatCurrency(Math.round(projection / 10) * 10, false)}</span>
+                {' '}by the end of the month, if the rest goes like {lastMonthName}.
+              </p>
+            )}
           </div>
           <dl className="grid grid-cols-2 gap-6 border-t border-gray-100 pt-5">
             <div>

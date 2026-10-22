@@ -11,6 +11,7 @@ import { exportAPI, plaidAPI, transactionsAPI } from '../services/api';
 import { formatCurrency } from '../utils/helpers';
 import { categoryLabel } from '../utils/categories';
 import { countsInTotals, isTransfer, withoutSplitOriginals } from '../utils/transactions';
+import { merchantOf } from '../utils/merchant';
 
 const todayKey = format(new Date(), 'yyyy-MM-dd');
 const yesterdayKey = format(subDays(new Date(), 1), 'yyyy-MM-dd');
@@ -297,15 +298,16 @@ export default function Transactions() {
           </div>
         ) : (
           <div className="space-y-4">
+            <div className="card p-0 overflow-hidden">
             {days.map(([day, txns]) => {
               const daySpent = txns.reduce((sum, t) => (countsInTotals(t) && t.amount > 0 ? sum + t.amount : sum), 0);
               return (
-                <section key={day} className="card py-2 px-5 sm:px-6" aria-label={dayLabel(day)}>
-                  <div className="flex items-baseline justify-between py-3 border-b border-gray-100">
-                    <h2 className="text-sm font-bold text-gray-900">{dayLabel(day)}</h2>
-                    {daySpent > 0 && <p className="text-xs font-medium text-gray-500">{formatCurrency(daySpent)} spent</p>}
+                <section key={day} aria-label={dayLabel(day)}>
+                  <div className="flex items-baseline justify-between px-5 sm:px-6 py-2 bg-gray-50 border-y border-gray-100 first:border-t-0">
+                    <h2 className="text-xs font-semibold text-gray-600">{dayLabel(day)}</h2>
+                    {daySpent > 0 && <p className="text-xs text-gray-500 tabular-nums">{formatCurrency(daySpent)} spent</p>}
                   </div>
-                  <ul className="divide-y divide-gray-100">
+                  <ul className="divide-y divide-gray-100 px-3 sm:px-4">
                     {txns.map((t) => {
                       const transfer = isTransfer(t);
                       const muted = transfer || t.hidden;
@@ -315,12 +317,12 @@ export default function Transactions() {
                           <button
                             type="button"
                             onClick={() => setEditing(t)}
-                            className="w-full flex items-center gap-3 sm:gap-4 py-3 text-left rounded-lg -mx-2 px-2 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-primary-600"
-                            aria-label={`Edit ${t.merchantName || t.name}`}
+                            className="w-full flex items-center gap-3 sm:gap-4 py-3 px-2 text-left rounded-lg hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-primary-600"
+                            aria-label={`Edit ${merchantOf(t)}`}
                           >
                           <MerchantIcon logoUrl={t.logoUrl} category={t.category} size="md" />
                           <div className="min-w-0 flex-1">
-                            <p className="text-sm font-semibold text-gray-900 truncate">{t.merchantName || t.name}</p>
+                            <p className="text-sm font-semibold text-gray-900 truncate">{merchantOf(t)}</p>
                             <p className="text-xs text-gray-500 truncate">
                               {transfer ? 'Transfer' : categoryLabel(t.category)}
                               {(accountNames[t.accountId] || t.importAccountName) && (
@@ -343,6 +345,7 @@ export default function Transactions() {
                 </section>
               );
             })}
+            </div>
             <p className="text-xs text-gray-500 px-1">
               Transfers between your own accounts, credit card payments, and hidden transactions are listed but not counted as spending or income.
             </p>

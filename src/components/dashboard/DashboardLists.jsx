@@ -5,6 +5,8 @@ import MerchantIcon from '../common/MerchantIcon';
 import { formatCurrency } from '../../utils/helpers';
 import { categoryLabel } from '../../utils/categories';
 import { dueLabel } from '../../utils/recurring';
+import { cleanMerchant, merchantOf } from '../../utils/merchant';
+import { isTransfer } from '../../utils/transactions';
 
 const Panel = ({ title, action, children, className = '' }) => (
   <section className={`card ${className}`}>
@@ -126,7 +128,7 @@ export function MerchantList({ merchants }) {
         <ul className="divide-y divide-gray-100">
           {rows.map(([name, amount]) => (
             <li key={name} className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0 text-sm">
-              <span className="font-medium text-gray-800 truncate">{name}</span>
+              <span className="font-medium text-gray-800 truncate">{cleanMerchant(name)}</span>
               <span className="font-semibold text-gray-900 shrink-0">{formatCurrency(amount, false)}</span>
             </li>
           ))}
@@ -150,18 +152,19 @@ export function RecentTransactions({ transactions, onSync, syncing }) {
         <ul className="divide-y divide-gray-100">
           {transactions.map((t) => {
             const moneyIn = t.amount < 0;
+            const transfer = isTransfer(t);
             return (
               <li key={t.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
                 <MerchantIcon logoUrl={t.logoUrl} category={t.category} size="md" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-gray-900 truncate">{t.merchantName || t.name}</p>
+                  <p className="text-sm font-semibold text-gray-900 truncate">{merchantOf(t)}</p>
                   <p className="text-xs text-gray-500 truncate">
-                    {categoryLabel(t.category)}
+                    {transfer ? 'Transfer' : categoryLabel(t.category)}
                     {t.pending && <span className="ml-1.5 text-amber-600">Pending</span>}
                   </p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className={`text-sm font-bold ${moneyIn ? 'text-green-600' : 'text-gray-900'}`}>
+                  <p className={`text-sm font-bold ${transfer || t.hidden ? 'text-gray-400' : moneyIn ? 'text-green-600' : 'text-gray-900'}`}>
                     {moneyIn ? '+' : ''}{formatCurrency(Math.abs(t.amount))}
                   </p>
                   <p className="text-xs text-gray-500">{format(parseISO(t.date), 'MMM d')}</p>
@@ -212,7 +215,7 @@ export function ComingUp({ recurring }) {
           {upcoming.map((r) => (
             <li key={r.merchant} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
               <MerchantIcon logoUrl={r.logoUrl} category={r.category} size="sm" />
-              <span className="min-w-0 flex-1 text-sm font-medium text-gray-800 truncate">{r.merchant}</span>
+              <span className="min-w-0 flex-1 text-sm font-medium text-gray-800 truncate">{cleanMerchant(r.merchant)}</span>
               <span className="text-right shrink-0">
                 <span className="block text-sm font-semibold text-gray-900">{formatCurrency(r.amount)}</span>
                 <span className="block text-xs text-gray-500">{dueLabel(r.nextDate)}</span>
