@@ -5,7 +5,7 @@ import PlaidLink from '../components/plaid/PlaidLink';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, Landmark, CreditCard, Home, TrendingUp, Wallet, Building2 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { plaidAPI, userAPI } from '../services/api';
+import { authAPI, plaidAPI, userAPI } from '../services/api';
 import { formatCurrency } from '../utils/helpers';
 import Skeleton from '../components/common/Skeleton';
 
@@ -31,6 +31,22 @@ export default function Settings() {
   const navigate = useNavigate();
   const [deleteConfirm, setDeleteConfirm] = useState('');
   const [deleting, setDeleting] = useState(false);
+  const [resetLinkState, setResetLinkState] = useState('idle'); // idle | sending | sent
+
+  // Changing the password goes through the emailed reset link: it proves access to the
+  // account's email, and the backend signs out every other session once it's used
+  const sendPasswordResetLink = async () => {
+    setResetLinkState('sending');
+    try {
+      await authAPI.forgotPassword(user.email);
+      setResetLinkState('sent');
+    } catch (error) {
+      setResetLinkState('idle');
+      toast.error(error.response?.status === 429
+        ? 'Too many reset requests. Wait a while, then try again.'
+        : "Couldn't send the link. Try again in a moment.");
+    }
+  };
 
   const deleteAccount = async () => {
     setDeleting(true);
@@ -201,32 +217,55 @@ export default function Settings() {
           )}
 
           {activeTab === 'security' && (
-            <div className="space-y-4">
-              <h2 className="text-base font-semibold text-gray-900">Security</h2>
-              <div className="border border-red-200 rounded-xl p-5 space-y-3">
-                <h3 className="text-sm font-semibold text-red-700">Delete account</h3>
-                <p className="text-sm text-gray-600">
-                  This permanently deletes your account: any subscription is cancelled, your banks are
-                  disconnected, and all of your transactions, budgets and AI coach history are erased.
-                  This can't be undone.
+            <div className="divide-y divide-gray-100">
+              <section className="pb-6" aria-labelledby="password-heading">
+                <h2 id="password-heading" className="text-base font-bold text-gray-900">Password</h2>
+                <p className="mt-1 text-sm text-gray-600 max-w-xl">
+                  We'll email a link to <span className="font-semibold text-gray-900">{user?.email}</span> where
+                  you can choose a new password. Once it's changed, you're signed out on all your devices, this one included.
                 </p>
-                <label className="block text-sm text-gray-600">
-                  Type <span className="font-semibold">DELETE</span> to confirm
+                {resetLinkState === 'sent' ? (
+                  <p role="status" className="mt-4 text-sm font-medium text-green-700">
+                    Link sent. It works once and expires in an hour.
+                  </p>
+                ) : (
+                  <button
+                    onClick={sendPasswordResetLink}
+                    disabled={resetLinkState === 'sending'}
+                    className="btn-secondary mt-4 text-sm"
+                  >
+                    {resetLinkState === 'sending' ? 'Sending…' : 'Email me a reset link'}
+                  </button>
+                )}
+              </section>
+
+              <section className="pt-6" aria-labelledby="delete-heading">
+                <h2 id="delete-heading" className="text-base font-bold text-red-700">Delete account</h2>
+                <p className="mt-1 text-sm text-gray-600 max-w-xl">
+                  Permanently deletes your account. Any subscription is cancelled, your banks are disconnected,
+                  and all of your transactions, budgets and coach history are erased. This can't be undone.
+                </p>
+                <label htmlFor="delete-confirm" className="mt-4 block text-sm text-gray-600">
+                  Type <span className="font-semibold text-gray-900">DELETE</span> to confirm
+                </label>
+                <div className="mt-1.5 flex flex-col sm:flex-row gap-3 sm:items-center">
                   <input
+                    id="delete-confirm"
                     type="text"
+                    autoComplete="off"
                     value={deleteConfirm}
                     onChange={(e) => setDeleteConfirm(e.target.value)}
-                    className="mt-1.5 w-full max-w-xs px-4 py-2 border border-gray-200 rounded-lg text-sm"
+                    className="block w-full sm:max-w-xs px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-red-400 focus:ring-2 focus:ring-red-500/20"
                   />
-                </label>
-                <button
-                  onClick={deleteAccount}
-                  disabled={deleteConfirm !== 'DELETE' || deleting}
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {deleting ? 'Deleting...' : 'Delete my account'}
-                </button>
-              </div>
+                  <button
+                    onClick={deleteAccount}
+                    disabled={deleteConfirm !== 'DELETE' || deleting}
+                    className="shrink-0 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-red-600 hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    {deleting ? 'Deleting…' : 'Delete my account'}
+                  </button>
+                </div>
+              </section>
             </div>
           )}
         </div>
