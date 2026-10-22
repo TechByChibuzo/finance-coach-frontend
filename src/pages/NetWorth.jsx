@@ -95,7 +95,7 @@ export default function NetWorth() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Net worth</h1>
+            <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">Net worth</h1>
           </div>
         </div>
 

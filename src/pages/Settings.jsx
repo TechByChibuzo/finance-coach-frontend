@@ -107,7 +107,7 @@ export default function Settings() {
     <Layout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Settings</h1>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">Settings</h1>
         </div>
 
         <div className="border-b border-gray-200">

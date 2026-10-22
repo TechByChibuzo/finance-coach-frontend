@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { format, getDate, getDaysInMonth, startOfMonth, endOfMonth, subMonths } from 'date-fns';
-import { RefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Layout from '../components/layout/Layout';
 import MonthPulse from '../components/dashboard/MonthPulse';
@@ -110,30 +109,18 @@ export default function Dashboard() {
   return (
     <Layout>
       <div className="space-y-6">
-        <header className="flex items-end justify-between gap-4">
-          <div>
-            <p className="text-sm font-medium text-gray-500">{firstName ? `Hi ${firstName}` : 'Your month'}</p>
-            <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">{format(now, 'MMMM')}</h1>
-          </div>
-          <button
-            onClick={handleSync}
-            disabled={syncing}
-            className="btn-secondary flex items-center gap-2 text-sm"
-            aria-label="Sync accounts"
-          >
-            <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} aria-hidden />
-            <span className="hidden sm:inline">{syncing ? 'Syncing…' : 'Sync'}</span>
-          </button>
-        </header>
-
-        <SetupChecklist {...data.setup} />
-
         <MonthPulse
           summary={data.summary}
           series={data.series}
           today={today}
           lastMonthName={format(lastMonthStart, 'MMMM')}
+          greeting={firstName ? `Hi ${firstName}` : 'Your month'}
+          monthName={format(now, 'MMMM')}
+          onSync={handleSync}
+          syncing={syncing}
         />
+
+        <SetupChecklist {...data.setup} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <BudgetProgress budgets={data.budgets} />

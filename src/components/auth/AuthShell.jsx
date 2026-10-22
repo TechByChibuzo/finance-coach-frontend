@@ -34,7 +34,7 @@ export default function AuthShell({ title, subtitle, children, footer }) {
           <span className="font-bold text-white">Finance Coach</span>
         </Link>
         <div>
-          <p className="text-4xl font-extrabold leading-tight tracking-tight text-white max-w-md">
+          <p className="font-display text-4xl xl:text-5xl font-bold leading-[1.08] tracking-tight text-white max-w-md">
             Know where your money goes, and what to do about it.
           </p>
           <p className="mt-4 text-base text-white/70 max-w-md">
@@ -51,7 +51,7 @@ export default function AuthShell({ title, subtitle, children, footer }) {
             <LogoMark />
             <span className="font-bold text-gray-900">Finance Coach</span>
           </Link>
-          <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">{title}</h1>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">{title}</h1>
           {subtitle && <p className="mt-2 text-sm text-gray-500">{subtitle}</p>}
           <div className="mt-8">{children}</div>
           {footer && <div className="mt-8 text-sm text-gray-600">{footer}</div>}

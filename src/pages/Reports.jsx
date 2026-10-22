@@ -109,7 +109,7 @@ export default function Reports() {
     <Layout>
       <div className="space-y-6">
         <header className="flex flex-wrap items-end justify-between gap-4">
-          <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Reports</h1>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">Reports</h1>
           <div className="inline-flex rounded-xl border border-gray-200 bg-surface p-1" role="group" aria-label="Time range">
             {RANGES.map((r) => (
               <button key={r} type="button" onClick={() => { setRange(r); setSelected(null); }} aria-pressed={range === r}

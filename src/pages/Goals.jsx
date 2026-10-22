@@ -78,7 +78,7 @@ export default function Goals() {
     <Layout>
       <div className="space-y-6">
         <header className="flex items-end justify-between gap-4">
-          <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Goals</h1>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">Goals</h1>
           {goals?.length > 0 && (
             <button onClick={() => setEditing('new')} className="btn-primary flex items-center gap-1.5 text-sm">
               <Plus className="h-4 w-4" aria-hidden />

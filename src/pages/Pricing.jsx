@@ -67,7 +67,7 @@ export default function Pricing() {
     <Layout>
       <div className="max-w-6xl mx-auto space-y-12 py-8">
         <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 mb-3">
+          <h1 className="font-display text-4xl sm:text-5xl font-bold tracking-tight text-gray-900 mb-3">
             Plans
           </h1>
           <p className="text-base text-gray-500 mb-8">

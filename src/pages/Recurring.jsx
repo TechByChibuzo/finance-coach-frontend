@@ -50,7 +50,7 @@ export default function Recurring() {
   return (
     <Layout>
       <div className="space-y-6">
-        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Recurring</h1>
+        <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">Recurring</h1>
 
         {error ? (
           <div className="card text-sm text-gray-600">Couldn't load your recurring charges. Try again in a moment.</div>

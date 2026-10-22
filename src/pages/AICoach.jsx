@@ -148,7 +148,7 @@ export default function AICoach() {
     <Layout>
       <div className="mx-auto flex max-w-3xl flex-col h-[calc(100dvh-8.5rem)] lg:h-[calc(100dvh-9.5rem)]">
         <header className="flex items-end justify-between gap-4 pb-4">
-          <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Coach</h1>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">Coach</h1>
           {messages.length > 0 && (
             <button onClick={startOver} className="btn-secondary text-sm">Start over</button>
           )}
