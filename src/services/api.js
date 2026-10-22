@@ -254,6 +254,16 @@ export const categoryRulesAPI = {
   remove: (id) => api.delete(`/category-rules/${id}`),
 };
 
+// Savings goals: progress follows a linked account's balance, or an amount kept up by hand
+export const goalsAPI = {
+  list: () => api.get('/goals'),
+  create: (goal) => api.post('/goals', goal),
+  update: (id, goal) => api.put(`/goals/${id}`, goal),
+  remove: (id) => api.delete(`/goals/${id}`),
+  // amount > 0 adds money, < 0 takes some out (goals tracked by hand only)
+  addToSaved: (id, amount) => api.post(`/goals/${id}/saved`, { amount }),
+};
+
 // Bills and subscriptions found in the user's transactions
 export const recurringAPI = {
   list: () => api.get('/recurring'),
