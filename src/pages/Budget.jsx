@@ -26,7 +26,6 @@ export default function Budget() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBudget, setEditingBudget] = useState(null);
   const [recommendationData, setRecommendationData] = useState(null);
-  const [showRecommendations, setShowRecommendations] = useState(false);
 
   const { data: budgetData, isLoading, error, refetch } = useBudgets(selectedMonth);
 
@@ -128,27 +127,22 @@ export default function Budget() {
                 <span className="hidden sm:inline">Copy last month</span>
               </button>
             )}
-            <button onClick={handleCreateBudget} className="btn-primary flex items-center gap-2 text-sm">
-              <Plus className="w-4 h-4" aria-hidden />
-              <span>New budget</span>
-            </button>
+            {hasBudgets && (
+              <button onClick={handleCreateBudget} className="btn-primary flex items-center gap-2 text-sm">
+                <Plus className="w-4 h-4" aria-hidden />
+                <span>New budget</span>
+              </button>
+            )}
           </div>
         </header>
 
         <MonthSelector currentMonth={selectedMonth} onMonthChange={setSelectedMonth} />
 
         {!hasBudgets ? (
-          <div>
-            <EmptyState
-              onCreateBudget={handleCreateBudget}
-              onGetRecommendations={() => setShowRecommendations(true)}
-            />
-            {showRecommendations && (
-              <div className="mt-6">
-                <BudgetRecommendations onCreateFromRecommendation={handleCreateFromRecommendation} />
-              </div>
-            )}
-          </div>
+          <EmptyState
+            onCreateBudget={handleCreateBudget}
+            onCreateFromRecommendation={handleCreateFromRecommendation}
+          />
         ) : (
           <>
             <BudgetOverview summary={budgetData} />
