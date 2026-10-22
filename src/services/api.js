@@ -149,6 +149,13 @@ export const transactionsAPI = {
   sync: () => 
     api.post('/transactions/sync', null, SLOW),
   
+  // Rows from a CSV export: [{ date, description, amount (positive = money out) }]
+  importCsv: (accountName, rows) =>
+    api.post('/transactions/import', { accountName, rows }, SLOW),
+
+  undoImport: (batchId) =>
+    api.delete(`/transactions/imports/${batchId}`),
+
   getByDateRange: (startDate, endDate) => 
     api.get('/transactions', { params: { startDate, endDate } }),
 };

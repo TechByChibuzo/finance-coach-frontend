@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { addMonths, format, isSameMonth, parseISO, startOfMonth, subDays } from 'date-fns';
-import { ChevronDown, ChevronLeft, ChevronRight, RefreshCw, Search } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, RefreshCw, Search, Upload } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Layout from '../components/layout/Layout';
 import CategoryIcon from '../components/common/CategoryIcon';
 import Skeleton from '../components/common/Skeleton';
+import ImportCsvModal from '../components/transactions/ImportCsvModal';
 import { plaidAPI, transactionsAPI } from '../services/api';
 import { formatCurrency } from '../utils/helpers';
 import { categoryLabel } from '../utils/categories';
@@ -54,6 +55,7 @@ export default function Transactions() {
   const [month, setMonth] = useState(() => startOfMonth(new Date()));
   const [searchTerm, setSearchTerm] = useState('');
   const [category, setCategory] = useState('all');
+  const [importing, setImporting] = useState(false);
 
   const loadTransactions = async () => {
     try {
@@ -138,10 +140,16 @@ export default function Transactions() {
       <div className="space-y-6">
         <header className="flex items-end justify-between gap-4">
           <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Transactions</h1>
-          <button onClick={syncTransactions} disabled={syncing} className="btn-secondary flex items-center gap-2 text-sm" aria-label="Sync accounts">
-            <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} aria-hidden />
-            <span className="hidden sm:inline">{syncing ? 'Syncing…' : 'Sync'}</span>
-          </button>
+          <div className="flex gap-2">
+            <button onClick={() => setImporting(true)} className="btn-secondary flex items-center gap-2 text-sm" aria-label="Import CSV">
+              <Upload className="w-4 h-4" aria-hidden />
+              <span className="hidden sm:inline">Import CSV</span>
+            </button>
+            <button onClick={syncTransactions} disabled={syncing} className="btn-secondary flex items-center gap-2 text-sm" aria-label="Sync accounts">
+              <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} aria-hidden />
+              <span className="hidden sm:inline">{syncing ? 'Syncing…' : 'Sync'}</span>
+            </button>
+          </div>
         </header>
 
         <section className="card p-0" aria-label="Month summary">
@@ -207,10 +215,15 @@ export default function Transactions() {
           <div className="card text-center py-14">
             {transactions.length === 0 ? (
               <>
-                <p className="text-sm text-gray-600 mb-4">Connect a bank in Settings, then sync to bring in your transactions.</p>
-                <button onClick={syncTransactions} disabled={syncing} className="btn-primary text-sm">
-                  {syncing ? 'Syncing…' : 'Sync now'}
-                </button>
+                <p className="text-sm text-gray-600 mb-4 max-w-md mx-auto">
+                  Connect a bank in Settings and sync, or import a CSV file of transactions downloaded from your bank.
+                </p>
+                <div className="flex justify-center gap-2">
+                  <button onClick={() => setImporting(true)} className="btn-primary text-sm">Import CSV</button>
+                  <button onClick={syncTransactions} disabled={syncing} className="btn-secondary text-sm">
+                    {syncing ? 'Syncing…' : 'Sync now'}
+                  </button>
+                </div>
               </>
             ) : filtering ? (
               <p className="text-sm text-gray-600">Nothing in {format(month, 'MMMM')} matches that search or category.</p>
@@ -239,7 +252,9 @@ export default function Transactions() {
                             <p className="text-sm font-semibold text-gray-900 truncate">{t.merchantName || t.name}</p>
                             <p className="text-xs text-gray-500 truncate">
                               {transfer ? 'Transfer' : categoryLabel(t.category)}
-                              {accountNames[t.accountId] && <span className="hidden sm:inline">, {accountNames[t.accountId]}</span>}
+                              {(accountNames[t.accountId] || t.importAccountName) && (
+                                <span className="hidden sm:inline">, {accountNames[t.accountId] || t.importAccountName}</span>
+                              )}
                               {t.pending && <span className="ml-1.5 font-medium text-amber-600">Pending</span>}
                             </p>
                           </div>
@@ -259,6 +274,7 @@ export default function Transactions() {
           </div>
         )}
       </div>
+      {importing && <ImportCsvModal onClose={() => setImporting(false)} onImported={loadTransactions} />}
     </Layout>
   );
 }
