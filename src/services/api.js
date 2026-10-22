@@ -135,6 +135,11 @@ export const authAPI = {
   },
 };
 
+// CSV export of all transactions (paid plans); returns a short-lived download link
+export const exportAPI = {
+  transactions: () => api.get('/export/transactions', SLOW),
+};
+
 // User API
 export const userAPI = {
   // Cancels billing, disconnects banks and erases all of the user's data
@@ -153,8 +158,20 @@ export const transactionsAPI = {
   importCsv: (accountName, rows) =>
     api.post('/transactions/import', { accountName, rows }, SLOW),
 
+  // remember: also use this category for every past and future transaction from the merchant
+  updateCategory: (id, category, remember) =>
+    api.patch(`/transactions/${id}/category`, { category, remember }, SLOW),
+
   undoImport: (batchId) =>
     api.delete(`/transactions/imports/${batchId}`),
+
+  // Newest first, across all accounts
+  recent: (limit = 10) =>
+    api.get('/transactions/recent', { params: { limit } }),
+
+  // Merchant name or description contains the text, across all months
+  search: (q) =>
+    api.get('/transactions/search', { params: { q } }),
 
   getByDateRange: (startDate, endDate) => 
     api.get('/transactions', { params: { startDate, endDate } }),
@@ -212,6 +229,17 @@ export const anomaliesAPI = {
   markReviewed: (id) => api.put(`/anomalies/${id}/review`),
 };
 
+// "Always categorize this merchant as..." rules
+export const categoryRulesAPI = {
+  list: () => api.get('/category-rules'),
+  remove: (id) => api.delete(`/category-rules/${id}`),
+};
+
+// Bills and subscriptions found in the user's transactions
+export const recurringAPI = {
+  list: () => api.get('/recurring'),
+};
+
 // Plaid API
 export const plaidAPI = {
   createLinkToken: () => 
@@ -222,6 +250,10 @@ export const plaidAPI = {
   
   getAccounts: () => 
     api.get('/plaid/accounts'),
+
+  // Stops syncing the account; removes the bank connection when it was the last account
+  disconnect: (accountId) =>
+    api.delete(`/plaid/accounts/${accountId}`),
 };
 
 // Budget API 

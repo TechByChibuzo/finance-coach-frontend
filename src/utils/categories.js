@@ -25,3 +25,15 @@ export const categoryLabel = (category) => {
   const words = category.replace(/_/g, ' ').toLowerCase();
   return words.charAt(0).toUpperCase() + words.slice(1);
 };
+
+// Categories a user can pick for a transaction (Plaid primaries, plus credit card payments)
+export const CATEGORY_OPTIONS = [
+  'FOOD_AND_DRINK', 'GENERAL_MERCHANDISE', 'TRANSPORTATION', 'TRAVEL', 'ENTERTAINMENT',
+  'RENT_AND_UTILITIES', 'PERSONAL_CARE', 'MEDICAL', 'HOME_IMPROVEMENT', 'GENERAL_SERVICES',
+  'GOVERNMENT_AND_NON_PROFIT', 'BANK_FEES', 'LOAN_PAYMENTS', 'INCOME', 'TRANSFER_IN', 'TRANSFER_OUT',
+  'CREDIT_CARD_PAYMENT',
+].map((code) => ({ code, label: code === 'CREDIT_CARD_PAYMENT' ? 'Credit card payment' : categoryLabel(code) }));
+
+// The category code to preselect when editing a transaction
+export const editableCategory = (t) =>
+  t.subcategory === 'LOAN_PAYMENTS_CREDIT_CARD_PAYMENT' ? 'CREDIT_CARD_PAYMENT' : t.category;
