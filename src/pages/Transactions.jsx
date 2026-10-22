@@ -3,7 +3,7 @@ import { addMonths, format, isSameMonth, parseISO, startOfMonth, subDays } from 
 import { ChevronDown, ChevronLeft, ChevronRight, RefreshCw, Search, Upload } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Layout from '../components/layout/Layout';
-import CategoryIcon from '../components/common/CategoryIcon';
+import MerchantIcon from '../components/common/MerchantIcon';
 import Skeleton from '../components/common/Skeleton';
 import ImportCsvModal from '../components/transactions/ImportCsvModal';
 import { plaidAPI, transactionsAPI } from '../services/api';
@@ -247,7 +247,7 @@ export default function Transactions() {
                       const moneyIn = t.amount < 0;
                       return (
                         <li key={t.id} className="flex items-center gap-3 sm:gap-4 py-3">
-                          <CategoryIcon category={t.category} size="md" />
+                          <MerchantIcon logoUrl={t.logoUrl} category={t.category} size="md" />
                           <div className="min-w-0 flex-1">
                             <p className="text-sm font-semibold text-gray-900 truncate">{t.merchantName || t.name}</p>
                             <p className="text-xs text-gray-500 truncate">

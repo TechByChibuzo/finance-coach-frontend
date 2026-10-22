@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import CategoryIcon from '../common/CategoryIcon';
+import MerchantIcon from '../common/MerchantIcon';
 import { formatCurrency } from '../../utils/helpers';
 import { categoryLabel } from '../../utils/categories';
 
@@ -150,7 +151,7 @@ export function RecentTransactions({ transactions, onSync, syncing }) {
             const moneyIn = t.amount < 0;
             return (
               <li key={t.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
-                <CategoryIcon category={t.category} size="md" />
+                <MerchantIcon logoUrl={t.logoUrl} category={t.category} size="md" />
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold text-gray-900 truncate">{t.merchantName || t.name}</p>
                   <p className="text-xs text-gray-500 truncate">
