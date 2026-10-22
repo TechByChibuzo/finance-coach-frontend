@@ -5,6 +5,7 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxi
 import Layout from '../components/layout/Layout';
 import Skeleton from '../components/common/Skeleton';
 import CategoryIcon from '../components/common/CategoryIcon';
+import CashFlowSankey from '../components/reports/CashFlowSankey';
 import { analyticsAPI } from '../services/api';
 import { categoryLabel } from '../utils/categories';
 import { formatCurrency, formatCurrencyCompact } from '../utils/helpers';
@@ -201,6 +202,24 @@ export default function Reports() {
                 </div>
               </details>
             </section>
+
+            {focus && (focus.income > 0 || focus.spending > 0) && (
+              <section className="card hidden sm:block" aria-labelledby="flow-title">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <h2 id="flow-title" className="text-base font-bold text-gray-900">
+                    Where {format(monthDate(focus.month), 'MMMM')}'s money went
+                  </h2>
+                  <p className="text-sm text-gray-500 tabular-nums">
+                    {focus.net >= 0
+                      ? `${formatCurrency(focus.net, false)} saved`
+                      : `${formatCurrency(-focus.net, false)} more out than in`}
+                  </p>
+                </div>
+                <div className="mt-4">
+                  <CashFlowSankey month={focus} />
+                </div>
+              </section>
+            )}
 
             {focus && (
               <section className="card" aria-labelledby="categories-title">
