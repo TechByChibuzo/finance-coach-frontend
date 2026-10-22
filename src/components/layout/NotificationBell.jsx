@@ -141,11 +141,11 @@ export default function NotificationBell() {
                             <p className="text-sm text-gray-900">
                               <span className="font-semibold">{b.category}</span>{' '}
                               {over
-                                ? <>is <span className="font-semibold text-red-600">{formatCurrency(Number(b.spent) - Number(b.amount), false)} over</span> budget</>
+                                ? <>is <span className="font-semibold text-red-600">{formatCurrency(Number(b.spent) - Number(b.available ?? b.amount), false)} over</span> budget</>
                                 : <>is at <span className="font-semibold text-amber-600">{Math.round(Number(b.percentageSpent))}%</span> of its budget</>}
                             </p>
                             <p className="text-xs text-gray-500 mt-0.5">
-                              {formatCurrency(b.spent, false)} of {formatCurrency(b.amount, false)} this month
+                              {formatCurrency(b.spent, false)} of {formatCurrency(b.available ?? b.amount, false)} this month
                             </p>
                           </Link>
                         </li>

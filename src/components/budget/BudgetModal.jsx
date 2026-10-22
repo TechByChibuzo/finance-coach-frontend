@@ -42,6 +42,7 @@ export default function BudgetModal({
         notes: editBudget.notes || '',
         alertThreshold: editBudget.alertThreshold,
         month: editBudget.month,
+        rollover: Boolean(editBudget.rollover),
       };
     }
     return {
@@ -50,6 +51,7 @@ export default function BudgetModal({
       notes: '',
       alertThreshold: 80,
       month: defaultMonth,
+      rollover: false,
     };
   });
 
@@ -77,6 +79,7 @@ export default function BudgetModal({
       notes: formData.notes || null,
       alertThreshold: formData.alertThreshold,
       month: formData.month,
+      rollover: formData.rollover,
     });
   };
 
@@ -166,6 +169,17 @@ export default function BudgetModal({
               <span>100%</span>
             </div>
           </div>
+
+          <label className="flex items-start gap-3 rounded-xl bg-gray-50 px-4 py-3 cursor-pointer">
+            <input type="checkbox" checked={formData.rollover} onChange={(e) => handleChange('rollover', e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
+            <span className="text-sm text-gray-700">
+              Roll over what's left
+              <span className="block text-xs text-gray-500 mt-0.5">
+                Money you don't spend this month is added to next month's budget. Overspending is taken off it.
+              </span>
+            </span>
+          </label>
 
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1.5">Notes (optional)</label>

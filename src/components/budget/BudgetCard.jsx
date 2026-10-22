@@ -7,7 +7,10 @@ import BudgetProgress from './BudgetProgress';
 export default function BudgetCard({ budget, onEdit, onDelete }) {
   const [showMenu, setShowMenu] = useState(false);
 
-  const remaining = budget.amount - budget.spent;
+  // With rollover, last month's leftover (or overspending) is part of what can be spent
+  const available = budget.available ?? budget.amount;
+  const remaining = available - budget.spent;
+  const carried = Number(budget.carriedOver || 0);
   const isExceeded = budget.isExceeded;
   const isWarning = budget.shouldAlert && !isExceeded;
 
@@ -60,8 +63,14 @@ export default function BudgetCard({ budget, onEdit, onDelete }) {
       <div className="mb-4">
         <div className="flex items-baseline gap-1.5">
           <span className="text-2xl font-extrabold tracking-tight text-gray-900">{formatCurrency(budget.spent, false)}</span>
-          <span className="text-sm text-gray-500">of {formatCurrency(budget.amount, false)}</span>
+          <span className="text-sm text-gray-500">of {formatCurrency(available, false)}</span>
         </div>
+        {budget.rollover && carried !== 0 && (
+          <p className="text-xs text-gray-500 mt-1">
+            {formatCurrency(budget.amount, false)} budget {carried > 0 ? '+' : '−'} {formatCurrency(Math.abs(carried), false)}{' '}
+            {carried > 0 ? 'left from last month' : 'overspent last month'}
+          </p>
+        )}
       </div>
 
       <div className="mb-4">

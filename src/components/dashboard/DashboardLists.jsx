@@ -71,7 +71,7 @@ export function BudgetProgress({ budgets }) {
                     <div className={`h-full rounded-full ${tone.bar}`} style={{ width: `${Math.min(pct, 100)}%` }} />
                   </div>
                   <p className="mt-1.5 text-xs text-gray-500">
-                    {formatCurrency(b.spent, false)} of {formatCurrency(b.amount, false)}
+                    {formatCurrency(b.spent, false)} of {formatCurrency(b.available ?? b.amount, false)}
                   </p>
                 </li>
               );
