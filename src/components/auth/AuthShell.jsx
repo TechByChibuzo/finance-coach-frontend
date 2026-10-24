@@ -1,14 +1,5 @@
 import { Link } from 'react-router-dom';
-
-export const LogoMark = ({ className = 'w-9 h-9' }) => (
-  <div className={`${className} bg-primary-600 rounded-xl flex items-center justify-center`}>
-    <svg width="18" height="18" viewBox="0 0 30 30" fill="none" aria-hidden>
-      <path d="M15 2L4 6.8V14.5C4 21.2 8.8 27.4 15 29C21.2 27.4 26 21.2 26 14.5V6.8L15 2Z" fill="white" fillOpacity="0.15" stroke="white" strokeWidth="1.5" strokeLinejoin="round" />
-      <line x1="15" y1="9" x2="15" y2="22" stroke="white" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M18 12C18 10.9 16.7 10 15 10C13.3 10 12 10.9 12 12C12 13.1 13.3 13.8 15 14C16.7 14.2 18 15 18 16.2C18 17.4 16.7 18.2 15 18.2C13.3 18.2 12 17.3 12 16.2" stroke="white" strokeWidth="1.8" strokeLinecap="round" fill="none" />
-    </svg>
-  </div>
-);
+import { LogoMark } from '../common/Logo';
 
 // A glimpse of the dashboard's lead card, so people see what they're signing up for
 function PacePreview() {

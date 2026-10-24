@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { LogoMark } from '../common/Logo';
 import { Crown, Sparkles, ChevronDown, Menu, UserCircle, LogOut, Settings } from 'lucide-react';
 import NotificationBell from './NotificationBell';
 import { useAuth } from '../../hooks/useAuth';
@@ -48,19 +49,7 @@ export default function Navbar({ onMenuClick }) {
             </button>
             
             <Link to="/dashboard" className="flex items-center ml-2 space-x-3">
-              <div className="w-9 h-9 bg-primary-600 rounded-xl flex items-center justify-center">
-                <svg width="22" height="22" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M15 2L4 6.8V14.5C4 21.2 8.8 27.4 15 29C21.2 27.4 26 21.2 26 14.5V6.8L15 2Z"
-                    fill="white" fillOpacity="0.15" stroke="white" strokeWidth="1.5" strokeLinejoin="round"
-                  />
-                  <line x1="15" y1="9" x2="15" y2="22" stroke="white" strokeWidth="1.8" strokeLinecap="round" />
-                  <path
-                    d="M18 12C18 10.9 16.7 10 15 10C13.3 10 12 10.9 12 12C12 13.1 13.3 13.8 15 14C16.7 14.2 18 15 18 16.2C18 17.4 16.7 18.2 15 18.2C13.3 18.2 12 17.3 12 16.2"
-                    stroke="white" strokeWidth="1.8" strokeLinecap="round" fill="none"
-                  />
-                </svg>
-              </div>
+              <LogoMark />
               <span className="text-lg font-bold text-gray-900 hidden sm:block">Finance Coach</span>
             </Link>
           </div>
