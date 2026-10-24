@@ -1,0 +1,15 @@
+# Weekly npm updates. Minor and patch bumps come grouped in one PR, since the only check a
+# PR gets is Vercel's preview build; major versions come one per PR. Security fixes arrive
+# as soon as they're published (Dependabot security updates, enabled in the repo settings).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
