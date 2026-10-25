@@ -92,7 +92,9 @@ export default function Transactions() {
   const checkHasAny = () =>
     transactionsAPI.recent(1).then(({ data }) => setHasAny(data.length > 0)).catch(() => {});
 
+  // Fetches the month from the API; state is set when the response arrives
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadMonth(month);
   }, [month, loadMonth]);
 
