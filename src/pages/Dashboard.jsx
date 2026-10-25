@@ -77,7 +77,9 @@ export default function Dashboard() {
     }
   };
 
+  // Fetches from the API on mount; state is set when the response arrives
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadDashboardData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
