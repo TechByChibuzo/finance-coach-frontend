@@ -90,6 +90,24 @@ export const useCancelSubscription = () => {
 };
 
 /**
+ * Hook to open the Stripe Customer Portal, where the user updates their card and sees invoices
+ */
+export const useBillingPortal = () => {
+  return useMutation({
+    mutationFn: () => subscriptionAPI.openBillingPortal(),
+    onSuccess: (response) => {
+      if (response.data?.url) {
+        window.location.href = response.data.url;
+      }
+    },
+    onError: (error) => {
+      console.error('Billing portal error:', error);
+      toast.error(error.response?.data?.message || error.response?.data?.error || "Couldn't open billing. Try again.");
+    },
+  });
+};
+
+/**
  * Helper hook to check if user has access to a specific feature
  * Returns a boolean and loading state
  */

@@ -352,6 +352,8 @@ export const subscriptionAPI = {
     api.post('/subscriptions/checkout', { planId, billingCycle }),
   cancelSubscription: () => 
     api.post('/subscriptions/cancel'),
+  // Stripe Customer Portal: card, invoices and cancellation, hosted by Stripe
+  openBillingPortal: () => api.post('/subscriptions/portal'),
 };
 
 export const investmentsAPI = {

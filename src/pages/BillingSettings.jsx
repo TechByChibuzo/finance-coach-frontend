@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { CreditCard, AlertCircle, Crown, Calendar, DollarSign, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
-import { useCurrentSubscription, useCancelSubscription } from '../hooks/useSubscription';
+import { useCurrentSubscription, useCancelSubscription, useBillingPortal } from '../hooks/useSubscription';
 import Skeleton from '../components/common/Skeleton';
 import { format } from 'date-fns';
 import { formatCurrency } from '../utils/helpers';
@@ -16,6 +16,7 @@ const PLAN_CONFIG = {
 export default function BillingSettings() {
   const { data: subscription, isLoading } = useCurrentSubscription();
   const cancelSubscription = useCancelSubscription();
+  const billingPortal = useBillingPortal();
   const [showCancelModal, setShowCancelModal] = useState(false);
 
   if (isLoading) {
@@ -162,17 +163,25 @@ export default function BillingSettings() {
         </div>
 
         <div className="card">
-          <h2 className="text-base font-semibold text-gray-900 mb-4">Payment Method</h2>
-          <div className="p-4 border border-gray-100 rounded-xl text-center py-8">
-            <p className="text-sm text-gray-400">Payment methods are managed securely through Stripe.</p>
-          </div>
-        </div>
-
-        <div className="card">
-          <h2 className="text-base font-semibold text-gray-900 mb-4">Billing History</h2>
-          <div className="p-4 border border-gray-100 rounded-xl text-center py-8">
-            <p className="text-sm text-gray-400">No billing history available yet.</p>
-          </div>
+          <h2 className="text-base font-semibold text-gray-900 mb-1">Payment method and invoices</h2>
+          {planName !== 'FREE' ? (
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <p className="text-sm text-gray-500">
+                Update your card and download past invoices on Stripe's secure billing page.
+              </p>
+              <button
+                onClick={() => billingPortal.mutate()}
+                disabled={billingPortal.isPending}
+                className="btn-secondary shrink-0"
+              >
+                {billingPortal.isPending ? 'Opening...' : 'Manage billing'}
+              </button>
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500">
+              You're on the free plan, so there's nothing to bill. <Link to="/pricing" className="text-primary-700 font-medium">See plans</Link>
+            </p>
+          )}
         </div>
 
         {showCancelModal && (
