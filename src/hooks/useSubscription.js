@@ -63,7 +63,7 @@ export const useCreateCheckout = () => {
     },
     onError: (error) => {
       console.error('Checkout error:', error);
-      toast.error(error.response?.data?.error || 'Failed to create checkout session');
+      toast.error(error.response?.data?.message || error.response?.data?.error || 'Failed to create checkout session');
     },
   });
 };
@@ -84,7 +84,7 @@ export const useCancelSubscription = () => {
     },
     onError: (error) => {
       console.error('Cancel error:', error);
-      toast.error(error.response?.data?.error || 'Failed to cancel subscription');
+      toast.error(error.response?.data?.message || error.response?.data?.error || 'Failed to cancel subscription');
     },
   });
 };

@@ -78,7 +78,7 @@ export default function Budget() {
       await copyPrevious.mutateAsync();
       toast.success("Copied last month's budgets");
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Failed to copy budgets');
+      toast.error(error.response?.data?.message || error.response?.data?.error || 'Failed to copy budgets');
     }
   };
 
